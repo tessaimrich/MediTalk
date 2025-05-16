@@ -13,6 +13,33 @@
         android:theme="@style/Theme.MediTalk"
         tools:targetApi="31">
         <activity
+            android:name=".SettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".InhalationDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DropDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CreamDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PillDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".InhalationListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CreamListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PillListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CategoryActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
