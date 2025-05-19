@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">MediTalk</string>
     <string name="app_icon">MediTalk App Icon</string>
+    <string name="englisch">Englisch</string>
+    <string name="spanisch">Spanisch</string>
+    <string name="kroatisch">Kroatisch</string>
+    <string name="slowenisch">Slowenisch</string>
+    <string name="italienisch">Italienisch</string>
+    <string name="franzoesisch">Franzoesisch</string>
+    <string name="weiter">Weiter</string>
 </resources>

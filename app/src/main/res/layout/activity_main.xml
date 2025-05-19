@@ -54,31 +54,31 @@
             android:layout_weight="1"
             android:src="@drawable/englisch"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Englisch"
+            android:contentDescription="@string/englisch"
             android:padding="8dp" />
 
-        <ImageButton
-            android:id="@+id/btnFlagGerman"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/spanisch"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Spanisch"
-            android:padding="8dp" />
+        <!-- <ImageButton
+              android:id="@+id/btnFlagGerman"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_weight="1"
+              android:src="@drawable/spanisch"
+              android:background="?attr/selectableItemBackgroundBorderless"
+              android:contentDescription="@string/spanisch"
+              android:padding="8dp" />   -->
 
-        <ImageButton
-            android:id="@+id/btnFlagCroatian"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/kroatisch"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Kroatisch"
-            android:padding="8dp" />
-    </LinearLayout>
+          <ImageButton
+              android:id="@+id/btnFlagCroatian"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_weight="1"
+              android:src="@drawable/kroatisch"
+              android:background="?attr/selectableItemBackgroundBorderless"
+              android:contentDescription="@string/kroatisch"
+              android:padding="8dp" />
+      </LinearLayout>
 
-    <!-- 4. Zweite Reihe mit 3 Flaggen -->
+      <!-- 4. Zweite Reihe mit 3 Flaggen -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -92,36 +92,36 @@
             android:layout_weight="1"
             android:src="@drawable/slovenisch"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Slowenisch"
+            android:contentDescription="@string/slowenisch"
             android:padding="8dp" />
 
-        <ImageButton
-            android:id="@+id/btnFlagItalian"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/italienisch"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Italienisch"
-            android:padding="8dp" />
+        <!--    <ImageButton
+                android:id="@+id/btnFlagItalian"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/italienisch"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/italienisch"
+                android:padding="8dp" />    -->
 
-        <ImageButton
-            android:id="@+id/btnFlagEnglishUK"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/franzoesisch"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Franzoesisch"
-            android:padding="8dp" />
-    </LinearLayout>
+        <!--        <ImageButton
+                   android:id="@+id/btnFlagEnglishUK"
+                   android:layout_width="0dp"
+                   android:layout_height="wrap_content"
+                   android:layout_weight="1"
+                   android:src="@drawable/franzoesisch"
+                   android:background="?attr/selectableItemBackgroundBorderless"
+                   android:contentDescription="@string/franzoesisch"
+                   android:padding="8dp" />    -->
+           </LinearLayout>
 
-    <!-- 5. Weiter-Button -->
+           <!-- 5. Weiter-Button -->
     <Button
         android:id="@+id/btnWeiter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Weiter" />
+        android:text="@string/weiter" />
 
 </LinearLayout>
