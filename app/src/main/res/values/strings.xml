@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MediTalk</string>
+    <string name="app_icon">MediTalk App Icon</string>
 </resources>

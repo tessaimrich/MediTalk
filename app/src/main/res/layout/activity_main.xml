@@ -1,19 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:orientation="vertical"
+    android:padding="16dp">
 
+    <!-- Icon und Titel nebeneinander -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/imgAppIcon"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@mipmap/ic_meditalk"
+            android:contentDescription="@string/app_icon" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:text="MediTalk"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- 2. Untertitel -->
     <TextView
+        android:id="@+id/tvSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginTop="24dp"
+        android:text="Sprache wählen"
+        android:textSize="18sp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- 3. Erste Reihe mit 3 Flaggen -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/btnFlagEnglish"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/englisch"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Englisch"
+            android:padding="8dp" />
+
+        <ImageButton
+            android:id="@+id/btnFlagGerman"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/spanisch"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Spanisch"
+            android:padding="8dp" />
+
+        <ImageButton
+            android:id="@+id/btnFlagCroatian"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/kroatisch"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Kroatisch"
+            android:padding="8dp" />
+    </LinearLayout>
+
+    <!-- 4. Zweite Reihe mit 3 Flaggen -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/btnFlagSlovenian"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/slovenisch"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Slowenisch"
+            android:padding="8dp" />
+
+        <ImageButton
+            android:id="@+id/btnFlagItalian"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/italienisch"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Italienisch"
+            android:padding="8dp" />
+
+        <ImageButton
+            android:id="@+id/btnFlagEnglishUK"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/franzoesisch"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Franzoesisch"
+            android:padding="8dp" />
+    </LinearLayout>
+
+    <!-- 5. Weiter-Button -->
+    <Button
+        android:id="@+id/btnWeiter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Weiter" />
+
+</LinearLayout>
