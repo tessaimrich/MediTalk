@@ -1,127 +1,187 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="#D4ECE9"
     android:padding="16dp">
 
-    <!-- Icon und Titel nebeneinander -->
-    <LinearLayout
+    <!-- Scrollbarer Inhalt -->
+    <ScrollView
+        android:id="@+id/scroll_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/menu_bar"
+        android:fillViewport="true">
 
-        <ImageView
-            android:id="@+id/imgAppIcon"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:src="@mipmap/ic_meditalk"
-            android:contentDescription="@string/app_icon" />
-
-        <TextView
-            android:id="@+id/tvTitle"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="16dp"
-            android:text="MediTalk"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:orientation="vertical">
 
-    <!-- 2. Untertitel -->
-    <TextView
-        android:id="@+id/tvSubtitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Sprache wählen"
-        android:textSize="18sp" />
-
-    <!-- 3. Erste Reihe mit 3 Flaggen -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/btnFlagEnglish"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/englisch"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/englisch"
-            android:padding="8dp" />
-
-        <!-- <ImageButton
-              android:id="@+id/btnFlagGerman"
-              android:layout_width="0dp"
-              android:layout_height="wrap_content"
-              android:layout_weight="1"
-              android:src="@drawable/spanisch"
-              android:background="?attr/selectableItemBackgroundBorderless"
-              android:contentDescription="@string/spanisch"
-              android:padding="8dp" />   -->
-
-          <ImageButton
-              android:id="@+id/btnFlagCroatian"
-              android:layout_width="0dp"
-              android:layout_height="wrap_content"
-              android:layout_weight="1"
-              android:src="@drawable/kroatisch"
-              android:background="?attr/selectableItemBackgroundBorderless"
-              android:contentDescription="@string/kroatisch"
-              android:padding="8dp" />
-      </LinearLayout>
-
-      <!-- 4. Zweite Reihe mit 3 Flaggen -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/btnFlagSlovenian"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/slovenisch"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/slowenisch"
-            android:padding="8dp" />
-
-        <!--    <ImageButton
-                android:id="@+id/btnFlagItalian"
-                android:layout_width="0dp"
+            <!-- Icon + Titel -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:src="@drawable/italienisch"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/italienisch"
-                android:padding="8dp" />    -->
+                android:orientation="horizontal">
 
-        <!--        <ImageButton
-                   android:id="@+id/btnFlagEnglishUK"
-                   android:layout_width="0dp"
-                   android:layout_height="wrap_content"
-                   android:layout_weight="1"
-                   android:src="@drawable/franzoesisch"
-                   android:background="?attr/selectableItemBackgroundBorderless"
-                   android:contentDescription="@string/franzoesisch"
-                   android:padding="8dp" />    -->
-           </LinearLayout>
+                <ImageView
+                    android:id="@+id/imgAppIcon"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:src="@mipmap/ic_meditalk"
+                    android:contentDescription="@string/app_icon" />
 
-           <!-- 5. Weiter-Button -->
-    <Button
-        android:id="@+id/btnWeiter"
+                <TextView
+                    android:id="@+id/tvTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="16dp"
+                    android:text="MediTalk"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Untertitel -->
+            <TextView
+                android:id="@+id/tvSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Sprache wählen"
+                android:textSize="18sp" />
+
+            <!-- 2 Spalten mit Flaggen -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:weightSum="2">
+
+                <!-- Linke Spalte -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal">
+
+                    <ImageButton
+                        android:id="@+id/btnFlagEnglish"
+                        android:layout_width="80dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/englisch"
+                        android:background="@null"
+                        android:contentDescription="@string/englisch"
+                        android:layout_margin="8dp"
+                        android:scaleType="fitCenter"
+                        android:adjustViewBounds="true" />
+
+                    <ImageButton
+                        android:id="@+id/btnFlagSlovenian"
+                        android:layout_width="80dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/slovenisch"
+                        android:background="@null"
+                        android:contentDescription="@string/slowenisch"
+                        android:layout_margin="8dp"
+                        android:scaleType="fitCenter"
+                        android:adjustViewBounds="true" />
+
+                    <!-- Deaktiviert -->
+                    <!--
+                    <ImageButton
+                        android:id="@+id/btnFlagSpanish"
+                        android:layout_width="80dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/spanisch"
+                        android:background="@null"
+                        android:contentDescription="@string/spanisch"
+                        android:layout_margin="8dp"
+                        android:scaleType="fitCenter"
+                        android:adjustViewBounds="true" />
+                    -->
+                </LinearLayout>
+
+                <!-- Rechte Spalte -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal">
+
+                    <ImageButton
+                        android:id="@+id/btnFlagCroatian"
+                        android:layout_width="80dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/kroatisch"
+                        android:background="@null"
+                        android:contentDescription="@string/kroatisch"
+                        android:layout_margin="8dp"
+                        android:scaleType="fitCenter"
+                        android:adjustViewBounds="true" />
+
+                    <!-- Weitere Flaggen deaktiviert -->
+                    <!--
+                    <ImageButton
+                        android:id="@+id/btnFlagItalian"
+                        android:layout_width="80dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/italienisch"
+                        android:background="@null"
+                        android:contentDescription="@string/italienisch"
+                        android:layout_margin="8dp"
+                        android:scaleType="fitCenter"
+                        android:adjustViewBounds="true" />
+
+                    <ImageButton
+                        android:id="@+id/btnFlagFrench"
+                        android:layout_width="80dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/franzoesisch"
+                        android:background="@null"
+                        android:contentDescription="@string/franzoesisch"
+                        android:layout_margin="8dp"
+                        android:scaleType="fitCenter"
+                        android:adjustViewBounds="true" />
+                    -->
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Menüleiste unten -->
+    <LinearLayout
+        android:id="@+id/menu_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="@string/weiter" />
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:background="#D4ECE9">
 
-</LinearLayout>
+        <ImageButton
+            android:id="@+id/btnLogout"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:src="@drawable/_exit_the_app_"
+            android:background="@null"
+            android:contentDescription="@string/exit"
+            android:scaleType="fitCenter" />
+
+        <ImageButton
+            android:id="@+id/btnWeiter"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:src="@drawable/_arrow_forward_1"
+            android:background="@null"
+            android:contentDescription="@string/weiter"
+            android:scaleType="fitCenter" />
+    </LinearLayout>
+</RelativeLayout>
