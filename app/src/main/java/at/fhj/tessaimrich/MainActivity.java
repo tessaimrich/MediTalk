@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 //"Weiter"-Button verknüpfen
-        Button btnWeiter = findViewById(R.id.btnWeiter);
+        ImageButton btnWeiter = findViewById(R.id.btnWeiter);
         btnWeiter.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, CategoryActivity.class);
             startActivity(intent);
