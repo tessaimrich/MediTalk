@@ -36,12 +36,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Wenn bereits eine Sprache gespeichert ist, direkt zur CategoryActivity und MainActivity beenden
+
+
+
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+/* ZUM TESTEN AUSKOMMENTIERT:
         if (prefs.contains(KEY_LANGUAGE)) {
             startActivity(new Intent(this, CategoryActivity.class));
             finish();
             return;
-        }
+        }  */
 
         // Padding für SystemBars
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -49,6 +53,13 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(sb.left, sb.top, sb.right, sb.bottom);
             return insets;
         });
+
+
+
+
+
+
+
 
 
     // Flaggen-Buttons mit Beschriftung
@@ -75,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
     // „Weiter“-Button: nur aktiv, wenn Sprache gewählt
         ImageButton btnWeiter = findViewById(R.id.btnWeiter);
         btnWeiter.setEnabled(false);
+        TextView tvWeiter = findViewById(R.id.tvWeiterLabel);
+        tvWeiter.setText("Weiter");
         btnWeiter.setOnClickListener(v -> {
             // speichern in SharedPreferences (falls noch nicht geschehen)
             prefs.edit()
@@ -88,15 +101,21 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        // „Exit/Logout“-Button
+        // „Logout“-Button
         ImageButton btnLogout = findViewById(R.id.btnLogout);
         TextView tvLogout = findViewById(R.id.tvLogoutLabel);
-        tvLogout.setText("Exit");  // oder "Logout"
+        tvLogout.setText("Logout");
         btnLogout.setOnClickListener(v -> {
-            // App beenden
-            finishAffinity();
+            finishAffinity();      // App beenden
         });
-    }
+
+
+    }  //Ende onCreate()
+
+
+
+
+
 
     /**
      * Initialisiert einen Flaggen-Button mit Beschriftung
