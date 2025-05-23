@@ -202,7 +202,7 @@
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
         android:padding="8dp"
-        android:background="#D4ECE9">
+        >
 
         <ImageButton
             android:id="@+id/btnLogout"
