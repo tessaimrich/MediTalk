@@ -18,4 +18,5 @@
     <string name="Exit">Exit</string>
     <string name="Weiter">weiter</string>
     <string name="Logout">logout</string>
+    <string name="sprache_waehlen">Sprache wählen</string>
 </resources>

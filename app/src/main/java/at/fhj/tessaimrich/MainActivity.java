@@ -83,17 +83,18 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    // „Weiter“-Button: nur aktiv, wenn Sprache gewählt
+        // „Weiter“-Button: nur aktiv, wenn Sprache gewählt
         ImageButton btnWeiter = findViewById(R.id.btnWeiter);
         btnWeiter.setEnabled(false);
         TextView tvWeiter = findViewById(R.id.tvWeiterLabel);
         tvWeiter.setText("Weiter");
+
         btnWeiter.setOnClickListener(v -> {
             // speichern in SharedPreferences (falls noch nicht geschehen)
             prefs.edit()
                     .putString(KEY_LANGUAGE, selectedLanguage)
                     .apply();
-            // zur nächsten Activity, Sprache per Intent mitgeben (optional)
+            // zur nächsten Activity, Sprache per Intent mitgeben
             Intent intent = new Intent(MainActivity.this, CategoryActivity.class);
             intent.putExtra(KEY_LANGUAGE, selectedLanguage);
             startActivity(intent);
