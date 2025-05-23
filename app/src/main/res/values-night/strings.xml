@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pills" />
+    <string name="creams_oin" />
+    <string name="drops" />
+    <string name="inhalation" />
+    <string name="home" />
+    <string name="menu" />
+</resources>
