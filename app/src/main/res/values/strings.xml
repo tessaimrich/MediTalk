@@ -16,4 +16,10 @@
     <string name="lang_it">Language_Italian</string>
     <string name="lang_fr">Language_French</string>
     <string name="Exit">Exit</string>
+    <string name="pills" />
+    <string name="creams_oin" />
+    <string name="drops" />
+    <string name="inhalation" />
+    <string name="home" />
+    <string name="menu" />
 </resources>
