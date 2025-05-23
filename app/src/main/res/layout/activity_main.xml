@@ -3,7 +3,6 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#D4ECE9"
     android:padding="16dp">
 
     <!-- Scrollbarer Inhalt -->
