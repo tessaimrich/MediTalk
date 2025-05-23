@@ -1,5 +1,6 @@
 package at.fhj.tessaimrich;
 
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -20,8 +21,10 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String PREFS_NAME   = "app_settings";
     private static final String KEY_LANGUAGE = "selected_language";
+
     // Wird gesetzt, wenn der Nutzer eine Flagge wählt
     private String selectedLanguage = null;
+
 
 
 
@@ -48,9 +51,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-
-// Flaggen-Buttons mit Beschriftung
+    // Flaggen-Buttons mit Beschriftung
         // verbindet das Bild, das Label, den Sprachcode und das Preferences-Objekt
         //"en": Sprachcode aus ISO 639-1: internationale Norm für Namen von Sprachen
         // prefs: SharedPreferences-Objekt, in das die Auswahl gespeichert werden soll
@@ -60,26 +61,44 @@ public class MainActivity extends AppCompatActivity {
         setupFlag(findViewById(R.id.btnFlagCroatian),   findViewById(R.id.tvLangCroatian),   "hr", prefs);
         setupFlag(findViewById(R.id.btnFlagItalian), findViewById(R.id.tvLangItalian), "it", prefs);
         setupFlag(findViewById(R.id.btnFlagFrench),  findViewById(R.id.tvLangFrench),  "fr", prefs);
+        /*... ist eine zusammenfassende Lösung, statt einzeln für jede Sprache:
+        ImageButton btnFlagEnglish = findViewById(R.id.btnFlagEnglish);
+        TextView    tvLangEnglish  = findViewById(R.id.tvLangEnglish);
+        btnFlagEnglish.setOnClickListener(v -> {
+            selectedLanguage = "en";
+            tvLangEnglish.setTypeface(null, Typeface.BOLD);
+            btnWeiter.setEnabled(true);
+        }); */
 
 
-//"Weiter"-Button verknüpfen
+
+
+
+        // „Weiter“-Button: nur aktiv, wenn Sprache gewählt
         ImageButton btnWeiter = findViewById(R.id.btnWeiter);
+        btnWeiter.setEnabled(false);
         btnWeiter.setOnClickListener(v -> {
+            // speichern in SharedPreferences (falls noch nicht geschehen)
+            prefs.edit()
+                    .putString(KEY_LANGUAGE, selectedLanguage)
+                    .apply();
+            // zur nächsten Activity, Sprache per Intent mitgeben (optional)
             Intent intent = new Intent(MainActivity.this, CategoryActivity.class);
+            intent.putExtra(KEY_LANGUAGE, selectedLanguage);
             startActivity(intent);
+            finish();
         });
 
 
-// (Optional) Sprache speichern, wenn eine Flagge geklickt wird:
-        ImageButton flagEng = findViewById(R.id.btnFlagEnglish);
-        flagEng.setOnClickListener(v -> {
-            // z. B. SharedPreferences oder ein Feld setzen
-            // selectedLanguage = "en";
+        // „Exit/Logout“-Button
+        ImageButton btnLogout = findViewById(R.id.btnLogout);
+        TextView tvLogout = findViewById(R.id.tvLogoutLabel);
+        tvLogout.setText("Exit");  // oder "Logout"
+        btnLogout.setOnClickListener(v -> {
+            // App beenden
+            finishAffinity();
         });
-        // … ebenso für die anderen Flaggen
     }
-
-
 
     /**
      * Initialisiert einen Flaggen-Button mit Beschriftung
@@ -105,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
     private String getLanguageDisplayName(String code) {
         switch (code) {
             case "en": return "English";
-            case "de": return "Deutsch";
+            case "it": return "Italiano";
             case "fr": return "Français";
             case "es": return "Español";
             case "sl": return "Slovenščina";
@@ -113,10 +132,4 @@ public class MainActivity extends AppCompatActivity {
             default:   return code;
         }
     }
-}
-
-
-
-
-
 }
