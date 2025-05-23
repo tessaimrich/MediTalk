@@ -7,8 +7,8 @@
     <!-- Menü-Icon oben links -->
     <ImageButton
         android:id="@+id/btnMenu"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:src="@drawable/menu_for_navigationdrawer"
         android:background="@null"
         android:contentDescription="@string/menu"
@@ -39,6 +39,7 @@
             android:layout_height="wrap_content"
             android:paddingStart="50dp"
             android:hint="Medikamente suchen...." />
+        
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Kategorien in ScrollView -->
@@ -46,8 +47,8 @@
         android:id="@+id/scroll_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/bottom_menu"
         android:layout_below="@id/searchBar"
+        android:layout_above="@id/bottom_container"
         android:layout_marginTop="16dp"
         android:fillViewport="true">
 
@@ -92,19 +93,30 @@
     </ScrollView>
 
     <!-- Trennlinie oberhalb der Menüleiste -->
+    <!-- Trennlinie oberhalb der Menüleiste -->
     <View
         android:id="@+id/bottom_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_above="@id/bottom_menu"
+        android:layout_above="@id/bottom_container"
         android:background="@color/border_gray" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/bottom_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="0dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="6dp"
+        app:cardBackgroundColor="@color/white">
+
 
     <!-- Menüleiste unten -->
     <LinearLayout
         android:id="@+id/bottom_menu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:orientation="vertical"
         android:background="@color/white">
 
@@ -132,5 +144,7 @@
                 android:scaleType="fitCenter" />
         </LinearLayout>
     </LinearLayout>
+        <!-- Dein LinearLayout mit dem Home-Button hier rein -->
+    </com.google.android.material.card.MaterialCardView>
 
 </RelativeLayout>
