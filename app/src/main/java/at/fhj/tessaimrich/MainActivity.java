@@ -81,9 +81,39 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-// setupFlag():
-    //Registriert auf dem flagButton einen Klick-Listener, der 1) selectedLanguage = langCode; setzt, 2)das flagLabel fett markiert, 3) den „Weiter“-Button aktiviert.
-    //Speichert (später, beim Klick auf „Weiter“) den langCode in prefs.
+    /**
+     * Initialisiert einen Flaggen-Button mit Beschriftung
+     * und aktiviert den Weiter-Button, sobald eine Auswahl getroffen wurde.
+     */
+    private void setupFlag(ImageButton flagBtn, TextView flagLabel, String langCode, SharedPreferences prefs) {
+        // Beschriftung unterhalb der Flagge
+        flagLabel.setText(getLanguageDisplayName(langCode));
+
+        flagBtn.setOnClickListener(v -> {
+            selectedLanguage = langCode;
+            // visuelles Feedback: Label fett
+            flagLabel.setTypeface(null, android.graphics.Typeface.BOLD);
+            // Weiter-Button aktivieren
+            findViewById(R.id.btnWeiter).setEnabled(true);
+        });
+    }
+
+
+    /**
+     * Gibt den Sprachnamen für den Code zurück.
+     */
+    private String getLanguageDisplayName(String code) {
+        switch (code) {
+            case "en": return "English";
+            case "de": return "Deutsch";
+            case "fr": return "Français";
+            case "es": return "Español";
+            case "sl": return "Slovenščina";
+            case "hr": return "Hrvatski";
+            default:   return code;
+        }
+    }
+}
 
 
 
