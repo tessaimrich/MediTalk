@@ -73,14 +73,15 @@
 
                     <ImageButton
                         android:id="@+id/btnFlagEnglish"
-                        android:layout_width="80dp"
+                        android:layout_width="49dp"
                         android:layout_height="50dp"
-                        android:src="@drawable/englisch"
-                        android:background="@null"
-                        android:contentDescription="@string/englisch"
                         android:layout_margin="8dp"
+                        android:adjustViewBounds="true"
+                        android:background="@drawable/flag_border"
+                        android:contentDescription="@string/englisch"
+                        android:padding="2dp"
                         android:scaleType="fitCenter"
-                        android:adjustViewBounds="true" />
+                        android:src="@drawable/englisch" />
 
                     <!-- Text unter Flagge -->
                     <TextView
