@@ -9,4 +9,10 @@
     <string name="franzoesisch">Franzoesisch</string>
     <string name="weiter">Weiter</string>
     <string name="exit">exit</string>
+    <string name="lang_en">Sprache_Englisch</string>
+    <string name="lang_sl">Language_Slovenian</string>
+    <string name="lang_es">Language_Spanish</string>
+    <string name="lang_hr">Language_Croatian</string>
+    <string name="lang_it">Language_Italian</string>
+    <string name="lang_fr">Language_French</string>
 </resources>

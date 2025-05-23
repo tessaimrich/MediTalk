@@ -49,12 +49,26 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
+// Flaggen-Buttons mit Beschriftung
+        // verbindet das Bild, das Label, den Sprachcode und das Preferences-Objekt
+        //"en": Sprachcode aus ISO 639-1: internationale Norm für Namen von Sprachen
+        // prefs: SharedPreferences-Objekt, in das die Auswahl gespeichert werden soll
+        setupFlag(findViewById(R.id.btnFlagEnglish),   findViewById(R.id.tvLangEnglish),   "en", prefs);
+        setupFlag(findViewById(R.id.btnFlagSlovenian),    findViewById(R.id.tvLangSlovenian),    "sl", prefs);
+        setupFlag(findViewById(R.id.btnFlagSpanish),    findViewById(R.id.tvLangSpanish),    "es", prefs);
+        setupFlag(findViewById(R.id.btnFlagCroatian),   findViewById(R.id.tvLangCroatian),   "hr", prefs);
+        setupFlag(findViewById(R.id.btnFlagItalian), findViewById(R.id.tvLangItalian), "it", prefs);
+        setupFlag(findViewById(R.id.btnFlagFrench),  findViewById(R.id.tvLangFrench),  "fr", prefs);
+
+
 //"Weiter"-Button verknüpfen
         ImageButton btnWeiter = findViewById(R.id.btnWeiter);
         btnWeiter.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, CategoryActivity.class);
             startActivity(intent);
         });
+
 
 // (Optional) Sprache speichern, wenn eine Flagge geklickt wird:
         ImageButton flagEng = findViewById(R.id.btnFlagEnglish);
@@ -64,6 +78,12 @@ public class MainActivity extends AppCompatActivity {
         });
         // … ebenso für die anderen Flaggen
     }
+
+
+
+// setupFlag():
+    //Registriert auf dem flagButton einen Klick-Listener, der 1) selectedLanguage = langCode; setzt, 2)das flagLabel fett markiert, 3) den „Weiter“-Button aktiviert.
+    //Speichert (später, beim Klick auf „Weiter“) den langCode in prefs.
 
 
 

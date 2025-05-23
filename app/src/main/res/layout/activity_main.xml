@@ -80,6 +80,15 @@
                         android:scaleType="fitCenter"
                         android:adjustViewBounds="true" />
 
+                    <!-- Text unter Flagge -->
+                    <TextView
+                        android:id="@+id/tvLangEnglish"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lang_en"
+                        android:textSize="14sp"
+                        android:layout_marginTop="4dp"/>
+
                     <ImageButton
                         android:id="@+id/btnFlagSlovenian"
                         android:layout_width="80dp"
@@ -90,9 +99,15 @@
                         android:layout_margin="8dp"
                         android:scaleType="fitCenter"
                         android:adjustViewBounds="true" />
+                    <!-- Text unter Flagge -->
+                    <TextView
+                        android:id="@+id/tvLangSlovenian"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lang_sl"
+                        android:textSize="14sp"
+                        android:layout_marginTop="4dp"/>
 
-                    <!-- Deaktiviert -->
-                    <!--
                     <ImageButton
                         android:id="@+id/btnFlagSpanish"
                         android:layout_width="80dp"
@@ -103,7 +118,14 @@
                         android:layout_margin="8dp"
                         android:scaleType="fitCenter"
                         android:adjustViewBounds="true" />
-                    -->
+                    <TextView
+                        android:id="@+id/tvLangSpanish"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lang_es"
+                        android:textSize="14sp"
+                        android:layout_marginTop="4dp"/>
+
                 </LinearLayout>
 
                 <!-- Rechte Spalte -->
@@ -124,9 +146,14 @@
                         android:layout_margin="8dp"
                         android:scaleType="fitCenter"
                         android:adjustViewBounds="true" />
+                    <TextView
+                        android:id="@+id/tvLangCroatian"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lang_hr"
+                        android:textSize="14sp"
+                        android:layout_marginTop="4dp"/>
 
-                    <!-- Weitere Flaggen deaktiviert -->
-                    <!--
                     <ImageButton
                         android:id="@+id/btnFlagItalian"
                         android:layout_width="80dp"
@@ -137,6 +164,13 @@
                         android:layout_margin="8dp"
                         android:scaleType="fitCenter"
                         android:adjustViewBounds="true" />
+                    <TextView
+                        android:id="@+id/tvLangItalian"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lang_it"
+                        android:textSize="14sp"
+                        android:layout_marginTop="4dp"/>
 
                     <ImageButton
                         android:id="@+id/btnFlagFrench"
@@ -148,7 +182,14 @@
                         android:layout_margin="8dp"
                         android:scaleType="fitCenter"
                         android:adjustViewBounds="true" />
-                    -->
+                    <TextView
+                        android:id="@+id/tvLangFrench"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lang_fr"
+                        android:textSize="14sp"
+                        android:layout_marginTop="4dp"/>
+
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
