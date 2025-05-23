@@ -1,10 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SettingsActivity">
+    android:padding="24dp"
+    android:background="#E6ECE6">
+
+    <!-- Titel -->
+    <TextView
+        android:id="@+id/settingsTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Einstellungen"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Helligkeit -->
+    <ImageView
+        android:id="@+id/brightnessIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/light_sensor"
+        app:layout_constraintTop_toBottomOf="@+id/settingsTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="32dp" />
+
+    <TextView
+        android:id="@+id/brightnessLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Automatische Anpassung der Helligkeit vom Bildschirm"
+        android:textColor="#000000"
+        android:layout_marginStart="12dp"
+        app:layout_constraintStart_toEndOf="@id/brightnessIcon"
+        app:layout_constraintTop_toTopOf="@id/brightnessIcon"
+        app:layout_constraintEnd_toStartOf="@id/brightnessSwitch"
+        app:layout_constraintBottom_toBottomOf="@id/brightnessIcon" />
+
+    <Switch
+        android:id="@+id/brightnessSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/brightnessLabel"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Näherungssensor -->
+    <ImageView
+        android:id="@+id/proximityIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/sound_proximity_sensor"
+        app:layout_constraintTop_toBottomOf="@id/brightnessIcon"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="24dp" />
+
+    <TextView
+        android:id="@+id/proximityLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Näherungssensor: Ton Anpassung"
+        android:textColor="#000000"
+        android:layout_marginStart="12dp"
+        app:layout_constraintStart_toEndOf="@id/proximityIcon"
+        app:layout_constraintTop_toTopOf="@id/proximityIcon"
+        app:layout_constraintEnd_toStartOf="@id/proximitySwitch"
+        app:layout_constraintBottom_toBottomOf="@id/proximityIcon" />
+
+    <Switch
+        android:id="@+id/proximitySwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/proximityLabel"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Wiedergabegeschwindigkeit Titel -->
+    <TextView
+        android:id="@+id/playbackTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Wiedergabegeschwindigkeit für Audio"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:layout_marginTop="32dp"
+        app:layout_constraintTop_toBottomOf="@id/proximityIcon"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Geschwindigkeit Auswahl -->
+    <RadioGroup
+        android:id="@+id/playbackSpeedGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/playbackTitle"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <RadioButton
+            android:id="@+id/speed0_5x"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0,5x" />
+
+        <RadioButton
+            android:id="@+id/speed1x"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1x"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/speed1_25x"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1,25x" />
+
+        <RadioButton
+            android:id="@+id/speed1_5x"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1,5x" />
+
+        <RadioButton
+            android:id="@+id/speed2x"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2x" />
+    </RadioGroup>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
