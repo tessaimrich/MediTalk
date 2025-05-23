@@ -195,7 +195,9 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Menüleiste unten -->
+
+<!-- Menüleiste unten -->
+
     <LinearLayout
         android:id="@+id/menu_bar"
         android:layout_width="match_parent"
@@ -205,33 +207,62 @@
         android:padding="8dp"
         android:background="#D4ECE9">
 
-        <ImageButton
-            android:id="@+id/btnLogout"
+        <!-- Logout-Button mit Text darunter -->
+        <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@drawable/_exit_the_app_"
-            android:background="@null"
-            android:contentDescription="@string/exit"
-            android:scaleType="fitCenter" />
-        <TextView
-            android:id="@+id/tvLogoutLabel"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/Exit"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:orientation="vertical"
+            android:gravity="center">
 
-        <ImageButton
-            android:id="@+id/btnWeiter"
+            <ImageButton
+                android:id="@+id/btnLogout"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/_exit_the_app_"
+                android:background="@null"
+                android:contentDescription="@string/exit"
+                android:scaleType="fitCenter" />
+
+            <TextView
+                android:id="@+id/tvLogoutLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Logout"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="4dp" />
+        </LinearLayout>
+
+        <!-- Weiter-Button mit Label darunter -->
+        <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@drawable/_arrow_forward_1"
-            android:background="@null"
-            android:contentDescription="@string/weiter"
-            android:scaleType="fitCenter" />
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageButton
+                android:id="@+id/btnWeiter"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/_arrow_forward_1"
+                android:background="@null"
+                android:contentDescription="@string/weiter"
+                android:scaleType="fitCenter" />
+
+            <TextView
+                android:id="@+id/tvWeiterLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Weiter"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="4dp" />
+        </LinearLayout>
+
     </LinearLayout>
+
+
+
 </RelativeLayout>

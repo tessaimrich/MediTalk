@@ -72,9 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-
-        // „Weiter“-Button: nur aktiv, wenn Sprache gewählt
+    // „Weiter“-Button: nur aktiv, wenn Sprache gewählt
         ImageButton btnWeiter = findViewById(R.id.btnWeiter);
         btnWeiter.setEnabled(false);
         btnWeiter.setOnClickListener(v -> {
