@@ -93,7 +93,6 @@
     </ScrollView>
 
     <!-- Trennlinie oberhalb der Menüleiste -->
-    <!-- Trennlinie oberhalb der Menüleiste -->
     <View
         android:id="@+id/bottom_line"
         android:layout_width="match_parent"
