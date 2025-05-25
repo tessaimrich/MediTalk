@@ -1,6 +1,8 @@
 package at.fhj.tessaimrich;
 
 
+import static android.app.ProgressDialog.show;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -14,7 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
+import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -90,6 +92,10 @@ public class MainActivity extends AppCompatActivity {
         tvWeiter.setText("Weiter");
 
         btnWeiter.setOnClickListener(v -> {
+            if (selectedLanguage == null) {
+                Toast.makeText(MainActivity.this, "Keine Sprache gewählt. Bitte tippen Sie auf eine Flagge.", Toast.LENGTH_SHORT).show();
+                return;
+            }
             // speichern in SharedPreferences (falls noch nicht geschehen)
             prefs.edit()
                     .putString(KEY_LANGUAGE, selectedLanguage)
