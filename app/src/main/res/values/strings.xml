@@ -21,4 +21,6 @@
     <string name="sprache_waehlen">Sprache wählen</string>
     <string name="pill_icon">icon_pill</string>
     <string name="nav_drawer">navigation_drawer</string>
+    <string name="play_audio">play_audio</string>
+    <string name="open_pdf">open_pdf</string>
 </resources>
