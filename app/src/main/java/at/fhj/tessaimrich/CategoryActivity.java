@@ -25,7 +25,7 @@ public class CategoryActivity extends AppCompatActivity {
         // Room-Instanz holen (Singleton)
         db = AppDatabase.getInstance(getApplicationContext());
 
-        // Suchfeld konfigurieren: Enter/Search löst performSearch() aus
+        // Suchfeld: Enter/Search löst performSearch() aus
         searchInput = findViewById(R.id.search_input);
         searchInput.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {

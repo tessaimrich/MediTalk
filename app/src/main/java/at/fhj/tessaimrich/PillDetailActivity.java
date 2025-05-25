@@ -16,10 +16,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
-
-
-
-
 public class PillDetailActivity extends AppCompatActivity {
     public static final String EXTRA_PILL_ID = "pill_id";
     private int[] audioQ1 = {
@@ -53,17 +49,17 @@ public class PillDetailActivity extends AppCompatActivity {
         TextView tvName = findViewById(R.id.tvPillName);
         tvName.setText(pillNames[pillId]);
 
-        // 2) Audio-Buttons
+        // Audio-Buttons
         setupAudio(findViewById(R.id.btnAudio1), audioQ1[pillId]);
         setupAudio(findViewById(R.id.btnAudio2), audioQ2[pillId]);
         setupAudio(findViewById(R.id.btnAudio3), audioQ3[pillId]);
 
-        // 3) PDF-Buttons
+        // PDF-Buttons
         setupPdf(findViewById(R.id.btnPdf1), pdfAssets[pillId]);
         setupPdf(findViewById(R.id.btnPdf2), pdfAssets[pillId]);
         setupPdf(findViewById(R.id.btnPdf3), pdfAssets[pillId]);
 
-        // 4) Home-Button
+        // Home-Button
         findViewById(R.id.btnHome).setOnClickListener(v -> finish());
     }
 
@@ -89,7 +85,7 @@ public class PillDetailActivity extends AppCompatActivity {
                     fos.close();
                     is.close();
                 }
-                // über FileProvider öffnen (bitte in Manifest + res/xml/file_paths.xml konfigurieren)
+                // über FileProvider öffnen
                 Uri uri = FileProvider.getUriForFile(
                         this,
                         getPackageName() + ".provider",
