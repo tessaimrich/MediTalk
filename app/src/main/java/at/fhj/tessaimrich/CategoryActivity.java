@@ -71,7 +71,8 @@ public class CategoryActivity extends AppCompatActivity {
     }
 
     /**
-     * Führt die Suche in der Room-DB (asynchron) aus.
+     * Führt die Suche in der Room-DB durch.
+     * Datenzugriff läuft in einem Hintergrund-Thread, damit die UI nicht blockiert wird
      * Bei Fund: Start der passenden Detail-Activity, ansonsten Toast.
      */
     private void performSearch(String name) {
@@ -81,7 +82,7 @@ public class CategoryActivity extends AppCompatActivity {
                 if (med == null) {
                     Toast.makeText(this, "Nicht gefunden", Toast.LENGTH_SHORT).show();
                 } else {
-                    //  Intent-Ziel je nach Med-Typ wählen :contentReference[oaicite:5]{index=5}
+                    //  Intent-Ziel je nach Med-Typ wählen
                     Class<?> target;
                     switch (med.getType()) {
                         case "PILL":       target = PillDetailActivity.class;      break;
