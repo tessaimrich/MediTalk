@@ -60,6 +60,7 @@
 
             <!-- Pillen -->
             <ImageView
+                android:id="@+id/ivPill"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:src="@drawable/pill_"
@@ -68,6 +69,7 @@
 
             <!-- Tropfen -->
             <ImageView
+                android:id="@+id/ivDrops"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:src="@drawable/drops_"
@@ -76,6 +78,7 @@
 
             <!-- Salben -->
             <ImageView
+                android:id="@+id/ivCreams"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:src="@drawable/cream_oinments"
@@ -84,6 +87,7 @@
 
             <!-- Inhalationen -->
             <ImageView
+                android:id="@+id/ivInhalations"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:src="@drawable/inhalator_"
