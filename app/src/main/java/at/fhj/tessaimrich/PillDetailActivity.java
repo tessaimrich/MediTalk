@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 
 public class PillDetailActivity extends AppCompatActivity {
+    /* in der Zwischenzeit auskommentiert
     public static final String EXTRA_PILL_ID = "pill_id";
     private int[] audioQ1 = {
             R.raw.amlodipine_q1, R.raw.cymbalta_q1, R.raw.nilemdo_q1, R.raw.qtern_q1, R.raw.eliquis_q1
@@ -27,6 +28,7 @@ public class PillDetailActivity extends AppCompatActivity {
     private int[] audioQ3 = {
             R.raw.amlodipine_q3, R.raw.cymbalta_q3, R.raw.nilemdo_q3, R.raw.qtern_q3, R.raw.eliquis_q3
     };
+    */
     private String[] pdfAssets = {      //Asset = eine PDF-Datei im assets/-Ordner, die man per getAssets() in der App laden kann.
             "amlodipine.pdf",
             "cymbalta.pdf",
@@ -44,13 +46,13 @@ public class PillDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_pill_detail);
 
         // Pillen-Name lesen und setzen
-        int pillId = getIntent().getIntExtra(EXTRA_PILL_ID, 0);
+        //int pillId = getIntent().getIntExtra(EXTRA_PILL_ID, 0);
         pillNames = getResources().getStringArray(R.array.pill_names);
         TextView tvName = findViewById(R.id.tvPillName);
-        tvName.setText(pillNames[pillId]);
+        //tvName.setText(pillNames[pillId]);
 
         // Audio-Buttons
-        setupAudio(findViewById(R.id.btnAudio1), audioQ1[pillId]);
+        /*setupAudio(findViewById(R.id.btnAudio1), audioQ1[pillId]);
         setupAudio(findViewById(R.id.btnAudio2), audioQ2[pillId]);
         setupAudio(findViewById(R.id.btnAudio3), audioQ3[pillId]);
 
@@ -58,6 +60,7 @@ public class PillDetailActivity extends AppCompatActivity {
         setupPdf(findViewById(R.id.btnPdf1), pdfAssets[pillId]);
         setupPdf(findViewById(R.id.btnPdf2), pdfAssets[pillId]);
         setupPdf(findViewById(R.id.btnPdf3), pdfAssets[pillId]);
+        */
 
         // Home-Button
         findViewById(R.id.btnHome).setOnClickListener(v -> finish());

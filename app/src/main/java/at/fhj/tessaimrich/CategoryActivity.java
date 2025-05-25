@@ -15,7 +15,8 @@ import com.google.android.material.textfield.TextInputEditText;
 public class CategoryActivity extends AppCompatActivity {
 
     private TextInputEditText searchInput;
-    private AppDatabase db;  // Room-Datenbank
+    //in der Zwischenzeit auskommentiert
+   // private AppDatabase db;  // Room-Datenbank
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,14 +24,16 @@ public class CategoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_category);
 
         // Room-Instanz holen (Singleton)
+        /*für Zwischenzeit und AppStart auskommentiert
         db = AppDatabase.getInstance(getApplicationContext());
+        */
 
         // Suchfeld: Enter/Search löst performSearch() aus
         searchInput = findViewById(R.id.search_input);
         searchInput.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 String query = v.getText().toString().trim();
-                performSearch(query);
+                //performSearch(query);
                 return true;
             }
             return false;
@@ -60,7 +63,7 @@ public class CategoryActivity extends AppCompatActivity {
         });
 
 
-
+        /*In der Zwischenzeit auskommentiert
         // Menü-Button: öffnet den Drawer
         findViewById(R.id.btnMenu).setOnClickListener(v -> {
             DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -68,6 +71,7 @@ public class CategoryActivity extends AppCompatActivity {
                 drawer.openDrawer(GravityCompat.START);
             }
         });
+        */
     }
 
     /**
@@ -75,6 +79,7 @@ public class CategoryActivity extends AppCompatActivity {
      * Datenzugriff läuft in einem Hintergrund-Thread, damit die UI nicht blockiert wird
      * Bei Fund: Start der passenden Detail-Activity, ansonsten Toast.
      */
+    /*In der Zwischenzeit auskommentiert
     private void performSearch(String name) {
         new Thread(() -> {
             Medication med = db.medDao().findByName(name);
@@ -100,4 +105,5 @@ public class CategoryActivity extends AppCompatActivity {
             });
         }).start();
     }
+    */
 }
