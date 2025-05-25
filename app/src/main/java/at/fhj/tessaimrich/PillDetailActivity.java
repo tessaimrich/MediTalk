@@ -1,6 +1,6 @@
-/*
+
 package at.fhj.tessaimrich;
- */
+
 
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -19,7 +19,7 @@ import java.io.InputStream;
 
 
 
-/*
+
 public class PillDetailActivity extends AppCompatActivity {
     public static final String EXTRA_PILL_ID = "pill_id";
     private int[] audioQ1 = {
@@ -107,4 +107,3 @@ public class PillDetailActivity extends AppCompatActivity {
     }
 }
 
-*/
