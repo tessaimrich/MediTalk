@@ -18,7 +18,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
 
-    <!-- 2) HEADER: Icon + Titel -->
+    <!-- 2) Icon + Titel -->
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -33,7 +33,7 @@
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:src="@drawable/cream_oinments"
-            android:contentDescription="@string/pill_icon" />
+            android:contentDescription="@string/creams_oin" />
 
         <TextView
             android:id="@+id/tvPillName"
@@ -46,7 +46,7 @@
             android:textColor="@android:color/black"/>
     </LinearLayout>
 
-    <!-- 3) ScrollView mit Fragenblöcken, mit Abstand zum Header und zur Bottom-Bar -->
+    <!-- 3) ScrollView mit Fragenblöcken -->
     <ScrollView
         android:id="@+id/scrollQuestions"
         android:layout_width="match_parent"
@@ -172,7 +172,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- 4) Bottom-Bar mit Home-Button -->
+    <!-- 4) Menu-Bar mit Home-Button -->
     <RelativeLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"

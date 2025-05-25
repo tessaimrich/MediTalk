@@ -1,10 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootCreamList"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".InhalationListActivity">
+    android:background="@color/background_main"
+    android:padding="16dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Navigation-Drawer-Icon -->
+    <ImageButton
+        android:id="@+id/btnDrawer"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/menu_for_navigationdrawer"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/nav_drawer"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <!-- Icon + Titel -->
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_below="@id/btnDrawer"
+        android:layout_marginTop="8dp">
+
+        <ImageView
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/inhalator_"
+            android:contentDescription="@string/inhalation" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="INHALATIONEN"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/creamList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/header"
+        android:layout_above="@id/bottomBar"
+        android:layout_marginTop="24dp"
+        android:divider="?android:attr/dividerHorizontal"
+        android:showDividers="middle"
+        android:dividerPadding="8dp">
+
+        <!-- Beispiel: Salben-Eintrag -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="• Enerzair Breezhaler "
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:padding="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="• Beispiel "
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:padding="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="• Beispiel"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:padding="8dp" />
+
+        <!-- Weitere Salben kannst du genauso hinzufügen -->
+
+    </LinearLayout>
+
+    <!-- Menü-Bar -->
+    <RelativeLayout
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:padding="8dp">
+
+        <ImageButton
+            android:id="@+id/btnHome"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/home_button_"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/home"
+            android:layout_centerHorizontal="true" />
+
+        <ImageButton
+            android:id="@+id/btnNext"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/_arrow_forward_1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/weiter"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+
+</RelativeLayout>

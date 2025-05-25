@@ -32,7 +32,7 @@
             android:id="@+id/ivDropIcon"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:src="@drawable/pill_"
+            android:src="@drawable/drops_"
             android:contentDescription="@string/drops" />
 
         <TextView
@@ -76,7 +76,7 @@
         android:layout_above="@id/bottomBar" />
 
 
-    <!-- 4) Bottom-Bar mit Home und Weiter -->
+    <!-- 4) Menu-Bar mit Home und Weiter -->
     <RelativeLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"

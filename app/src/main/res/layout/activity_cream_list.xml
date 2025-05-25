@@ -17,7 +17,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
 
-    <!-- Header: Icon + Titel -->
+    <!-- Icon + Titel -->
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -85,7 +85,7 @@
 
     </LinearLayout>
 
-    <!-- Bottom-Bar -->
+    <!-- Menu-Bar -->
     <RelativeLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
