@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string-array name="pill_names">
+        <item>Amlodipine</item>
+        <item>Cymbalta</item>
+        <item>Nilemdo</item>
+        <item>Qtern</item>
+        <item>Eliquis</item>
+    </string-array>
+
+</resources>
