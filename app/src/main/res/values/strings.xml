@@ -19,4 +19,6 @@
     <string name="Weiter">weiter</string>
     <string name="Logout">logout</string>
     <string name="sprache_waehlen">Sprache wählen</string>
+    <string name="pill_icon">icon_pill</string>
+    <string name="nav_drawer">navigation_drawer</string>
 </resources>
