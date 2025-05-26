@@ -62,19 +62,13 @@ public class PillListActivity extends AppCompatActivity {
         });
 
 
-        // Home-Button: Zurück zur Startseite
+        // Home-Button: zurück zur CategoryActivity
         btnHome.setOnClickListener(v -> {
-            Intent intent = new Intent(PillListActivity.this, MainActivity.class);
-            // Flags
+            Intent intent = new Intent(PillListActivity.this, CategoryActivity.class);
+            // damit keine doppelten CategoryActivity-Instanzen im Back-Stack landen
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            // CLEAR_TOP
-            //   – Wenn sich schon eine Instanz der MainActivity irgendwo im Back-Stack befindet, werden alle darüberliegenden Activities gelöscht und es wird diese wiederverwendet .
-            //   – Ohne dieses Flag hätte man nach ein paar Navigationen mehrere MainActivity-Instanzen in deinem Stack.
-            // SINGLE_TOP
-            //   - wenn sie schon ganz oben liegt, bekommt bestehende Instanz einfach einen neuen Intent.
-
             startActivity(intent);
-            finish();
+            finish();  // schließt die PillListActivity
         });
 
 

@@ -62,8 +62,14 @@ public class PillDetailActivity extends AppCompatActivity {
         setupPdf(findViewById(R.id.btnPdf3), pdfAssets[pillId]);
         */
 
-        // Home-Button
-        findViewById(R.id.btnHome).setOnClickListener(v -> finish());
+        // Home-Button: zurück zur CategoryActivity
+        findViewById(R.id.btnHome).setOnClickListener(v -> {
+            Intent intent = new Intent(PillDetailActivity.this, CategoryActivity.class);
+            // Optional: vorhandene Instanz wiederverwenden und Stack bereinigen
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            finish();  // eigene Activity schließen
+        });
     }
 
     private void setupAudio(ImageButton btn, int audioResId) {
