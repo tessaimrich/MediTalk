@@ -8,7 +8,7 @@
     <string name="italienisch">Italienisch</string>
     <string name="franzoesisch">Franzoesisch</string>
     <string name="weiter">Weiter</string>
-    <string name="exit">exit</string>
+    <string name="exit">Exit</string>
     <string name="lang_en">Sprache_Englisch</string>
     <string name="lang_sl">Language_Slovenian</string>
     <string name="lang_es">Language_Spanish</string>
@@ -16,7 +16,7 @@
     <string name="lang_it">Language_Italian</string>
     <string name="lang_fr">Language_French</string>
     <string name="Exit">Exit</string>
-    <string name="Weiter">weiter</string>
+    <string name="Weiter">Weiter</string>
     <string name="Logout">logout</string>
     <string name="sprache_waehlen">Sprache wählen</string>
     <string name="pill_icon">icon_pill</string>
