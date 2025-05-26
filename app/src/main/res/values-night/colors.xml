@@ -5,6 +5,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="background_main">#E6F1F2</color>
     <color name="splash_background">#E6F1F2</color>
-    <!-- definiere hier ein graues Border, z.B. ein neutrales Mittelgrau -->
-    <color name="border_gray">#FFBDBDBD</color>
+    <!-- z.B. ein mittleres Grau -->
+    <color name="secondary_text_gray">#FF757575</color>
 </resources>

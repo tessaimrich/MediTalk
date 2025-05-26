@@ -174,7 +174,7 @@
         android:id="@+id/bottom_line"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="@color/border_gray"
+        android:background="@color/secondary_text_gray"
         app:layout_constraintBottom_toTopOf="@id/bottom_container"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -205,7 +205,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/border_gray" />
+                android:background="@color/secondary_text_gray" />
 
             <!-- Button-Zeile -->
             <LinearLayout

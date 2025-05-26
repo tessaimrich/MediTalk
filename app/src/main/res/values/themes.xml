@@ -6,6 +6,7 @@
         <item name="android:windowBackground">@color/background_main</item>
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:textColorSecondary">@color/secondary_text_gray</item>
     </style>
 
     <style name="Theme.MediTalk" parent="Base.Theme.MediTalk" />
