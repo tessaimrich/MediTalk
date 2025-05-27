@@ -23,4 +23,8 @@
     <string name="nav_drawer">navigation_drawer</string>
     <string name="play_audio">play_audio</string>
     <string name="open_pdf">open_pdf</string>
+    <string name="navigation_drawer_open">Navigation öffnen</string>
+    <string name="navigation_drawer_close">Navigation schließen</string>
+    <string name="app_version">1.0</string>
+    <string name="menu_home" />
 </resources>

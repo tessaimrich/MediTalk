@@ -12,7 +12,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.textfield.TextInputEditText;
 
-public class CategoryActivity extends AppCompatActivity {
+public class CategoryActivity extends BaseDrawerActivity {
 
     private TextInputEditText searchInput;
     //in der Zwischenzeit auskommentiert
@@ -21,8 +21,17 @@ public class CategoryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_category);
-
+        getLayoutInflater().inflate(
+                R.layout.activity_category,        // dein existierendes Layout
+                findViewById(R.id.content_frame),  // container aus app_bar_drawer.xml
+                true
+    );
+        findViewById(R.id.btnMenu).setOnClickListener(v -> {
+                    DrawerLayout drawer = findViewById(R.id.drawer_layout);
+                    if (drawer != null) {
+                        drawer.openDrawer(GravityCompat.START);
+                    }
+                });
         // Room-Instanz holen (Singleton)
         /*für Zwischenzeit und AppStart auskommentiert
         db = AppDatabase.getInstance(getApplicationContext());

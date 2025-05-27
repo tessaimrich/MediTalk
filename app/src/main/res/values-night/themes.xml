@@ -7,4 +7,14 @@
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
         <item name="android:textColorSecondary">@color/secondary_text_gray</item>
     </style>
+    <!-- 2. Overlay für deine AppBar (Toolbar) -->
+    <style name="Theme.MediTalk.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
+        <!-- Wenn du speziellere Anpassungen an Toolbar-Text oder Icons brauchst, hier ergänzen -->
+        <!-- z.B. <item name="android:textColorPrimary">@color/white</item> -->
+    </style>
+
+    <!-- 3. Overlay für Popup-Menus in deiner Toolbar -->
+    <style name="Theme.MediTalk.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light">
+        <!-- Falls deine Popups z.B. dunkle Schrift auf hellem Hintergrund haben sollen -->
+    </style>
 </resources>
