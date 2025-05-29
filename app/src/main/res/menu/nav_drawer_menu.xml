@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_language"
+            android:icon="@drawable/_language_navigationdrawer"
+            android:title="Sprache ändern" />
+        <item
+            android:id="@+id/nav_display"
+            android:icon="@drawable/_settings_"
+            android:title="Anzeigeeinstellungen" />
+        <item
+            android:id="@+id/nav_info"
+            android:icon="@drawable/info_navigationdrawer"
+            android:title="Info zur App" />
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/home_button_"
+            android:title="Zurück zum HomeScreen"/>
+    </group>
+</menu>
