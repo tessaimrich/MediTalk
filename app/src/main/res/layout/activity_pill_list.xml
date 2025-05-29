@@ -18,7 +18,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
 
-<!-- 2) Icon + Titel -->
+<!--  Icon + Titel -->
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -76,7 +76,7 @@
         android:layout_above="@id/bottomBar" />
 
 
-<!-- 4) Menu-Bar mit Home und Weiter -->
+<!--  Menu-Bar mit Home und Weiter -->
     <RelativeLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
