@@ -26,12 +26,7 @@ public class CategoryActivity extends BaseDrawerActivity {
                 findViewById(R.id.content_frame),  // container aus app_bar_drawer.xml
                 true
     );
-        findViewById(R.id.btnMenu).setOnClickListener(v -> {
-                    DrawerLayout drawer = findViewById(R.id.drawer_layout);
-                    if (drawer != null) {
-                        drawer.openDrawer(GravityCompat.START);
-                    }
-                });
+
         // Room-Instanz holen (Singleton)
         /*für Zwischenzeit und AppStart auskommentiert
         db = AppDatabase.getInstance(getApplicationContext());

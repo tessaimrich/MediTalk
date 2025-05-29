@@ -16,7 +16,7 @@
             android:name=".NavHeader"
             android:exported="false" />
         <activity
-            android:name=".BaseDrawer"
+            android:name=".BaseDrawerActivity"
             android:exported="false" />
         <activity
             android:name=".SplashActivity"

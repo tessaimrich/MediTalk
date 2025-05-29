@@ -4,24 +4,11 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
-    <!-- Menü-Icon oben links -->
-    <ImageButton
-        android:id="@+id/btnMenu"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/menu_for_navigationdrawer"
-        android:background="@null"
-        android:contentDescription="@string/menu"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="8dp" />
-
     <!-- Suchfeld -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/searchBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/btnMenu"
         android:layout_marginTop="12dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
@@ -42,13 +29,41 @@
         
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- Menüleiste im Stil von Menu-Bar mit Home -->
+    <RelativeLayout
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:padding="8dp">
+
+        <!-- Home-Button zentriert -->
+        <ImageButton
+            android:id="@+id/btnHome"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/home_button_"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/home"
+            android:layout_centerHorizontal="true"
+            android:scaleType="fitCenter" />
+    </RelativeLayout>
+
+    <!-- Trennlinie oberhalb der Menüleiste -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@id/bottomBar"
+        android:background="@color/secondary_text_gray" />
+
     <!-- Kategorien in ScrollView -->
     <ScrollView
         android:id="@+id/scroll_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/searchBar"
-        android:layout_above="@id/bottom_container"
+        android:layout_above="@id/bottomBar"
         android:layout_marginTop="16dp"
         android:fillViewport="true">
 
@@ -95,41 +110,4 @@
                 android:contentDescription="@string/inhalation" />
         </LinearLayout>
     </ScrollView>
-
-    <!-- Trennlinie oberhalb der Menüleiste -->
-    <View
-        android:id="@+id/bottom_line"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_above="@id/bottomBar"
-        android:background="@color/secondary_text_gray" />
-
-    <!-- Trennlinie oberhalb der Menüleiste -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_above="@id/bottomBar"
-        android:background="@color/secondary_text_gray" />
-
-    <!-- Menüleiste im Stil von Menu-Bar mit Home -->
-    <RelativeLayout
-        android:id="@+id/bottomBar"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/white"
-        android:padding="8dp">
-
-        <!-- Home-Button zentriert -->
-        <ImageButton
-            android:id="@+id/btnHome"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/home_button_"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/home"
-            android:layout_centerInParent="true"
-            android:scaleType="fitCenter" />
-    </RelativeLayout>
-
 </RelativeLayout>

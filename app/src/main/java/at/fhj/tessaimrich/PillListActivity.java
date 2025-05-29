@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class PillListActivity extends AppCompatActivity {
+public class PillListActivity extends BaseDrawerActivity {
 
     private ListView lvPills;
     private ImageButton btnHome, btnNext;
@@ -30,7 +30,11 @@ public class PillListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pill_list);
+        getLayoutInflater().inflate(
+                R.layout.activity_pill_list,
+                findViewById(R.id.content_frame),
+                true
+        );
 
         lvPills  = findViewById(R.id.lvPills);
         btnHome  = findViewById(R.id.btnHome);
