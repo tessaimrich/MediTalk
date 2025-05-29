@@ -11,6 +11,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 public class PillListActivity extends BaseDrawerActivity {
 
@@ -46,6 +47,7 @@ public class PillListActivity extends BaseDrawerActivity {
             public View getView(int position, View convertView, android.view.ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
                 TextView tv = view.findViewById(android.R.id.text1);
+                tv.setTextColor(ContextCompat.getColor(getContext(), R.color.med_text_darkgray));
 
                 if (position == selectedPos) {
                     tv.setTypeface(null, Typeface.BOLD);    // fettgedruckt, wenn ausgewählt

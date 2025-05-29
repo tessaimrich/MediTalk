@@ -61,23 +61,11 @@ public class CategoryActivity extends BaseDrawerActivity {
                 startActivity(new Intent(this, InhalationListActivity.class))
         );
 
-
-
         // Home-Button:
         findViewById(R.id.btnHome).setOnClickListener(v -> {
             //nothing to do
         });
 
-
-        /*In der Zwischenzeit auskommentiert
-        // Menü-Button: öffnet den Drawer
-        findViewById(R.id.btnMenu).setOnClickListener(v -> {
-            DrawerLayout drawer = findViewById(R.id.drawer_layout);
-            if (drawer != null) {
-                drawer.openDrawer(GravityCompat.START);
-            }
-        });
-        */
     }
 
     /**
