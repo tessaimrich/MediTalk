@@ -3,6 +3,7 @@ package at.fhj.tessaimrich;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -10,11 +11,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 
 public class CategoryActivity extends BaseDrawerActivity {
 
-    private TextInputEditText searchInput;
+    private MaterialAutoCompleteTextView searchInput;
     //in der Zwischenzeit auskommentiert
    // private AppDatabase db;  // Room-Datenbank
 
@@ -32,16 +33,19 @@ public class CategoryActivity extends BaseDrawerActivity {
         db = AppDatabase.getInstance(getApplicationContext());
         */
 
-        // Suchfeld: Enter/Search löst performSearch() aus
+        // Suchfeld: Enter/Search löst Suche aus
         searchInput = findViewById(R.id.search_input);
-        searchInput.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                String query = v.getText().toString().trim();
-                //performSearch(query);
-                return true;
-            }
-            return false;
-        });
+
+        //Nur zum Testen, dann mit Room DB bald verbunden etc
+        String[] suggestions = {"Amlodipin", "Cymbalta", "Eliquis", "Nilemdo", "Qtern"}; // z. B. Dummy-Daten
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_dropdown_item_1line,
+                suggestions
+        );
+        searchInput.setAdapter(adapter);
+        searchInput.setThreshold(1); // ab 1 Buchstabe zeigen
+
 
         // Kategorie-Icons: führen zu ListActivities
         findViewById(R.id.ivPill).setOnClickListener(v ->

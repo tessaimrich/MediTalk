@@ -20,12 +20,12 @@
         app:boxCornerRadiusBottomStart="12dp"
         app:boxCornerRadiusBottomEnd="12dp">
 
-        <com.google.android.material.textfield.TextInputEditText
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
             android:id="@+id/search_input"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:paddingStart="50dp"
-            android:hint="Medikamente suchen...." />
+            android:hint="Medikamente suchen..." />
         
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -33,7 +33,7 @@
     <RelativeLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:background="@color/white"
         android:padding="8dp">
@@ -41,21 +41,14 @@
         <!-- Home-Button zentriert -->
         <ImageButton
             android:id="@+id/btnHome"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:src="@drawable/home_button_"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/home"
             android:layout_centerHorizontal="true"
-            android:scaleType="fitCenter" />
+            />
     </RelativeLayout>
-
-    <!-- Trennlinie oberhalb der Menüleiste -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_above="@id/bottomBar"
-        android:background="@color/secondary_text_gray" />
 
     <!-- Kategorien in ScrollView -->
     <ScrollView
@@ -76,8 +69,8 @@
             <!-- Pillen -->
             <ImageView
                 android:id="@+id/ivPill"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:src="@drawable/pill_"
                 android:layout_marginTop="16dp"
                 android:contentDescription="@string/pills" />
@@ -85,8 +78,8 @@
             <!-- Tropfen -->
             <ImageView
                 android:id="@+id/ivDrops"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:src="@drawable/drops_"
                 android:layout_marginTop="16dp"
                 android:contentDescription="@string/drops" />
@@ -94,8 +87,8 @@
             <!-- Salben -->
             <ImageView
                 android:id="@+id/ivCreams"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:src="@drawable/cream_oinments"
                 android:layout_marginTop="16dp"
                 android:contentDescription="@string/creams_oin" />
@@ -103,8 +96,8 @@
             <!-- Inhalationen -->
             <ImageView
                 android:id="@+id/ivInhalations"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:src="@drawable/inhalator_"
                 android:layout_marginTop="16dp"
                 android:contentDescription="@string/inhalation" />
