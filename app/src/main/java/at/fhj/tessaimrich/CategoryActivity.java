@@ -17,13 +17,13 @@ public class CategoryActivity extends BaseDrawerActivity {
 
     private MaterialAutoCompleteTextView searchInput;
     //in der Zwischenzeit auskommentiert
-   // private AppDatabase db;  // Room-Datenbank
+    // private AppDatabase db;  // Room-Datenbank
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getLayoutInflater().inflate(
-                R.layout.activity_category,        // dein existierendes Layout
+                R.layout.activity_category,        // existierendes Layout
                 findViewById(R.id.content_frame),  // container aus app_bar_drawer.xml
                 true
     );
