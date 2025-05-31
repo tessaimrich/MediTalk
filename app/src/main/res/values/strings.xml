@@ -42,6 +42,7 @@
     <string name="navigation_drawer_close">Navigation schließen</string>
     <string name="app_version">1.0</string>
     <string name="drop_icon">drop_icon</string>
+    <string name="inhalation_icon">inhalation_icon</string>
 
 
 </resources>

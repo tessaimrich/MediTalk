@@ -78,7 +78,7 @@ public class PillListActivity extends BaseDrawerActivity {
         });
 
 
-        // 4) Weiter-Button
+        // Weiter-Button
         btnNext.setOnClickListener(v -> {
             if (selectedPos >= 0) {         // Nur weiter wenn ein Medikament ausgewählt ist
                 Intent intent = new Intent(PillListActivity.this, PillDetailActivity.class);
