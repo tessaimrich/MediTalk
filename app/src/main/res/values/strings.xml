@@ -1,23 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
 <resources>
+
+    <!-- App-Titel, Icon-Beschreibung -->
     <string name="app_name">MediTalk</string>
     <string name="app_icon">MediTalk App Icon</string>
+
+    <!-- Flaggen-Beschriftungen -->
     <string name="englisch">Englisch</string>
     <string name="spanisch">Spanisch</string>
     <string name="kroatisch">Kroatisch</string>
     <string name="slowenisch">Slowenisch</string>
     <string name="italienisch">Italienisch</string>
     <string name="franzoesisch">Franzoesisch</string>
+
+    <!-- Buttons unten / allgemein -->
     <string name="weiter">Weiter</string>
+    <string name="Weiter">Weiter</string>
     <string name="exit">Exit</string>
+    <string name="Exit">Exit</string>
+    <string name="Logout">logout</string>
+
+    <!-- Sprach‐Labels unter den Flaggen -->
     <string name="lang_en">Sprache_Englisch</string>
     <string name="lang_sl">Language_Slovenian</string>
     <string name="lang_es">Language_Spanish</string>
     <string name="lang_hr">Language_Croatian</string>
     <string name="lang_it">Language_Italian</string>
     <string name="lang_fr">Language_French</string>
-    <string name="Exit">Exit</string>
-    <string name="Weiter">Weiter</string>
-    <string name="Logout">logout</string>
+
+    <!-- Menüeinträge im Drawer -->
+    <string name="menu_home" />
+
+    <!-- Sonstige Labels -->
     <string name="sprache_waehlen">Sprache wählen</string>
     <string name="pill_icon">icon_pill</string>
     <string name="nav_drawer">navigation_drawer</string>
@@ -26,5 +41,9 @@
     <string name="navigation_drawer_open">Navigation öffnen</string>
     <string name="navigation_drawer_close">Navigation schließen</string>
     <string name="app_version">1.0</string>
-    <string name="menu_home" />
+
+
+
+
+
 </resources>
