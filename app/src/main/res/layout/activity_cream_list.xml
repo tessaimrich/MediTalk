@@ -20,7 +20,7 @@
             android:id="@+id/ivCreamsIcon"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:src="@drawable/pill_"
+            android:src="@drawable/cream_oinments"
             android:contentDescription="@string/creams_oin" />
 
         <TextView
