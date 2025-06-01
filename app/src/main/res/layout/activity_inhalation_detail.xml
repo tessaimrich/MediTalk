@@ -7,7 +7,7 @@
     android:background="@color/background_main"
     android:padding="16dp">
 
-    <!-- 1) Navigation-Drawer-Icon -->
+    <!-- Navigation-Drawer-Icon -->
     <ImageButton
         android:id="@+id/btnDrawer"
         android:layout_width="40dp"
@@ -18,7 +18,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
 
-    <!-- 2) HEADER: Icon + Titel -->
+    <!-- Icon + Titel -->
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -46,7 +46,7 @@
             android:textColor="@android:color/black"/>
     </LinearLayout>
 
-    <!-- 3) ScrollView mit Fragenblöcken -->
+    <!-- Frageblock -->
     <ScrollView
         android:id="@+id/scrollQuestions"
         android:layout_width="match_parent"
@@ -61,7 +61,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Frage 1 -->
+            <!-- Frage -->
             <TextView
                 android:id="@+id/tvQuestion1"
                 android:layout_width="match_parent"
@@ -97,82 +97,11 @@
                     android:contentDescription="@string/open_pdf"/>
             </LinearLayout>
 
-            <!-- Frage 2 -->
-            <TextView
-                android:id="@+id/tvQuestion2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Wofür ist es?"
-                android:gravity="center"
-                android:textStyle="bold"
-                android:textSize="16sp"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="24dp">
-
-                <ImageButton
-                    android:id="@+id/btnAudio2"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/ic_speaker"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/play_audio"/>
-
-                <ImageButton
-                    android:id="@+id/btnPdf2"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginStart="32dp"
-                    android:src="@drawable/ic_document"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/open_pdf"/>
-            </LinearLayout>
-
-            <!-- Frage 3 -->
-            <TextView
-                android:id="@+id/tvQuestion3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Vor der Einnahme beachten?"
-                android:gravity="center"
-                android:textStyle="bold"
-                android:textSize="16sp"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="24dp">
-
-                <ImageButton
-                    android:id="@+id/btnAudio3"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/ic_speaker"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/play_audio"/>
-
-                <ImageButton
-                    android:id="@+id/btnPdf3"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginStart="32dp"
-                    android:src="@drawable/ic_document"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/open_pdf"/>
-            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
 
-    <!-- 4) Menu-Bar mit Home-Button -->
+    <!-- Menu-Bar mit Home-Button -->
     <RelativeLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
