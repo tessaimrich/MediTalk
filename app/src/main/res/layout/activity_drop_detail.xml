@@ -7,7 +7,7 @@
     android:background="@color/background_main"
     android:padding="16dp">
 
-    <!-- 1) Navigation-Drawer-Icon -->
+    <!-- NavigationDrawer-Icon -->
     <ImageButton
         android:id="@+id/btnDrawer"
         android:layout_width="40dp"
@@ -18,7 +18,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
 
-    <!-- 2) HEADER: Icon + Titel -->
+    <!-- Icon + Titel -->
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -46,7 +46,7 @@
             android:textColor="@android:color/black"/>
     </LinearLayout>
 
-    <!-- 3) ScrollView mit Fragenblöcken -->
+    <!-- Fragenblöcke -->
     <ScrollView
         android:id="@+id/scrollQuestions"
         android:layout_width="match_parent"
@@ -172,7 +172,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- 4) Menu-Bar mit Home-Button -->
+    <!-- Menu-Bar mit Home-Button -->
     <RelativeLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
