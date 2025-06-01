@@ -7,7 +7,7 @@
     android:background="@color/background_main"
     android:padding="16dp">
 
-    <!-- 1) Navigation-Drawer-Icon -->
+    <!-- Navigation-Drawer-Icon -->
     <ImageButton
         android:id="@+id/btnDrawer"
         android:layout_width="40dp"
@@ -18,7 +18,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
 
-    <!-- 2) HEADER: Icon + Titel -->
+    <!-- Icon + Titel -->
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -40,13 +40,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
-            android:text="PILLENNAME"
+            android:text="TABLETTENNAME"
             android:textSize="26sp"
             android:textStyle="bold"
             android:textColor="@android:color/black"/>
     </LinearLayout>
 
-    <!-- 3) ScrollView mit Fragenblöcken, mit Abstand zum Header und zur Bottom-Bar -->
+    <!-- Frage-Blöcke -->
     <ScrollView
         android:id="@+id/scrollQuestions"
         android:layout_width="match_parent"
@@ -172,7 +172,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- 4) Bottom-Bar mit Home-Button -->
+    <!-- Bottom-Bar mit Home-Button -->
     <RelativeLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
