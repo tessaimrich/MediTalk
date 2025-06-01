@@ -17,6 +17,10 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 
 public class PillDetailActivity extends AppCompatActivity {
+
+    //CODE IST NUR ERSTER VERSUCH GEWESEN - WIRD NOCH GEÄNDERT
+
+
     /* in der Zwischenzeit auskommentiert
     public static final String EXTRA_PILL_ID = "pill_id";
     private int[] audioQ1 = {
