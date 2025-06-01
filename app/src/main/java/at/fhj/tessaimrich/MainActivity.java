@@ -33,12 +33,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Edge-to-Edge und eigenes App-Icon (in styles.xml als <item name="android:windowBackground">@drawable/app_icon_background</item>)
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
         // Wenn bereits eine Sprache gespeichert ist, direkt zur CategoryActivity und MainActivity beenden
-
 
 
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
