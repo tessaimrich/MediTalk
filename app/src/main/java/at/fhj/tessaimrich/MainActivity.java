@@ -54,14 +54,6 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-
-
-
-
-
-
-
-
     // Flaggen-Buttons mit Beschriftung
         // verbindet das Bild, das Label, den Sprachcode und das Preferences-Objekt
         //"en": Sprachcode aus ISO 639-1: internationale Norm für Namen von Sprachen
@@ -85,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
         // „Weiter“-Button: nur aktiv, wenn Sprache gewählt
         ImageButton btnWeiter = findViewById(R.id.btnWeiter);
-        btnWeiter.setEnabled(false);
+        btnWeiter.setEnabled(true);
         TextView tvWeiter = findViewById(R.id.tvWeiterLabel);
         tvWeiter.setText("Weiter");
 
@@ -94,9 +86,12 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Keine Sprache gewählt. Bitte tippen Sie auf eine Flagge.", Toast.LENGTH_SHORT).show();
                 return;
             }
-            // speichern in SharedPreferences (falls noch nicht geschehen)
+            // Sprachname (für Anzeige) ermitteln
+            String languageDisplayName = getLanguageDisplayName(selectedLanguage);
+
+            // Sprachname speichern
             prefs.edit()
-                    .putString(KEY_LANGUAGE, selectedLanguage)
+                    .putString(KEY_LANGUAGE, languageDisplayName)
                     .apply();
             // zur nächsten Activity, Sprache per Intent mitgeben
             Intent intent = new Intent(MainActivity.this, CategoryActivity.class);
