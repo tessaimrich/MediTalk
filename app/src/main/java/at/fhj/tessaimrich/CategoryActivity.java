@@ -1,10 +1,12 @@
 package at.fhj.tessaimrich;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -67,7 +69,6 @@ public class CategoryActivity extends BaseDrawerActivity {
         });
 
     }
-
     /**
      * Führt die Suche in der Room-DB durch.
      * Datenzugriff läuft in einem Hintergrund-Thread, damit die UI nicht blockiert wird

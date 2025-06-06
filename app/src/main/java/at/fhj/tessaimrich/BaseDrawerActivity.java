@@ -1,8 +1,10 @@
 package at.fhj.tessaimrich;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -47,6 +49,25 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
         navView.setNavigationItemSelectedListener(this);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        NavigationView navView = findViewById(R.id.nav_view);
+        if (navView != null) {
+            // Zugriff auf das Header-Layout im Drawer
+            android.view.View headerView = navView.getHeaderView(0);
+
+            // Zugriff auf das Sprach-TextView im Header
+            TextView tvLanguage = headerView.findViewById(R.id.tvLanguage);
+
+            if (tvLanguage != null) {
+                SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
+                String language = prefs.getString("selected_language", "Deutsch");
+                tvLanguage.setText("Sprache: " + language);
+            }
+        }
+    }
     /** Drawer‐Menü‐Clicks auswerten */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -54,7 +75,8 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_language) {
-            Toast.makeText(this, "Sprachauswahl folgt…", Toast.LENGTH_SHORT).show();
+            showLanguageSelectionDialog();
+            return true;
 
         } else if (id == R.id.nav_display) {
             startActivity(new Intent(this, SettingsActivity.class));
@@ -82,5 +104,31 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+    }
+    private void showLanguageSelectionDialog() {
+        final String[] languages = {"English","Kroatisch","Slowenisch", "Italienisch", "Spanisch", "Französisch"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Sprache wählen")
+                .setItems(languages, (dialog, which) -> {
+                    String selected = languages[which];
+
+                    // Sprache speichern
+                    SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
+                    prefs.edit().putString("selected_language", selected).apply();
+
+                    Toast.makeText(this, "Sprache geändert: " + selected, Toast.LENGTH_SHORT).show();
+
+                    // UI aktualisieren
+                    updateLanguageUI(selected);
+
+                    //Header aktualisieren
+                    onResume();
+                })
+                .show();
+    }
+
+    // leere Methode – du überschreibst sie bei Bedarf in konkreten Activities
+    protected void updateLanguageUI(String newLanguage) {
+        // Standard: nichts tun
     }
 }
