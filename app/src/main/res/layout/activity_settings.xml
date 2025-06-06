@@ -207,7 +207,7 @@
                 android:layout_height="1dp"
                 android:background="@color/secondary_text_gray" />
 
-            <!-- Button-Zeile -->
+            <!-- HomeButton-Zeile -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -225,7 +225,7 @@
                     android:scaleType="fitCenter" />
             </LinearLayout>
         </LinearLayout>
-        <!-- Dein LinearLayout mit dem Home-Button hier rein -->
+
     </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
