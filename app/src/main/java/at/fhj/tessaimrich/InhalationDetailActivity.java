@@ -11,11 +11,15 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 
-public class InhalationDetailActivity extends AppCompatActivity {
+public class InhalationDetailActivity extends BaseDrawerActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_inhalation_detail);
+        getLayoutInflater().inflate(
+                R.layout.activity_pill_detail,
+                findViewById(R.id.content_frame),
+                true
+        );
 
 
         ImageButton btnHome = findViewById(R.id.btnHome);

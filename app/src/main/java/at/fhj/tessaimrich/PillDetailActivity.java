@@ -16,7 +16,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
-public class PillDetailActivity extends AppCompatActivity {
+public class PillDetailActivity extends BaseDrawerActivity {
 
     //CODE IST NUR ERSTER VERSUCH GEWESEN - WIRD NOCH GEÄNDERT
 
@@ -47,7 +47,11 @@ public class PillDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pill_detail);
+        getLayoutInflater().inflate(
+                R.layout.activity_pill_detail,
+                findViewById(R.id.content_frame),
+                true
+        );
 
         // Pillen-Name lesen und setzen
         //int pillId = getIntent().getIntExtra(EXTRA_PILL_ID, 0);
