@@ -106,26 +106,30 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
         }
     }
     private void showLanguageSelectionDialog() {
-        final String[] languages = {"English","Kroatisch","Slowenisch", "Italienisch", "Spanisch", "Französisch"};
+        final String[] languages = {"English", "Kroatisch", "Slowenisch", "Italienisch", "Spanisch", "Französisch"};
+        final String[] codes     = {"en",      "hr",        "sl",         "it",         "es",       "fr"};
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Sprache wählen")
                 .setItems(languages, (dialog, which) -> {
-                    String selected = languages[which];
+                    String selectedCode  = codes[which];      // wird gespeichert
+                    String selectedLabel = languages[which];  // nur zur Anzeige
 
-                    // Sprache speichern
+                    // ISO-Sprachcode speichern
                     SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
-                    prefs.edit().putString("selected_language", selected).apply();
+                    prefs.edit().putString("selected_language", selectedCode).apply();
 
-                    Toast.makeText(this, "Sprache geändert: " + selected, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Sprache geändert: " + selectedLabel, Toast.LENGTH_SHORT).show();
 
-                    // UI aktualisieren
-                    updateLanguageUI(selected);
+                    // UI aktualisieren (optional)
+                    updateLanguageUI(selectedLabel);
 
-                    //Header aktualisieren
+                    // Header neu laden
                     onResume();
                 })
                 .show();
     }
+
 
     // leere Methode – du überschreibst sie bei Bedarf in konkreten Activities
     protected void updateLanguageUI(String newLanguage) {

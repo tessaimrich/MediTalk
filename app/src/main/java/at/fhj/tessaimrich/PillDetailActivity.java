@@ -3,6 +3,7 @@ package at.fhj.tessaimrich;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,10 +17,20 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
+import android.speech.tts.TextToSpeech;
+import android.widget.Toast;
+
+import java.util.Locale;
+import java.util.Objects;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
 public class PillDetailActivity extends BaseDrawerActivity {
 
-    //CODE IST NUR ERSTER VERSUCH GEWESEN - WIRD NOCH GEÄNDERT
+    private TextToSpeech tts;
+    private String selectedLanguageCode;
 
+    //CODE IST NUR ERSTER VERSUCH GEWESEN - WIRD NOCH GEÄNDERT
 
     /* in der Zwischenzeit auskommentiert
     public static final String EXTRA_PILL_ID = "pill_id";
@@ -42,7 +53,7 @@ public class PillDetailActivity extends BaseDrawerActivity {
     };
     private String[] pillNames;
 
-
+    private boolean ttsReady = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +63,36 @@ public class PillDetailActivity extends BaseDrawerActivity {
                 findViewById(R.id.content_frame),
                 true
         );
+// Sprache aus SharedPreferences lesen
+        SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
+        selectedLanguageCode = prefs.getString("selected_language", "en");  // fallback: en
+
+// Pillenname aus Intent holen
+        String pillName = getIntent().getStringExtra("pill_name");
+        if (pillName != null) {
+            ((TextView) findViewById(R.id.tvPillName)).setText(pillName);
+        }
+        tts = new TextToSpeech(this, status -> {
+            if (status == TextToSpeech.SUCCESS) {
+                Locale locale = new Locale(selectedLanguageCode);
+                int result = tts.setLanguage(locale);
+                if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                    ttsReady = false;
+                } else {
+                    ttsReady = true;
+                }
+            } else {
+                ttsReady = false;
+            }
+        });
+
+        ImageButton btnAudio = findViewById(R.id.btnAudio1);
+        btnAudio.setOnClickListener(v -> {
+            String name = getIntent().getStringExtra("pill_name");
+            if (name != null) {
+                startTextToSpeechForPill(name);
+            }
+        });
 
         // Pillen-Name lesen und setzen
         //int pillId = getIntent().getIntExtra(EXTRA_PILL_ID, 0);
@@ -78,6 +119,40 @@ public class PillDetailActivity extends BaseDrawerActivity {
             startActivity(intent);
             finish();  // eigene Activity schließen
         });
+    }
+
+    private void startTextToSpeechForPill(String pillNameRaw) {
+        // Name bereinigen → z. B. "1. Amlodipine Valsartan Mylan" → "amlodipin"
+        String pillKey = pillNameRaw.toLowerCase().contains("amlodipine") ? "amlodipin" : ""; // hier ggf. Mapping-Tabelle einsetzen
+
+        if (pillKey.isEmpty()) return;
+
+        // Textdateiname vorbereiten
+        String filename = "tts.pills/" + pillKey + "_" + selectedLanguageCode + ".txt";
+
+        try {
+            InputStreamReader isr = new InputStreamReader(getAssets().open(filename));
+            BufferedReader reader = new BufferedReader(isr);
+            StringBuilder textBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                textBuilder.append(line).append("\n");
+            }
+            reader.close();
+
+            String ttsText = textBuilder.toString().trim();
+
+            // TTS starten
+            if (tts != null && ttsReady) {
+                tts.speak(ttsText, TextToSpeech.QUEUE_FLUSH, null, "tts_id");
+            } else {
+                Toast.makeText(this, "Sprachausgabe noch nicht bereit", Toast.LENGTH_SHORT).show();
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void setupAudio(ImageButton btn, int audioResId) {
@@ -118,5 +193,14 @@ public class PillDetailActivity extends BaseDrawerActivity {
             }
         });
     }
+    @Override
+    protected void onDestroy() {
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
+        super.onDestroy();
+    }
+
 }
 

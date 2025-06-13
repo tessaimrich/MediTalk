@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
             // Sprachname speichern
             prefs.edit()
-                    .putString(KEY_LANGUAGE, languageDisplayName)
+                    .putString(KEY_LANGUAGE, selectedLanguage)
                     .apply();
             // zur nächsten Activity, Sprache per Intent mitgeben
             Intent intent = new Intent(MainActivity.this, CategoryActivity.class);
