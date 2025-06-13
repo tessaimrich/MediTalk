@@ -1,59 +1,34 @@
-
 package at.fhj.tessaimrich;
 
-
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.core.content.FileProvider;
-import androidx.appcompat.app.AppCompatActivity;
-import android.view.View;
+import android.os.IBinder;
+import android.speech.tts.TextToSpeech;
+import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-
-import android.speech.tts.TextToSpeech;
 import android.widget.Toast;
 
-import java.util.Locale;
-import java.util.Objects;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-public class PillDetailActivity extends BaseDrawerActivity {
+public class PillDetailActivity extends BaseDrawerActivity implements TTSService.TTSListener {
 
-    private TextToSpeech tts;
+    private TTSService ttsService;
     private String selectedLanguageCode;
 
-    //CODE IST NUR ERSTER VERSUCH GEWESEN - WIRD NOCH GEÄNDERT
-
-    /* in der Zwischenzeit auskommentiert
-    public static final String EXTRA_PILL_ID = "pill_id";
-    private int[] audioQ1 = {
-            R.raw.amlodipine_q1, R.raw.cymbalta_q1, R.raw.nilemdo_q1, R.raw.qtern_q1, R.raw.eliquis_q1
-    };
-    private int[] audioQ2 = {
-            R.raw.amlodipine_q2, R.raw.cymbalta_q2, R.raw.nilemdo_q2, R.raw.qtern_q2, R.raw.eliquis_q2
-    };
-    private int[] audioQ3 = {
-            R.raw.amlodipine_q3, R.raw.cymbalta_q3, R.raw.nilemdo_q3, R.raw.qtern_q3, R.raw.eliquis_q3
-    };
-    */
-    private String[] pdfAssets = {      //Asset = eine PDF-Datei im assets/-Ordner, die man per getAssets() in der App laden kann.
-            "amlodipine.pdf",
-            "cymbalta.pdf",
-            "nilemdo.pdf",
-            "qtern.pdf",
-            "eliquis.pdf"
-    };
-    private String[] pillNames;
-
     private boolean ttsReady = false;
+    private boolean isSpeaking = false;  // Flag, das anzeigt, ob TTS gerade spricht
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,74 +38,85 @@ public class PillDetailActivity extends BaseDrawerActivity {
                 findViewById(R.id.content_frame),
                 true
         );
-// Sprache aus SharedPreferences lesen
+
+        // Sprache aus SharedPreferences lesen
         SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
         selectedLanguageCode = prefs.getString("selected_language", "en");  // fallback: en
 
-// Pillenname aus Intent holen
+        // Pillenname aus Intent holen
         String pillName = getIntent().getStringExtra("pill_name");
         if (pillName != null) {
             ((TextView) findViewById(R.id.tvPillName)).setText(pillName);
         }
-        tts = new TextToSpeech(this, status -> {
-            if (status == TextToSpeech.SUCCESS) {
-                Locale locale = new Locale(selectedLanguageCode);
-                int result = tts.setLanguage(locale);
-                if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                    ttsReady = false;
-                } else {
-                    ttsReady = true;
-                }
-            } else {
-                ttsReady = false;
-            }
-        });
 
+        // TTSService starten
+        Intent serviceIntent = new Intent(this, TTSService.class);
+        startService(serviceIntent);
+
+        // Hole die Service-Instanz (falls sie schon läuft)
+        bindService(serviceIntent, serviceConnection, BIND_AUTO_CREATE);
+
+        // Audio-Button
         ImageButton btnAudio = findViewById(R.id.btnAudio1);
         btnAudio.setOnClickListener(v -> {
             String name = getIntent().getStringExtra("pill_name");
             if (name != null) {
-                startTextToSpeechForPill(name);
+                if (isSpeaking) {
+                    // Wenn die Wiedergabe läuft, stoppe sie
+                    ttsService.stop();
+                    isSpeaking = false;
+                    Toast.makeText(this, "Wiedergabe gestoppt", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Wenn keine Wiedergabe läuft, starte sie
+                    startTextToSpeechForPill(name);
+                    isSpeaking = true;
+                }
             }
         });
-
-        // Pillen-Name lesen und setzen
-        //int pillId = getIntent().getIntExtra(EXTRA_PILL_ID, 0);
-        pillNames = getResources().getStringArray(R.array.pill_names);
-        TextView tvName = findViewById(R.id.tvPillName);
-        //tvName.setText(pillNames[pillId]);
-
-        // Audio-Buttons
-        /*setupAudio(findViewById(R.id.btnAudio1), audioQ1[pillId]);
-        setupAudio(findViewById(R.id.btnAudio2), audioQ2[pillId]);
-        setupAudio(findViewById(R.id.btnAudio3), audioQ3[pillId]);
-
-        // PDF-Buttons
-        setupPdf(findViewById(R.id.btnPdf1), pdfAssets[pillId]);
-        setupPdf(findViewById(R.id.btnPdf2), pdfAssets[pillId]);
-        setupPdf(findViewById(R.id.btnPdf3), pdfAssets[pillId]);
-        */
 
         // Home-Button: zurück zur CategoryActivity
         findViewById(R.id.btnHome).setOnClickListener(v -> {
             Intent intent = new Intent(PillDetailActivity.this, CategoryActivity.class);
-            // Optional: vorhandene Instanz wiederverwenden und Stack bereinigen
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
             finish();  // eigene Activity schließen
         });
     }
 
-    private void startTextToSpeechForPill(String pillNameRaw) {
-        // Name bereinigen → z. B. "1. Amlodipine Valsartan Mylan" → "amlodipin"
-        String pillKey = pillNameRaw.toLowerCase().contains("amlodipine") ? "amlodipin" : ""; // hier ggf. Mapping-Tabelle einsetzen
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            TTSService.LocalBinder binder = (TTSService.LocalBinder) service;
+            ttsService = binder.getService();
+            ttsService.setTTSListener(PillDetailActivity.this);
+        }
 
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            ttsService = null;
+        }
+    };
+
+    @Override
+    public void onTTSInitialized(boolean isReady) {
+        if (isReady) {
+            // TTS wird nur initialisiert, aber nicht automatisch abgespielt
+            Log.d("TTS", "TTS erfolgreich initialisiert, bereit zur Wiedergabe");
+        } else {
+            Toast.makeText(this, "TTS konnte nicht initialisiert werden", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void startTextToSpeechForPill(String pillNameRaw) {
+        String pillKey = getPillKeyFromName(pillNameRaw);  // Hole den pillKey aus dem Namen
         if (pillKey.isEmpty()) return;
 
-        // Textdateiname vorbereiten
-        String filename = "tts.pills/" + pillKey + "_" + selectedLanguageCode + ".txt";
+        // Der Dateiname basiert auf dem pillKey und der Sprache
+        String filename = "tts/pills/" + pillKey + "_" + selectedLanguageCode + ".txt"; // Richtig!
+        Log.d("TTS", "Dateiname für TTS: " + filename);  // Überprüfe den Dateinamen im Log
 
         try {
+            // Lade die Datei aus den Assets
             InputStreamReader isr = new InputStreamReader(getAssets().open(filename));
             BufferedReader reader = new BufferedReader(isr);
             StringBuilder textBuilder = new StringBuilder();
@@ -142,65 +128,60 @@ public class PillDetailActivity extends BaseDrawerActivity {
 
             String ttsText = textBuilder.toString().trim();
 
-            // TTS starten
-            if (tts != null && ttsReady) {
-                tts.speak(ttsText, TextToSpeech.QUEUE_FLUSH, null, "tts_id");
+            // Debugging: Zeige den geladenen Text
+            Log.d("TTS", "Text: " + ttsText);  // Log-Ausgabe
+            Toast.makeText(this, "Text: " + ttsText, Toast.LENGTH_LONG).show();  // Toast
+
+            // TTS nur sprechen, wenn es bereit ist
+            if (ttsService != null && ttsService.isTTSReady()&& !isSpeaking) {
+                ttsService.speak(ttsText);
+                isSpeaking = true;
             } else {
-                Toast.makeText(this, "Sprachausgabe noch nicht bereit", Toast.LENGTH_SHORT).show();
+                if (isSpeaking) {
+                    // Stoppe TTS, wenn es schon läuft
+                    ttsService.stop();
+                    isSpeaking = false;  // Flag zurücksetzen
+                    Toast.makeText(this, "Wiedergabe gestoppt", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Sprachausgabe noch nicht bereit", Toast.LENGTH_SHORT).show();
+                }
             }
 
-
+        } catch (FileNotFoundException e) {
+            Log.e("TTS", "Datei nicht gefunden: " + filename);  // Log für den Fehler
+            e.printStackTrace();
+            Toast.makeText(this, "Datei nicht gefunden: " + filename, Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void setupAudio(ImageButton btn, int audioResId) {
-        btn.setOnClickListener(v -> {
-            MediaPlayer mp = MediaPlayer.create(this, audioResId);
-            mp.setOnCompletionListener(m -> m.release());
-            mp.start();
-        });
+
+
+
+    private String getPillKeyFromName(String pillNameRaw) {
+        // Mappe verschiedene Namen auf einen einheitlichen pillKey
+        if (pillNameRaw.toLowerCase().contains("amlodipin")) {
+            return "amlodipin";
+        } else if (pillNameRaw.toLowerCase().contains("valsartan")) {
+            return "valsartan";
+        } else if (pillNameRaw.toLowerCase().contains("cymbalta")) {
+            return "cymbalta";
+        } else if (pillNameRaw.toLowerCase().contains("eliquis")) {
+            return "eliquis";
+        } else if (pillNameRaw.toLowerCase().contains("nilemdo")) {
+            return "nilemdo";
+        } else if (pillNameRaw.toLowerCase().contains("qtern")) {
+            return "qtern";
+        }
+        return "";  // Falls der pillName nicht zugeordnet werden konnte
     }
 
-    private void setupPdf(ImageButton btn, String assetName) {
-        btn.setOnClickListener(v -> {
-            try {
-                // PDF aus assets in Cache kopieren
-                File outFile = new File(getCacheDir(), assetName);
-                if (!outFile.exists()) {
-                    InputStream is = getAssets().open(assetName);
-                    FileOutputStream fos = new FileOutputStream(outFile);
-                    byte[] buf = new byte[1024];
-                    int len;
-                    while ((len = is.read(buf)) > 0) fos.write(buf, 0, len);
-                    fos.close();
-                    is.close();
-                }
-                // über FileProvider öffnen
-                Uri uri = FileProvider.getUriForFile(
-                        this,
-                        getPackageName() + ".provider",
-                        outFile
-                );
-                Intent pdfIntent = new Intent(Intent.ACTION_VIEW)
-                        .setDataAndType(uri, "application/pdf")
-                        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                startActivity(pdfIntent);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
     @Override
     protected void onDestroy() {
-        if (tts != null) {
-            tts.stop();
-            tts.shutdown();
-        }
         super.onDestroy();
+        if (ttsService != null) {
+            unbindService(serviceConnection);
+        }
     }
-
 }
-
