@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import androidx.core.content.FileProvider;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.widget.ImageButton;
@@ -81,6 +82,15 @@ public class PillDetailActivity extends BaseDrawerActivity implements TTSService
             startActivity(intent);
             finish();  // eigene Activity schließen
         });
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (ttsService != null && ttsService.isTTSReady()) {
+            String languageCode = PreferenceManager.getDefaultSharedPreferences(this).getString("language", "de");
+            ttsService.setLanguage(languageCode); // Sprache neu setzen
+        }
     }
 
     private ServiceConnection serviceConnection = new ServiceConnection() {

@@ -2,8 +2,10 @@ package at.fhj.tessaimrich;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
@@ -16,12 +18,18 @@ public class TTSService extends Service {
     private TTSListener listener;
     private final IBinder binder = new LocalBinder();
 
+    private String currentLanguageCode = "";
+
     @Override
     public void onCreate() {
         super.onCreate();
         tts = new TextToSpeech(this, status -> {
             if (status == TextToSpeech.SUCCESS) {
-                Locale locale = new Locale("en");  // Wähle die korrekte Sprache hier
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                String languageCode = sharedPreferences.getString("language", "de");
+                Locale locale = new Locale(languageCode);  // Wähle die korrekte Sprache hier
+                currentLanguageCode = languageCode; // direkt setzen, damit es in speak() nicht nochmal gesetzt wird
+
                 int result = tts.setLanguage(locale);
                 if (result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED) {
                     ttsReady = true;
@@ -51,8 +59,23 @@ public class TTSService extends Service {
 
     // Die Methode, um Text zu sprechen
     public void speak(String text) {
-        if (ttsReady && tts != null) {
-            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
+        if (text == null || text.isEmpty() || tts == null) return;
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String langCode = prefs.getString("language", "de");
+
+        tts.setLanguage(new Locale(langCode));
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
+    }
+
+
+    public void setLanguage(String languageCode) {
+        Locale locale = new Locale(languageCode);
+        int result = tts.setLanguage(locale);
+        if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            Log.e("TTSService", "Language not supported: " + languageCode);
+        } else {
+            Log.d("TTSService", "Language set to: " + languageCode);
         }
     }
 

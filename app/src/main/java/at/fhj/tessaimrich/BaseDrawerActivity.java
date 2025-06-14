@@ -3,6 +3,7 @@ package at.fhj.tessaimrich;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +23,7 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
 
     protected DrawerLayout drawer;
     private ActionBarDrawerToggle toggle;
+    public TTSService ttsService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,8 +118,23 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
                     String selectedLabel = languages[which];  // nur zur Anzeige
 
                     // ISO-Sprachcode speichern
-                    SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
-                    prefs.edit().putString("selected_language", selectedCode).apply();
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    prefs.edit().putString("language", selectedCode).apply();
+
+                    try {
+                        java.lang.reflect.Field field = BaseDrawerActivity.this.getClass().getDeclaredField("ttsService");
+                        field.setAccessible(true);
+                        Object ttsObj = field.get(BaseDrawerActivity.this);
+                        if (ttsObj instanceof TTSService) {
+                            TTSService service = (TTSService) ttsObj;
+                            if (service.isTTSReady()) {
+                                service.setLanguage(selectedCode);
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
 
                     Toast.makeText(this, "Sprache geändert: " + selectedLabel, Toast.LENGTH_SHORT).show();
 
@@ -131,7 +148,7 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
     }
 
 
-    // leere Methode – du überschreibst sie bei Bedarf in konkreten Activities
+    // leere Methode
     protected void updateLanguageUI(String newLanguage) {
         // Standard: nichts tun
     }
