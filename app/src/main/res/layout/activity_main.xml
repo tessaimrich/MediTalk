@@ -78,7 +78,6 @@
                         android:layout_margin="8dp"
                         android:adjustViewBounds="true"
                         android:background="@drawable/flag_border"
-                        android:contentDescription="@string/englisch"
                         android:padding="2dp"
                         android:scaleType="fitCenter"
                         android:src="@drawable/englisch" />
@@ -94,11 +93,11 @@
 
                     <ImageButton
                         android:id="@+id/btnFlagSlovenian"
-                        android:layout_width="80dp"
+                        android:layout_width="49dp"
                         android:layout_height="50dp"
                         android:src="@drawable/slovenisch"
-                        android:background="@null"
-                        android:contentDescription="@string/slowenisch"
+                        android:background="@drawable/flag_border"
+                        android:padding="2dp"
                         android:layout_margin="8dp"
                         android:scaleType="fitCenter"
                         android:adjustViewBounds="true" />
@@ -113,11 +112,11 @@
 
                     <ImageButton
                         android:id="@+id/btnFlagSpanish"
-                        android:layout_width="80dp"
+                        android:layout_width="49dp"
                         android:layout_height="50dp"
                         android:src="@drawable/spanisch"
-                        android:background="@null"
-                        android:contentDescription="@string/spanisch"
+                        android:background="@drawable/flag_border"
+                        android:padding="2dp"
                         android:layout_margin="8dp"
                         android:scaleType="fitCenter"
                         android:adjustViewBounds="true" />
@@ -141,11 +140,11 @@
 
                     <ImageButton
                         android:id="@+id/btnFlagCroatian"
-                        android:layout_width="80dp"
+                        android:layout_width="49dp"
                         android:layout_height="50dp"
                         android:src="@drawable/kroatisch"
-                        android:background="@null"
-                        android:contentDescription="@string/kroatisch"
+                        android:background="@drawable/flag_border"
+                        android:padding="2dp"
                         android:layout_margin="8dp"
                         android:scaleType="fitCenter"
                         android:adjustViewBounds="true" />
@@ -159,11 +158,11 @@
 
                     <ImageButton
                         android:id="@+id/btnFlagItalian"
-                        android:layout_width="80dp"
+                        android:layout_width="49dp"
                         android:layout_height="50dp"
                         android:src="@drawable/italienisch"
-                        android:background="@null"
-                        android:contentDescription="@string/italienisch"
+                        android:background="@drawable/flag_border"
+                        android:padding="2dp"
                         android:layout_margin="8dp"
                         android:scaleType="fitCenter"
                         android:adjustViewBounds="true" />
@@ -177,11 +176,11 @@
 
                     <ImageButton
                         android:id="@+id/btnFlagFrench"
-                        android:layout_width="80dp"
+                        android:layout_width="49dp"
                         android:layout_height="50dp"
                         android:src="@drawable/franzoesisch"
-                        android:background="@null"
-                        android:contentDescription="@string/franzoesisch"
+                        android:background="@drawable/flag_border"
+                        android:padding="2dp"
                         android:layout_margin="8dp"
                         android:scaleType="fitCenter"
                         android:adjustViewBounds="true" />

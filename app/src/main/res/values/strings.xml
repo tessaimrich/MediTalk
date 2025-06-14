@@ -6,14 +6,6 @@
     <string name="app_name">MediTalk</string>
     <string name="app_icon">MediTalk App Icon</string>
 
-    <!-- Flaggen-Beschriftungen -->
-    <string name="englisch">Englisch</string>
-    <string name="spanisch">Spanisch</string>
-    <string name="kroatisch">Kroatisch</string>
-    <string name="slowenisch">Slowenisch</string>
-    <string name="italienisch">Italienisch</string>
-    <string name="franzoesisch">Franzoesisch</string>
-
     <!-- Buttons unten / allgemein -->
     <string name="weiter">Weiter</string>
     <string name="Weiter">Weiter</string>
@@ -22,12 +14,12 @@
     <string name="Logout">logout</string>
 
     <!-- Sprach‐Labels unter den Flaggen -->
-    <string name="lang_en">Sprache_Englisch</string>
-    <string name="lang_sl">Language_Slovenian</string>
-    <string name="lang_es">Language_Spanish</string>
-    <string name="lang_hr">Language_Croatian</string>
-    <string name="lang_it">Language_Italian</string>
-    <string name="lang_fr">Language_French</string>
+    <string name="lang_en">Englisch</string>
+    <string name="lang_sl">Slowenisch</string>
+    <string name="lang_es">Spanisch</string>
+    <string name="lang_hr">Kroatisch</string>
+    <string name="lang_it">Italienisch</string>
+    <string name="lang_fr">Französisch</string>
 
     <!-- Menüeinträge im Drawer -->
     <string name="menu_home" />
