@@ -18,17 +18,14 @@ public class TTSService extends Service {
     private TTSListener listener;
     private final IBinder binder = new LocalBinder();
 
-    private String currentLanguageCode = "";
-
     @Override
     public void onCreate() {
         super.onCreate();
         tts = new TextToSpeech(this, status -> {
             if (status == TextToSpeech.SUCCESS) {
-                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                String languageCode = sharedPreferences.getString("language", "de");
+                SharedPreferences sharedPreferences = getSharedPreferences("app_settings", MODE_PRIVATE);
+                String languageCode = sharedPreferences.getString("selected_language", "en");
                 Locale locale = new Locale(languageCode);  // Wähle die korrekte Sprache hier
-                currentLanguageCode = languageCode; // direkt setzen, damit es in speak() nicht nochmal gesetzt wird
 
                 int result = tts.setLanguage(locale);
                 if (result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED) {
@@ -61,8 +58,8 @@ public class TTSService extends Service {
     public void speak(String text) {
         if (text == null || text.isEmpty() || tts == null) return;
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String langCode = prefs.getString("language", "de");
+        SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
+        String langCode = prefs.getString("selected_language", "de");
 
         tts.setLanguage(new Locale(langCode));
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);

@@ -26,8 +26,6 @@ import java.io.InputStreamReader;
 public class PillDetailActivity extends BaseDrawerActivity implements TTSService.TTSListener {
 
     private TTSService ttsService;
-    private String selectedLanguageCode;
-
     private boolean ttsReady = false;
     private boolean isSpeaking = false;  // Flag, das anzeigt, ob TTS gerade spricht
 
@@ -42,7 +40,6 @@ public class PillDetailActivity extends BaseDrawerActivity implements TTSService
 
         // Sprache aus SharedPreferences lesen
         SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
-        selectedLanguageCode = prefs.getString("selected_language", "en");  // fallback: en
 
         // Pillenname aus Intent holen
         String pillName = getIntent().getStringExtra("pill_name");
@@ -88,8 +85,9 @@ public class PillDetailActivity extends BaseDrawerActivity implements TTSService
         super.onResume();
 
         if (ttsService != null && ttsService.isTTSReady()) {
-            String languageCode = PreferenceManager.getDefaultSharedPreferences(this).getString("language", "de");
-            ttsService.setLanguage(languageCode); // Sprache neu setzen
+            SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
+            String languageCode = prefs.getString("selected_language", "en");
+            ttsService.setLanguage(languageCode);
         }
     }
 
@@ -99,6 +97,11 @@ public class PillDetailActivity extends BaseDrawerActivity implements TTSService
             TTSService.LocalBinder binder = (TTSService.LocalBinder) service;
             ttsService = binder.getService();
             ttsService.setTTSListener(PillDetailActivity.this);
+
+            // Sprache direkt beim Verbinden setzen
+            SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
+            String lang = prefs.getString("selected_language", "en");
+            ttsService.setLanguage(lang);
         }
 
         @Override
@@ -122,7 +125,10 @@ public class PillDetailActivity extends BaseDrawerActivity implements TTSService
         if (pillKey.isEmpty()) return;
 
         // Der Dateiname basiert auf dem pillKey und der Sprache
-        String filename = "tts/pills/" + pillKey + "_" + selectedLanguageCode + ".txt"; // Richtig!
+        SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
+        String currentLangCode = prefs.getString("selected_language", "en");
+
+        String filename = "tts/pills/" + pillKey + "_" + currentLangCode + ".txt";
         Log.d("TTS", "Dateiname für TTS: " + filename);  // Überprüfe den Dateinamen im Log
 
         try {
@@ -143,26 +149,26 @@ public class PillDetailActivity extends BaseDrawerActivity implements TTSService
             Toast.makeText(this, "Text: " + ttsText, Toast.LENGTH_LONG).show();  // Toast
 
             // TTS nur sprechen, wenn es bereit ist
-            if (ttsService != null && ttsService.isTTSReady()&& !isSpeaking) {
-                ttsService.speak(ttsText);
-                isSpeaking = true;
-            } else {
-                if (isSpeaking) {
-                    // Stoppe TTS, wenn es schon läuft
-                    ttsService.stop();
-                    isSpeaking = false;  // Flag zurücksetzen
-                    Toast.makeText(this, "Wiedergabe gestoppt", Toast.LENGTH_SHORT).show();
+            if (ttsService != null && ttsService.isTTSReady()) {
+                // Sprache direkt JETZT setzen
+                ttsService.setLanguage(currentLangCode);
+                if (!isSpeaking) {
+                    ttsService.speak(ttsText);
+                    isSpeaking = true;
                 } else {
-                    Toast.makeText(this, "Sprachausgabe noch nicht bereit", Toast.LENGTH_SHORT).show();
+                    ttsService.stop();
+                    isSpeaking = false;
+                    Toast.makeText(this, "Wiedergabe gestoppt", Toast.LENGTH_SHORT).show();
                 }
+            } else {
+                Toast.makeText(this, "Sprachausgabe nicht bereit", Toast.LENGTH_SHORT).show();
             }
-
         } catch (FileNotFoundException e) {
-            Log.e("TTS", "Datei nicht gefunden: " + filename);  // Log für den Fehler
-            e.printStackTrace();
-            Toast.makeText(this, "Datei nicht gefunden: " + filename, Toast.LENGTH_SHORT).show();
+            Log.e("TTS", "Datei nicht gefunden: " + filename);
+            Toast.makeText(this, "Text nicht gefunden", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
+            Toast.makeText(this, "Fehler beim TTS", Toast.LENGTH_SHORT).show();
         }
     }
 

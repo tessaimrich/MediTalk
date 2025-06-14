@@ -118,8 +118,8 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
                     String selectedLabel = languages[which];  // nur zur Anzeige
 
                     // ISO-Sprachcode speichern
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                    prefs.edit().putString("language", selectedCode).apply();
+                    SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
+                    prefs.edit().putString("selected_language", selectedCode).apply();
 
                     try {
                         java.lang.reflect.Field field = BaseDrawerActivity.this.getClass().getDeclaredField("ttsService");
@@ -137,7 +137,7 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
 
 
                     Toast.makeText(this, "Sprache geändert: " + selectedLabel, Toast.LENGTH_SHORT).show();
-
+                    recreate();
                     // UI aktualisieren (optional)
                     updateLanguageUI(selectedLabel);
 

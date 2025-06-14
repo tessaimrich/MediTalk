@@ -126,14 +126,35 @@ public class MainActivity extends AppCompatActivity {
         flagLabel.setText(getLanguageDisplayName(langCode));
 
         flagBtn.setOnClickListener(v -> {
+            // Sprache setzen
             selectedLanguage = langCode;
-            // visuelles Feedback: Label fett
+
+            // Alle Markierungen zurücksetzen
+            resetFlagLabels();
+
+            // Diese Flagge hervorheben
             flagLabel.setTypeface(null, android.graphics.Typeface.BOLD);
+
             // Weiter-Button aktivieren
             findViewById(R.id.btnWeiter).setEnabled(true);
         });
     }
 
+    private void resetFlagLabels() {
+        int[] labelIds = {
+                R.id.tvLangEnglish,
+                R.id.tvLangSlovenian,
+                R.id.tvLangSpanish,
+                R.id.tvLangCroatian,
+                R.id.tvLangItalian,
+                R.id.tvLangFrench
+        };
+
+        for (int id : labelIds) {
+            TextView label = findViewById(id);
+            label.setTypeface(null, android.graphics.Typeface.NORMAL);
+        }
+    }
 
     /**
      * Gibt den Sprachnamen für den Code zurück.

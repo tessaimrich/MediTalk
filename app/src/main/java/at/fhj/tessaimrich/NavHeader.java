@@ -20,8 +20,8 @@ public class NavHeader extends AppCompatActivity {
 
         TextView languageTextView = findViewById(R.id.tvLanguage);
 
-        SharedPreferences sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE);
-        String selectedLanguage = sharedPreferences.getString("language", "English"); // Default = English
+        SharedPreferences sharedPreferences = getSharedPreferences("app_settings", MODE_PRIVATE);
+        String selectedLanguage = sharedPreferences.getString("selected_language", "en"); // fallback = "en"
 
         languageTextView.setText("Sprache: " + selectedLanguage);
     }
