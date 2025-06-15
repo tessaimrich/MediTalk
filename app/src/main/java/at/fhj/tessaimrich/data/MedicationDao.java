@@ -27,6 +27,9 @@ public interface MedicationDao {
     @Query("SELECT name FROM medications")
     List<String> getAllNames();
 
+    // alte Methode entfernt oder umbenannt
+    @Query("SELECT * FROM medications WHERE category = :category")
+    List<Medication> findByCategory(String category);
     //  Alle Medikamente einer Sprache synchron laden
     @Query("SELECT * FROM medications WHERE language = :lang ORDER BY category, name")
     List<Medication> getAll(String lang);

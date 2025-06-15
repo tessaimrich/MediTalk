@@ -17,14 +17,14 @@
         android:layout_marginTop="16dp">
 
         <ImageView
-            android:id="@+id/ivPillIcon"
+            android:id="@+id/ivCreamIcon"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:src="@drawable/cream_oinments"
             android:contentDescription="@string/creams_oin" />
 
         <TextView
-            android:id="@+id/tvPillName"
+            android:id="@+id/tvCreamName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
@@ -68,7 +68,7 @@
                 android:layout_marginBottom="24dp">
 
                 <ImageButton
-                    android:id="@+id/btnAudio1"
+                    android:id="@+id/btnAudioCream"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:src="@drawable/ic_speaker"
@@ -76,7 +76,7 @@
                     android:contentDescription="@string/play_audio"/>
 
                 <ImageButton
-                    android:id="@+id/btnPdf1"
+                    android:id="@+id/btnPdfCreamPdf"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_marginStart="32dp"

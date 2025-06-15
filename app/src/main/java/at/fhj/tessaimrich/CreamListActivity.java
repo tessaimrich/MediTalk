@@ -3,24 +3,28 @@ package at.fhj.tessaimrich;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import at.fhj.tessaimrich.data.AppDatabase;
+import at.fhj.tessaimrich.data.Medication;
+import java.util.List;
+import java.util.ArrayList;
 
 public class CreamListActivity extends BaseDrawerActivity {
 
     private ListView lvCreams;
     private ImageButton btnHome, btnNext;
-    private String[] creams = {
-            "Protopic"
-    };
+    private List<String> creams;
+
     private int selectedPos = -1;  // aktuell ausgewählter Eintrag
+
 
 
 
@@ -33,29 +37,49 @@ public class CreamListActivity extends BaseDrawerActivity {
                 true
         );
 
-        lvCreams  = findViewById(R.id.lvCreams);
+        AppDatabase db = AppDatabase.getInstance(getApplicationContext());
+
+        if (db.medicationDao().findByCategory("cream").isEmpty()) {
+            db.medicationDao().insertAll(
+                    // Englisch
+                    new Medication("Protopic", "cream", "en", "protopic", "protopic_en.txt"),
+                    // Slowenisch
+                    new Medication("Protopic", "cream", "sl", "protopic", "protopic_sl.txt"),
+                    // Kroatisch
+                    new Medication("Protopic", "cream", "hr", "protopic", "protopic_hr.txt"),
+                    // Italienisch
+                    new Medication("Protopic", "cream", "it", "protopic", "protopic_it.txt"),
+                    // Spanisch
+                    new Medication("Protopic", "cream", "es", "protopic", "protopic_es.txt"),
+                    // Französisch
+                    new Medication("Protopic", "cream", "fr", "protopic", "protopic_fr.txt")
+            );
+            Log.d("DB", "Test-Creams wurden eingefügt");
+        }
+        List<Medication> meds = db.medicationDao().findByCategory("cream");
+        creams = new ArrayList<>();
+        for (Medication m : meds) {
+            creams.add(m.getName());
+        }
+        lvCreams = findViewById(R.id.lvCreams);
         btnHome  = findViewById(R.id.btnHome);
         btnNext  = findViewById(R.id.btnNext);
 
-        // Adapter, der im getView() das ausgewählte Item fettgedruckt macht
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, creams) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1,
+                creams) {
             @Override
-            public View getView(int position, View convertView, android.view.ViewGroup parent) {
+            public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
                 TextView tv = view.findViewById(android.R.id.text1);
                 tv.setTextColor(ContextCompat.getColor(getContext(), R.color.med_text_darkgray));
-
-                if (position == selectedPos) {
-                    tv.setTypeface(null, Typeface.BOLD);    // fettgedruckt, wenn ausgewählt
-                } else {
-                    tv.setTypeface(null, Typeface.NORMAL);
-                }
+                tv.setTypeface(null, position == selectedPos
+                        ? Typeface.BOLD
+                        : Typeface.NORMAL);
                 return view;
             }
         };
         lvCreams.setAdapter(adapter);
-
-
 
         // Tippen auf Medikamentennamen: Auswahl merken
         lvCreams.setOnItemClickListener((parent, view, position, id) -> {
@@ -78,7 +102,7 @@ public class CreamListActivity extends BaseDrawerActivity {
         btnNext.setOnClickListener(v -> {
             if (selectedPos >= 0) {         // Nur weiter wenn ein Medikament ausgewählt ist
                 Intent intent = new Intent(CreamListActivity.this, CreamDetailActivity.class);
-                intent.putExtra("cream_name", creams[selectedPos]);
+                intent.putExtra("cream_name", creams.get(selectedPos));
                 startActivity(intent);
             }
         });
