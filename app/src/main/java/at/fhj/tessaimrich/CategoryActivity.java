@@ -3,6 +3,7 @@ package at.fhj.tessaimrich;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -15,11 +16,13 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 
+import at.fhj.tessaimrich.data.AppDatabase;
+import at.fhj.tessaimrich.data.Medication;
+
 public class CategoryActivity extends BaseDrawerActivity {
 
     private MaterialAutoCompleteTextView searchInput;
-    //in der Zwischenzeit auskommentiert
-    // private AppDatabase db;  // Room-Datenbank
+     private AppDatabase db;  // Room-Datenbank
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,12 +34,25 @@ public class CategoryActivity extends BaseDrawerActivity {
     );
 
         // Room-Instanz holen (Singleton)
-        /*für Zwischenzeit und AppStart auskommentiert
+
         db = AppDatabase.getInstance(getApplicationContext());
-        */
+
 
         // Suchfeld: Enter/Search löst Suche aus
         searchInput = findViewById(R.id.search_input);
+
+        searchInput.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE) {
+                String input = searchInput.getText().toString().trim();
+                if (!input.isEmpty()) {
+                    performSearch(input);
+                } else {
+                    Toast.makeText(this, "Bitte Suchbegriff eingeben", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            }
+            return false;
+        });
 
         //Nur zum Testen, dann mit Room DB bald verbunden etc
         String[] suggestions = {"Amlodipin", "Cymbalta", "Eliquis", "Nilemdo", "Qtern"}; // z. B. Dummy-Daten
@@ -74,31 +90,40 @@ public class CategoryActivity extends BaseDrawerActivity {
      * Datenzugriff läuft in einem Hintergrund-Thread, damit die UI nicht blockiert wird
      * Bei Fund: Start der passenden Detail-Activity, ansonsten Toast.
      */
-    /*In der Zwischenzeit auskommentiert
+
     private void performSearch(String name) {
         new Thread(() -> {
-            Medication med = db.medDao().findByName(name);
-            runOnUiThread(() -> {
-                if (med == null) {
-                    Toast.makeText(this, "Nicht gefunden", Toast.LENGTH_SHORT).show();
-                } else {
-                    //  Intent-Ziel je nach Med-Typ wählen
-                    Class<?> target;
-                    switch (med.getType()) {
-                        case "PILL":       target = PillDetailActivity.class;      break;
-                        case "CREAM":      target = CreamDetailActivity.class;     break;
-                        case "DROP":       target = DropDetailActivity.class;      break;
-                        case "INHALATION": target = InhalationDetailActivity.class;break;
-                        default:
-                            Toast.makeText(this, "Unbekannter Typ", Toast.LENGTH_SHORT).show();
-                            return;
+            try {
+                Medication med = db.medicationDao().findByName(name);
+
+                runOnUiThread(() -> {
+                    if (med == null) {
+                        Toast.makeText(this, "Nicht gefunden: " + name, Toast.LENGTH_SHORT).show();
+                        Log.w("Search", "Kein Medikament gefunden für: " + name);
+                    } else {
+                        Class<?> target;
+                        switch (med.getCategory()) {
+                            case "PILL":       target = PillDetailActivity.class;       break;
+                            case "CREAM":      target = CreamDetailActivity.class;      break;
+                            case "DROP":       target = DropDetailActivity.class;       break;
+                            case "INHALATION": target = InhalationDetailActivity.class; break;
+                            default:
+                                Toast.makeText(this, "Unbekannter Typ: " + med.getCategory(), Toast.LENGTH_SHORT).show();
+                                return;
+                        }
+                        Intent intent = new Intent(this, target);
+                        intent.putExtra("pill_name", med.getName()); // oder "item_id" wenn gewünscht
+                        startActivity(intent);
                     }
-                    Intent intent = new Intent(this, target);
-                    intent.putExtra("item_id", med.getId());  // Extra fürs Laden der Details
-                    startActivity(intent);
-                }
-            });
+                });
+            } catch (Exception e) {
+                Log.e("Search", "Fehler bei performSearch(): ", e);
+                runOnUiThread(() ->
+                        Toast.makeText(this, "Fehler bei der Suche", Toast.LENGTH_SHORT).show()
+                );
+            }
         }).start();
+
     }
-    */
+
 }

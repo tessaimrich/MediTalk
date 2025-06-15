@@ -9,28 +9,37 @@ import java.util.List;
 
 @Dao
 public interface MedicationDao {
-
-    // 1) Alle Medikamente von Pills,Drops,Creams oder Inhalationen + Sprache abrufen
+    @Query("SELECT COUNT(*) FROM medications")
+    int countAll();
+    // Alle Medikamente einer Kategorie und Sprache synchron laden
     @Query("SELECT * FROM medications WHERE category = :cat AND language = :lang ORDER BY name ASC")
     List<Medication> getByCategory(String cat, String lang);
 
-    // 2) Nach Name (für die Suchleiste)
+    //  Nach Name suchen, Teilstring-Suche
     @Query("SELECT * FROM medications WHERE name LIKE '%' || :search || '%' ORDER BY name ASC")
     List<Medication> searchByName(String search);
 
-    // 3) Einzelnes Medikament anhand der ID abrufen (für DetailActivity)
+    // Einzelnes Medikament anhand der ID synchron abrufen
     @Query("SELECT * FROM medications WHERE id = :id LIMIT 1")
     Medication getById(int id);
 
-    // 4) (Optional) alle Medikamente sämtlicher Kategorien einer Sprache laden
+    // Gibt nur die Pillennamen zurück
+    @Query("SELECT name FROM medications")
+    List<String> getAllNames();
+
+    //  Alle Medikamente einer Sprache synchron laden
     @Query("SELECT * FROM medications WHERE language = :lang ORDER BY category, name")
     List<Medication> getAll(String lang);
 
-    // 5) Einfügen / Update vielleicht noch gebraucht
-   /* @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(Medication medication);
-   */
-    // 6) Löschen (falls später gebraucht)
+    //  Insert / Update (synchron, über Executor im AppDatabase)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(Medication... medications);
+
+    // Löschen aller Einträge
     @Query("DELETE FROM medications")
     void deleteAll();
+
+    // Exakte Namenssuche synchron
+    @Query("SELECT * FROM medications WHERE name = :name LIMIT 1")
+    Medication findByName(String name);
 }

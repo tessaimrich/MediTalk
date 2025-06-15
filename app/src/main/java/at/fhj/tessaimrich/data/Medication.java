@@ -22,17 +22,22 @@ public class Medication {
     @ColumnInfo(name = "tts_text")
     private String ttsText;
 
-    @ColumnInfo(name = "pdf_asset")
+    @ColumnInfo(name = "filename")
+    private String filename;
+    /*@ColumnInfo(name = "pdf_asset")
     private String pdfAsset;    // Dateiname: "Amlodipine Valsartan Mylan.pdf" etc.
-
+*/
     // Konstruktor
-    public Medication(String name, String category, String language, String ttsText, String pdfAsset) {
+    public Medication(String name, String category, String language, String ttsText, String filename) {
         this.name = name;
         this.category = category;
         this.language = language;
         this.ttsText = ttsText;
-        this.pdfAsset = pdfAsset;
+        this.filename  = filename;
     }
+
+    // this.pdfAsset = pdfAsset;
+
 
     // Getter und Setter
 
@@ -71,10 +76,18 @@ public class Medication {
         this.ttsText = ttsText;
     }
 
-    public String getPdfAsset() {
+    public String getFilename() {
+        return filename;
+    }
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+    //Wenn PDFs existieren wieder aktivieren
+   /* public String getPdfAsset() {
         return pdfAsset;
     }
     public void setPdfAsset(String pdfAsset) {
         this.pdfAsset = pdfAsset;
     }
+        */
 }

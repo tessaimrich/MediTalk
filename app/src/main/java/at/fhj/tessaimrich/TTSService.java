@@ -5,14 +5,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 
 import java.util.Locale;
 
 public class TTSService extends Service {
-
     private TextToSpeech tts;
     private boolean ttsReady = false;
     private TTSListener listener;
@@ -21,26 +20,43 @@ public class TTSService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
         tts = new TextToSpeech(this, status -> {
             if (status == TextToSpeech.SUCCESS) {
-                SharedPreferences sharedPreferences = getSharedPreferences("app_settings", MODE_PRIVATE);
-                String languageCode = sharedPreferences.getString("selected_language", "en");
-                Locale locale = new Locale(languageCode);  // Wähle die korrekte Sprache hier
+                SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
+                String languageCode = prefs.getString("selected_language", "en");
+                Locale locale = new Locale(languageCode);
 
                 int result = tts.setLanguage(locale);
-                if (result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED) {
+                if (result != TextToSpeech.LANG_MISSING_DATA
+                        && result != TextToSpeech.LANG_NOT_SUPPORTED) {
+
+                    // Engine ist bereit
                     ttsReady = true;
+
+                    // UtteranceProgressListener nur einmal registrieren
+                    tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+                        @Override
+                        public void onStart(String utteranceId) {
+                            if (listener != null) listener.onSpeakStart();
+                        }
+                        @Override
+                        public void onDone(String utteranceId) {
+                            if (listener != null) listener.onSpeakDone();
+                        }
+                        @Override
+                        public void onError(String utteranceId) {
+                            if (listener != null) listener.onSpeakError();
+                        }
+                    });
+
                     Log.d("TTS", "TextToSpeech initialized successfully.");
-                    if (listener != null) {
-                        listener.onTTSInitialized(ttsReady); // Benachrichtige den Listener
-                    }
+                    if (listener != null) listener.onTTSInitialized(true);
                 }
             } else {
                 ttsReady = false;
                 Log.e("TTS", "TextToSpeech initialization failed.");
-                if (listener != null) {
-                    listener.onTTSInitialized(ttsReady); // Benachrichtige den Listener
-                }
+                if (listener != null) listener.onTTSInitialized(false);
             }
         });
     }
@@ -54,22 +70,28 @@ public class TTSService extends Service {
         this.listener = listener;
     }
 
-    // Die Methode, um Text zu sprechen
     public void speak(String text) {
-        if (text == null || text.isEmpty() || tts == null) return;
+        if (!ttsReady || tts == null || text == null || text.isEmpty()) return;
 
-        SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
-        String langCode = prefs.getString("selected_language", "de");
-
-        tts.setLanguage(new Locale(langCode));
-        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
+        String utteranceId = "TTS_" + System.currentTimeMillis();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
+        } else {
+            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+        }
     }
 
+    public void stop() {
+        if (tts != null && tts.isSpeaking()) {
+            tts.stop();
+        }
+    }
 
     public void setLanguage(String languageCode) {
         Locale locale = new Locale(languageCode);
         int result = tts.setLanguage(locale);
-        if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+        if (result == TextToSpeech.LANG_MISSING_DATA
+                || result == TextToSpeech.LANG_NOT_SUPPORTED) {
             Log.e("TTSService", "Language not supported: " + languageCode);
         } else {
             Log.d("TTSService", "Language set to: " + languageCode);
@@ -80,14 +102,8 @@ public class TTSService extends Service {
         return ttsReady;
     }
 
-    public class LocalBinder extends Binder {
-        TTSService getService() {
-            return TTSService.this;
-        }
-    }
-
-    public interface TTSListener {
-        void onTTSInitialized(boolean isReady);
+    public boolean isSpeaking() {
+        return tts != null && tts.isSpeaking();
     }
 
     @Override
@@ -98,10 +114,17 @@ public class TTSService extends Service {
         }
         super.onDestroy();
     }
-    public void stop() {
-        if (tts != null && tts.isSpeaking()) {
-            tts.stop();
+
+    public class LocalBinder extends Binder {
+        TTSService getService() {
+            return TTSService.this;
         }
     }
 
+    public interface TTSListener {
+        void onTTSInitialized(boolean isReady);
+        void onSpeakStart();
+        void onSpeakDone();
+        void onSpeakError();
+    }
 }

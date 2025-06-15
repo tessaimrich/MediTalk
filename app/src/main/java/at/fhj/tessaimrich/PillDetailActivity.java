@@ -4,30 +4,31 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
-import androidx.core.content.FileProvider;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
-import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.List;
 
-public class PillDetailActivity extends BaseDrawerActivity implements TTSService.TTSListener {
+import at.fhj.tessaimrich.data.AppDatabase;
+import at.fhj.tessaimrich.data.Medication;
+
+import java.io.IOException;
+import java.util.Arrays;
+
+public class PillDetailActivity extends BaseDrawerActivity {
 
     private TTSService ttsService;
-    private boolean ttsReady = false;
-    private boolean isSpeaking = false;  // Flag, das anzeigt, ob TTS gerade spricht
+    private ImageButton btnAudio;
+    private String pillName;
+    private boolean isSpeaking = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,166 +39,101 @@ public class PillDetailActivity extends BaseDrawerActivity implements TTSService
                 true
         );
 
-        // Sprache aus SharedPreferences lesen
-        SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
+        // 1) Pillenname holen und anzeigen
+        pillName = getIntent().getStringExtra("pill_name");
+        ((TextView)findViewById(R.id.tvPillName)).setText(pillName != null ? pillName : "");
 
-        // Pillenname aus Intent holen
-        String pillName = getIntent().getStringExtra("pill_name");
-        if (pillName != null) {
-            ((TextView) findViewById(R.id.tvPillName)).setText(pillName);
-        }
+        // 2) Audio-Button referenzieren
+        btnAudio = findViewById(R.id.btnAudio1);
 
-        // TTSService starten
-        Intent serviceIntent = new Intent(this, TTSService.class);
-        startService(serviceIntent);
-
-        // Hole die Service-Instanz (falls sie schon läuft)
-        bindService(serviceIntent, serviceConnection, BIND_AUTO_CREATE);
-
-        // Audio-Button
-        ImageButton btnAudio = findViewById(R.id.btnAudio1);
+        // 3) Button-Logik: einmal Play, nächstes Mal Stop
         btnAudio.setOnClickListener(v -> {
-            String name = getIntent().getStringExtra("pill_name");
-            if (name != null) {
-                if (isSpeaking) {
-                    // Wenn die Wiedergabe läuft, stoppe sie
-                    ttsService.stop();
-                    isSpeaking = false;
-                    Toast.makeText(this, "Wiedergabe gestoppt", Toast.LENGTH_SHORT).show();
-                } else {
-                    // Wenn keine Wiedergabe läuft, starte sie
-                    startTextToSpeechForPill(name);
+            if (ttsService == null || !ttsService.isTTSReady()) {
+                Toast.makeText(this, "Sprachausgabe nicht bereit", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (isSpeaking) {
+                // Stoppen
+                ttsService.stop();
+                isSpeaking = false;
+                Toast.makeText(this, "Wiedergabe gestoppt", Toast.LENGTH_SHORT).show();
+            } else {
+                // Starten
+                String text = loadTtsTextForPill(pillName);
+                if (text != null && !text.isEmpty()) {
+                    ttsService.speak(text);
                     isSpeaking = true;
+                } else {
+                    Toast.makeText(this, "Text nicht gefunden", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        // Home-Button: zurück zur CategoryActivity
+
         findViewById(R.id.btnHome).setOnClickListener(v -> {
             Intent intent = new Intent(PillDetailActivity.this, CategoryActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
-            finish();  // eigene Activity schließen
+            finish();
         });
+
+
+        // 4) TTS-Service starten und binden
+        Intent intent = new Intent(this, TTSService.class);
+        startService(intent);
+        bindService(intent, serviceConnection, BIND_AUTO_CREATE);
+
+
+
     }
-    @Override
-    protected void onResume() {
-        super.onResume();
 
-        if (ttsService != null && ttsService.isTTSReady()) {
-            SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
-            String languageCode = prefs.getString("selected_language", "en");
-            ttsService.setLanguage(languageCode);
-        }
-    }
+    /** Lädt den TTS-Text aus DB + Assets */
+    private String loadTtsTextForPill(String name) {
+        try {
+            Medication med = AppDatabase
+                    .getInstance(getApplicationContext())
+                    .medicationDao()
+                    .findByName(name);
+            if (med == null) return null;
 
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            TTSService.LocalBinder binder = (TTSService.LocalBinder) service;
-            ttsService = binder.getService();
-            ttsService.setTTSListener(PillDetailActivity.this);
-
-            // Sprache direkt beim Verbinden setzen
+            String key = med.getTtsText();
             SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
             String lang = prefs.getString("selected_language", "en");
-            ttsService.setLanguage(lang);
-        }
+            String filename = "tts/pills/" + key + "_" + lang + ".txt";
 
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(getAssets().open(filename))
+            );
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append(" ");
+            }
+            reader.close();
+            return sb.toString().trim();
+        } catch (Exception e) {
+            Log.e("PillDetail", "Fehler beim Laden der TTS-Datei", e);
+            return null;
+        }
+    }
+
+    /** Verbindung zum TTSService */
+    private final ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override public void onServiceConnected(ComponentName name, IBinder binder) {
+            ttsService = ((TTSService.LocalBinder)binder).getService();
+            // sofort die aktuelle Sprache setzen
+            SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
+            ttsService.setLanguage(prefs.getString("selected_language", "en"));
+        }
+        @Override public void onServiceDisconnected(ComponentName name) {
             ttsService = null;
         }
     };
 
     @Override
-    public void onTTSInitialized(boolean isReady) {
-        if (isReady) {
-            // TTS wird nur initialisiert, aber nicht automatisch abgespielt
-            Log.d("TTS", "TTS erfolgreich initialisiert, bereit zur Wiedergabe");
-        } else {
-            Toast.makeText(this, "TTS konnte nicht initialisiert werden", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void startTextToSpeechForPill(String pillNameRaw) {
-        String pillKey = getPillKeyFromName(pillNameRaw);  // Hole den pillKey aus dem Namen
-        if (pillKey.isEmpty()) return;
-
-        // Der Dateiname basiert auf dem pillKey und der Sprache
-        SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
-        String currentLangCode = prefs.getString("selected_language", "en");
-
-        String filename = "tts/pills/" + pillKey + "_" + currentLangCode + ".txt";
-        Log.d("TTS", "Dateiname für TTS: " + filename);  // Überprüfe den Dateinamen im Log
-
-        try {
-            // Lade die Datei aus den Assets
-            InputStreamReader isr = new InputStreamReader(getAssets().open(filename));
-            BufferedReader reader = new BufferedReader(isr);
-            StringBuilder textBuilder = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                textBuilder.append(line).append("\n");
-            }
-            reader.close();
-
-            String ttsText = textBuilder.toString().trim();
-
-            // Debugging: Zeige den geladenen Text
-            Log.d("TTS", "Text: " + ttsText);  // Log-Ausgabe
-            Toast.makeText(this, "Text: " + ttsText, Toast.LENGTH_LONG).show();  // Toast
-
-            // TTS nur sprechen, wenn es bereit ist
-            if (ttsService != null && ttsService.isTTSReady()) {
-                // Sprache direkt JETZT setzen
-                ttsService.setLanguage(currentLangCode);
-                if (!isSpeaking) {
-                    ttsService.speak(ttsText);
-                    isSpeaking = true;
-                } else {
-                    ttsService.stop();
-                    isSpeaking = false;
-                    Toast.makeText(this, "Wiedergabe gestoppt", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(this, "Sprachausgabe nicht bereit", Toast.LENGTH_SHORT).show();
-            }
-        } catch (FileNotFoundException e) {
-            Log.e("TTS", "Datei nicht gefunden: " + filename);
-            Toast.makeText(this, "Text nicht gefunden", Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Fehler beim TTS", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-
-
-
-    private String getPillKeyFromName(String pillNameRaw) {
-        // Mappe verschiedene Namen auf einen einheitlichen pillKey
-        if (pillNameRaw.toLowerCase().contains("amlodipin")) {
-            return "amlodipin";
-        } else if (pillNameRaw.toLowerCase().contains("valsartan")) {
-            return "valsartan";
-        } else if (pillNameRaw.toLowerCase().contains("cymbalta")) {
-            return "cymbalta";
-        } else if (pillNameRaw.toLowerCase().contains("eliquis")) {
-            return "eliquis";
-        } else if (pillNameRaw.toLowerCase().contains("nilemdo")) {
-            return "nilemdo";
-        } else if (pillNameRaw.toLowerCase().contains("qtern")) {
-            return "qtern";
-        }
-        return "";  // Falls der pillName nicht zugeordnet werden konnte
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (ttsService != null) {
-            unbindService(serviceConnection);
-        }
+        if (ttsService != null) unbindService(serviceConnection);
     }
 }
