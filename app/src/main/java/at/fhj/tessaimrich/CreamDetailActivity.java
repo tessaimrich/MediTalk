@@ -16,7 +16,7 @@ public class CreamDetailActivity extends BaseDrawerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getLayoutInflater().inflate(
-                R.layout.activity_pill_detail,
+                R.layout.activity_cream_detail,
                 findViewById(R.id.content_frame),
                 true
         );
