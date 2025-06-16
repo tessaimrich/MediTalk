@@ -4,6 +4,8 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -11,8 +13,13 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.content.FileProvider;
+
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import at.fhj.tessaimrich.data.AppDatabase;
 import at.fhj.tessaimrich.data.Medication;
@@ -22,8 +29,10 @@ public class CreamDetailActivity extends BaseDrawerActivity {
 
     private TTSService ttsService;
     private ImageButton btnAudio;
+    private ImageButton btnPdf;
     private String creamName;
     private boolean isSpeaking = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +47,10 @@ public class CreamDetailActivity extends BaseDrawerActivity {
         ((TextView)findViewById(R.id.tvCreamName))
                 .setText(creamName != null ? creamName : "");
 
-        // b) Audio-Button referenzieren
+        // Audio-Button referenzieren
         btnAudio = findViewById(R.id.btnAudioCream);
 
-        // c) Play/Stop-Logik
+        // Play/Stop-Logik
         btnAudio.setOnClickListener(v -> {
             if (ttsService == null || !ttsService.isTTSReady()) {
                 Toast.makeText(this, "Sprachausgabe nicht bereit", Toast.LENGTH_SHORT).show();
@@ -62,13 +71,27 @@ public class CreamDetailActivity extends BaseDrawerActivity {
             }
         });
 
+        // PDF-Button
+        btnPdf = findViewById(R.id.btnPdfCreamPdf);
+        btnPdf.setOnClickListener(v -> {
+            Medication med = AppDatabase
+                    .getInstance(getApplicationContext())
+                    .medicationDao()
+                    .findByName(creamName);
+            if (med == null || med.getPdfAsset() == null) {
+                Toast.makeText(this, "Keine PDF verfügbar", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            openPdfFromAssets(med.getPdfAsset());
+        });
+
+        // Home-Button und TTS-Service
         findViewById(R.id.btnHome).setOnClickListener(v -> {
             Intent intent = new Intent(this, CategoryActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
             finish();
         });
-
         Intent intent = new Intent(this, TTSService.class);
         startService(intent);
         bindService(intent, serviceConnection, BIND_AUTO_CREATE);
@@ -113,6 +136,7 @@ public class CreamDetailActivity extends BaseDrawerActivity {
             ttsService = null;
         }
     };
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -120,5 +144,38 @@ public class CreamDetailActivity extends BaseDrawerActivity {
             unbindService(serviceConnection);
         }
     }
+
+
+    /** kopiert PDFs aus assets/pdfs/ und öffnet sie */
+    private void openPdfFromAssets(String assetFileName) {
+        AssetManager am = getAssets();
+        try (InputStream in = am.open("pdfs/" + assetFileName)) {
+            File outFile = new File(getFilesDir(), assetFileName);
+            try (FileOutputStream out = new FileOutputStream(outFile)) {
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+            }
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            Uri uri = FileProvider.getUriForFile(
+                    this,
+                    getPackageName() + ".fileprovider",
+                    outFile
+            );
+            intent.setDataAndType(uri, "application/pdf");
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(intent);
+
+        } catch (IOException e) {
+            Toast.makeText(this, "Fehler beim Öffnen der PDF", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }
+
+
+
+
 
 }
