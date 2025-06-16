@@ -30,7 +30,7 @@ public class Medication {
 
 
     // Konstruktor
-    public Medication(String name, String category, String language, String ttsText, String filename) {
+    public Medication(String name, String category, String language, String ttsText, String filename, String pdfAsset) {
         this.name = name;
         this.category = category;
         this.language = language;
@@ -39,7 +39,7 @@ public class Medication {
         this.pdfAsset = pdfAsset;
     }
 
-    // this.pdfAsset = pdfAsset;  -> habe ich in Konstruktor hinzugefügt
+
 
 
     // Getter und Setter
@@ -86,7 +86,6 @@ public class Medication {
         this.filename = filename;
     }
 
-  //Wenn PDFs existieren wieder aktivieren:
     public String getPdfAsset() {
         return pdfAsset;
     }
