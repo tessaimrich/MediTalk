@@ -24,9 +24,11 @@ public class Medication {
 
     @ColumnInfo(name = "filename")
     private String filename;
-    /*@ColumnInfo(name = "pdf_asset")
+    @ColumnInfo(name = "pdf_asset")
     private String pdfAsset;    // Dateiname: "Amlodipine Valsartan Mylan.pdf" etc.
-*/
+
+
+
     // Konstruktor
     public Medication(String name, String category, String language, String ttsText, String filename) {
         this.name = name;
@@ -34,9 +36,10 @@ public class Medication {
         this.language = language;
         this.ttsText = ttsText;
         this.filename  = filename;
+        this.pdfAsset = pdfAsset;
     }
 
-    // this.pdfAsset = pdfAsset;
+    // this.pdfAsset = pdfAsset;  -> habe ich in Konstruktor hinzugefügt
 
 
     // Getter und Setter
@@ -82,12 +85,13 @@ public class Medication {
     public void setFilename(String filename) {
         this.filename = filename;
     }
-    //Wenn PDFs existieren wieder aktivieren
-   /* public String getPdfAsset() {
+
+  //Wenn PDFs existieren wieder aktivieren:
+    public String getPdfAsset() {
         return pdfAsset;
     }
     public void setPdfAsset(String pdfAsset) {
         this.pdfAsset = pdfAsset;
     }
-        */
+
 }
