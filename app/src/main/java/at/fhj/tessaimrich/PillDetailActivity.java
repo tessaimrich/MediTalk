@@ -29,6 +29,7 @@ import at.fhj.tessaimrich.data.Medication;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Locale;
 
 public class PillDetailActivity extends BaseDrawerActivity {
 
@@ -83,13 +84,18 @@ public class PillDetailActivity extends BaseDrawerActivity {
         // für pdf:
         btnPdf = findViewById(R.id.btnPdf1);
         btnPdf.setOnClickListener(v -> {
-            // Aus DB den pdfAsset-Namen holen
+            //gewählte Sprache aus SharedPreferences holen
+            SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
+            String lang = prefs.getString("selected_language", "en");
+
+            // Jetzt gezielt nach Name+Sprache fragen
             Medication med = AppDatabase
                     .getInstance(getApplicationContext())
                     .medicationDao()
-                    .findByName(pillName);
+                    .findByNameAndLanguage(pillName, lang);
+
             if (med == null || med.getPdfAsset() == null) {
-                Toast.makeText(this, "Keine PDF verfügbar", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Keine PDF verfügbar („" + lang + "“)", Toast.LENGTH_SHORT).show();
                 return;
             }
             // PDF öffnen
@@ -115,34 +121,110 @@ public class PillDetailActivity extends BaseDrawerActivity {
      * Lädt den TTS-Text aus DB + Assets
      */
     private String loadTtsTextForPill(String name) {
-        try {
-            Medication med = AppDatabase
-                    .getInstance(getApplicationContext())
-                    .medicationDao()
-                    .findByName(name);
-            if (med == null) return null;
+        Medication med = AppDatabase
+                .getInstance(getApplicationContext())
+                .medicationDao()
+                .findByNameAndLanguage(name,
+                        getSharedPreferences("app_settings", MODE_PRIVATE)
+                                .getString("selected_language", "en")
+                );
+        if (med == null) return null;
 
-            String key = med.getTtsText();
-            SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
-            String lang = prefs.getString("selected_language", "en");
-            String filename = "tts/pills/" + key + "_" + lang + ".txt";
+        String key      = med.getTtsText();                  // z.B. "cymbalta"
+        String lang     = med.getLanguage();                 // z.B. "fr"
+        String requested= key + "_" + lang + ".txt";         // "cymbalta_fr.txt"
+        String file     = resolveAssetFilename("tts/pills", requested);
+        if (file == null) return null;
 
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(getAssets().open(filename))
-            );
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(getAssets().open("tts/pills/" + file))
+        )) {
             StringBuilder sb = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
                 sb.append(line).append(" ");
             }
-            reader.close();
             return sb.toString().trim();
-        } catch (Exception e) {
+        } catch (IOException e) {
             Log.e("PillDetail", "Fehler beim Laden der TTS-Datei", e);
             return null;
         }
     }
 
+
+
+    /**
+     * Kopiert die PDF aus assets in den App-Files-Ordner
+     * und öffnet sie dann mit einem externen PDF-Viewer.
+     */
+
+
+    private void openPdfFromAssets(String rawAssetName) {
+        // rawAssetName kommt direkt aus der DB, z.B. "Cymbalta_EN.pdf"
+        String assetFileName = resolveAssetFilename("pdfs", rawAssetName);
+        if (assetFileName == null) {
+            Toast.makeText(this,
+                    "PDF nicht gefunden für „" + pillName + "“",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        try (InputStream in = getAssets().open("pdfs/" + assetFileName)) {
+            File outFile = new File(getFilesDir(), assetFileName);
+            try (FileOutputStream out = new FileOutputStream(outFile)) {
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+            }
+
+            Uri uri = FileProvider.getUriForFile(
+                    this,
+                    getPackageName() + ".fileprovider",
+                    outFile
+            );
+            startActivity(new Intent(Intent.ACTION_VIEW)
+                    .setDataAndType(uri, "application/pdf")
+                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            );
+
+        } catch (FileNotFoundException fnf) {
+            Log.e("PillDetail", "PDF nicht gefunden: " + assetFileName, fnf);
+            Toast.makeText(this,
+                    "PDF nicht gefunden: " + assetFileName,
+                    Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            Log.e("PillDetail", "Fehler beim Öffnen der PDF", e);
+            Toast.makeText(this,
+                    "Fehler beim Öffnen der PDF",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+    private String resolveAssetFilename(String dir, String requestedName) {
+        try {
+            String[] files = getAssets().list(dir);
+            if (files != null) {
+                // 1) exakter case-insensitive Match
+                for (String f : files) {
+                    if (f.equalsIgnoreCase(requestedName)) {
+                        return f;
+                    }
+                }
+                // 2) Fallback: Matching auf Suffix (z.B. "_EN.pdf" oder "_de.txt")
+                String lowerReq = requestedName.toLowerCase(Locale.ROOT);
+                String suffix   = lowerReq.substring(lowerReq.lastIndexOf('_'));
+                for (String f : files) {
+                    if (f.toLowerCase(Locale.ROOT).endsWith(suffix)) {
+                        return f;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            Log.e("PillDetail", "Fehler beim Listen von assets/" + dir, e);
+        }
+        return null;
+    }
     /**
      * Verbindung zum TTSService
      */
@@ -171,67 +253,4 @@ public class PillDetailActivity extends BaseDrawerActivity {
         super.onDestroy();
         if (ttsService != null) unbindService(serviceConnection);
     }
-
-
-    /**
-     * Kopiert die PDF aus assets in den App-Files-Ordner
-     * und öffnet sie dann mit einem externen PDF-Viewer.
-     */
-
-    private void logAllAssets() {
-        AssetManager am = getAssets();
-        try {
-            // 1) Was liegt direkt im assets-Ordner?
-            String[] roots = am.list("");
-            Log.d("PillDetail", "assets/ root enthält: " + Arrays.toString(roots));
-            // 2) Was liegt im Unterordner pdfs/ ?
-            String[] pdfs = am.list("pdfs");
-            Log.d("PillDetail", "assets/pdfs enthält: " + Arrays.toString(pdfs));
-        } catch (IOException e) {
-            Log.e("PillDetail", "Fehler beim Listen der Assets", e);
-        }
-    }
-    private void openPdfFromAssets(String rawAssetName) {
-        AssetManager am = getAssets();
-
-        // Sorge dafür, dass der Name auf .pdf endet
-        String assetFileName = rawAssetName.toLowerCase().endsWith(".pdf")
-                ? rawAssetName
-                : rawAssetName + ".pdf";
-
-        try (InputStream in = am.open("pdfs/" + assetFileName)) {
-            // Kopiere ins interne Verzeichnis
-            File outFile = new File(getFilesDir(), assetFileName);
-            try (FileOutputStream out = new FileOutputStream(outFile)) {
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-            }
-
-            // Erzeuge URI und starte externen PDF-Viewer
-            Uri uri = FileProvider.getUriForFile(
-                    this,
-                    getPackageName() + ".fileprovider",
-                    outFile
-            );
-            Intent intent = new Intent(Intent.ACTION_VIEW)
-                    .setDataAndType(uri, "application/pdf")
-                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            startActivity(intent);
-
-        } catch (FileNotFoundException fnf) {
-            Log.e("PillDetail", "PDF nicht gefunden: " + assetFileName, fnf);
-            Toast.makeText(this,
-                    "PDF nicht gefunden: " + assetFileName,
-                    Toast.LENGTH_LONG).show();
-        } catch (IOException e) {
-            Log.e("PillDetail", "Fehler beim Öffnen der PDF", e);
-            Toast.makeText(this,
-                    "Fehler beim Öffnen der PDF",
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
-
 }

@@ -47,4 +47,6 @@ public interface MedicationDao {
     Medication findByName(String name);
     @Query("SELECT * FROM medications WHERE category = :category AND language = :lang")
     List<Medication> findByCategoryAndLanguage(String category, String lang);
+    @Query("SELECT * FROM medications WHERE name = :name AND language = :lang LIMIT 1")
+    Medication findByNameAndLanguage(String name, String lang);
 }
