@@ -46,7 +46,7 @@ public class PillListActivity extends BaseDrawerActivity {
         if (db.medicationDao().getAll("en").isEmpty()) {
             db.medicationDao().insertAll(
                     // Englisch
-                    new Medication("Amlodipine Valsartan Mylan", "Pills", "en", "amlodipin", "amlodipin_en.txt"),
+                    new Medication("Amlodipine Valsartan Mylan", "Pills", "en", "amlodipin", "amlodipin_en.txt", "AmlodipineValsartanMylan.pdf"),
                     new Medication("Cymbalta",                  "Pills", "en", "cymbalta",  "cymbalta_en.txt"),
                     new Medication("Eliquis",                   "Pills", "en", "eliquis",   "eliquis_en.txt"),
                     new Medication("Nilemdo",                   "Pills", "en", "nilemdo",   "nilemdo_en.txt"),
