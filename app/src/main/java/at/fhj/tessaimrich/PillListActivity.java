@@ -25,7 +25,7 @@ public class PillListActivity extends BaseDrawerActivity {
     private String[] pills = {
             "Amlodipine Valsartan Mylan",
             "Cymbalta",
-            "Eliquis ",
+            "Eliquis",
             "Nilemdo",
             "Qtern"
     };
@@ -52,14 +52,14 @@ public class PillListActivity extends BaseDrawerActivity {
                     new Medication("Nilemdo",                   "Pills", "en", "nilemdo",   "nilemdo_en.txt", "Nilemdo_EN.pdf"),
                     new Medication("Qtern",                     "Pills", "en", "qtern",     "qtern_en.txt", "Qtern_EN.pdf"),
                     // Slowenisch
-            new Medication("Amlodipine Valsartan Mylan", "Pills", "sl", "amlodipin", "amlodipin_sl.txt", "AmlodipineValsartanMylan_SL.pdf"),
+            new Medication("Amlodipine Valsartan Mylan", "Pills", "sl", "amlodipin", "amlodipin_sl.txt", "AmlodipinValsartanMylan_SL.pdf"),
                     new Medication("Cymbalta",                  "Pills", "sl", "cymbalta",  "cymbalta_sl.txt", "Cymbalta_SL.pdf"),
                     new Medication("Eliquis",                   "Pills", "sl", "eliquis",   "eliquis_sl.txt", "Eliquis_SL.pdf"),
                     new Medication("Nilemdo",                   "Pills", "sl", "nilemdo",   "nilemdo_sl.txt", "Nilemdo_SL.pdf"),
                     new Medication("Qtern",                     "Pills", "sl", "qtern",     "qtern_sl.txt", "Qtern_SL.pdf"),
 
                     // Kroatisch
-                    new Medication("Amlodipine Valsartan Mylan", "Pills", "hr", "amlodipin", "amlodipin_hr.txt", "AmlodipineValsartanMylan_HR.pdf"),
+                    new Medication("Amlodipine Valsartan Mylan", "Pills", "hr", "amlodipin", "amlodipin_hr.txt", "AmlodipinValsartanMylan_HR.pdf"),
                     new Medication("Cymbalta",                  "Pills", "hr", "cymbalta",  "cymbalta_hr.txt", "Cymbalta_HR.pdf"),
                     new Medication("Eliquis",                   "Pills", "hr", "eliquis",   "eliquis_hr.txt", "Eliquis_HR.pdf"),
                     new Medication("Nilemdo",                   "Pills", "hr", "nilemdo",   "nilemdo_hr.txt", "Nilemdo_HR.pdf"),
@@ -73,14 +73,14 @@ public class PillListActivity extends BaseDrawerActivity {
                     new Medication("Qtern",                     "Pills", "it", "qtern",     "qtern_it.txt", "Qtern_IT.pdf"),
 
                     // Spanisch
-                    new Medication("Amlodipine Valsartan Mylan", "Pills", "es", "amlodipin", "amlodipin_es.txt", "AmlodipineValsartanMylan_ES.pdf"),
+                    new Medication("Amlodipine Valsartan Mylan", "Pills", "es", "amlodipin", "amlodipin_es.txt", "AmlodipinValsartanMylan_ES.pdf"),
                     new Medication("Cymbalta",                  "Pills", "es", "cymbalta",  "cymbalta_es.txt", "Cymbalta_ES.pdf"),
                     new Medication("Eliquis",                   "Pills", "es", "eliquis",   "eliquis_es.txt", "Eliquis_ES.pdf"),
                     new Medication("Nilemdo",                   "Pills", "es", "nilemdo",   "nilemdo_es.txt", "Nilemdo_ES.pdf"),
                     new Medication("Qtern",                     "Pills", "es", "qtern",     "qtern_es.txt", "Qtern_ES.pdf"),
 
                     // Französisch
-                    new Medication("Amlodipine Valsartan Mylan", "Pills", "fr", "amlodipin", "amlodipin_fr.txt", "AmlodipineValsartanMylan_FR.pdf"),
+                    new Medication("Amlodipine Valsartan Mylan", "Pills", "fr", "amlodipin", "amlodipin_fr.txt", "AmlodipinValsartanMylan_FR.pdf"),
                     new Medication("Cymbalta",                  "Pills", "fr", "cymbalta",  "cymbalta_fr.txt", "Cymbalta_FR.pdf"),
                     new Medication("Eliquis",                   "Pills", "fr", "eliquis",   "eliquis_fr.txt", "Eliquis_FR.pdf"),
                     new Medication("Nilemdo",                   "Pills", "fr", "nilemdo",   "nilemdo_fr.txt", "Nilemdo_FR.pdf"),
