@@ -81,7 +81,7 @@ public class PillDetailActivity extends BaseDrawerActivity {
         });
 
         // für pdf:
-        ImageButton btnPdf = findViewById(R.id.btnPdf1);
+        btnPdf = findViewById(R.id.btnPdf1);
         btnPdf.setOnClickListener(v -> {
             // Aus DB den pdfAsset-Namen holen
             Medication med = AppDatabase
