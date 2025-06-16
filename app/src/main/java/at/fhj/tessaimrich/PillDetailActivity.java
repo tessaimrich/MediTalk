@@ -4,6 +4,8 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -11,9 +13,12 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
@@ -27,8 +32,10 @@ public class PillDetailActivity extends BaseDrawerActivity {
 
     private TTSService ttsService;
     private ImageButton btnAudio;
+    private ImageButton btnPdf;
     private String pillName;
     private boolean isSpeaking = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,14 +46,15 @@ public class PillDetailActivity extends BaseDrawerActivity {
                 true
         );
 
-        // 1) Pillenname holen und anzeigen
+        // Pillenname holen und anzeigen
         pillName = getIntent().getStringExtra("pill_name");
-        ((TextView)findViewById(R.id.tvPillName)).setText(pillName != null ? pillName : "");
+        ((TextView) findViewById(R.id.tvPillName)).setText(pillName != null ? pillName : "");
 
-        // 2) Audio-Button referenzieren
+
+        // Audio-Button referenzieren
         btnAudio = findViewById(R.id.btnAudio1);
 
-        // 3) Button-Logik: einmal Play, nächstes Mal Stop
+        // Button-Logik: einmal Play, nächstes Mal Stop
         btnAudio.setOnClickListener(v -> {
             if (ttsService == null || !ttsService.isTTSReady()) {
                 Toast.makeText(this, "Sprachausgabe nicht bereit", Toast.LENGTH_SHORT).show();
@@ -70,6 +78,22 @@ public class PillDetailActivity extends BaseDrawerActivity {
             }
         });
 
+        // für pdf:
+        ImageButton btnPdf = findViewById(R.id.btnPdf1);
+        btnPdf.setOnClickListener(v -> {
+            // Aus DB den pdfAsset-Namen holen
+            Medication med = AppDatabase
+                    .getInstance(getApplicationContext())
+                    .medicationDao()
+                    .findByName(pillName);
+            if (med == null || med.getPdfAsset() == null) {
+                Toast.makeText(this, "Keine PDF verfügbar", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            // PDF öffnen
+            openPdfFromAssets(med.getPdfAsset());
+        });
+
 
         findViewById(R.id.btnHome).setOnClickListener(v -> {
             Intent intent = new Intent(PillDetailActivity.this, CategoryActivity.class);
@@ -79,16 +103,15 @@ public class PillDetailActivity extends BaseDrawerActivity {
         });
 
 
-        // 4) TTS-Service starten und binden
+        // TTS-Service starten und binden
         Intent intent = new Intent(this, TTSService.class);
         startService(intent);
         bindService(intent, serviceConnection, BIND_AUTO_CREATE);
-
-
-
     }
 
-    /** Lädt den TTS-Text aus DB + Assets */
+    /**
+     * Lädt den TTS-Text aus DB + Assets
+     */
     private String loadTtsTextForPill(String name) {
         try {
             Medication med = AppDatabase
@@ -118,10 +141,13 @@ public class PillDetailActivity extends BaseDrawerActivity {
         }
     }
 
-    /** Verbindung zum TTSService */
+    /**
+     * Verbindung zum TTSService
+     */
     private final ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override public void onServiceConnected(ComponentName name, IBinder binder) {
-            ttsService = ((TTSService.LocalBinder)binder).getService();
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder binder) {
+            ttsService = ((TTSService.LocalBinder) binder).getService();
             // sofort die aktuelle Sprache setzen
             SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
             ttsService.setLanguage(prefs.getString("selected_language", "en"));
@@ -131,7 +157,9 @@ public class PillDetailActivity extends BaseDrawerActivity {
             float savedRate = speechPrefs.getFloat("speech_rate", 1.0f);
             ttsService.setSpeechRate(savedRate);
         }
-        @Override public void onServiceDisconnected(ComponentName name) {
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
             ttsService = null;
         }
     };
@@ -141,4 +169,40 @@ public class PillDetailActivity extends BaseDrawerActivity {
         super.onDestroy();
         if (ttsService != null) unbindService(serviceConnection);
     }
+
+
+    /**
+     * Kopiert die angegebene PDF aus assets/pdfs/ in den App-Files-Ordner
+     * und öffnet sie dann mit einem externen PDF-Viewer.
+     */
+    private void openPdfFromAssets(String assetFileName) {
+        AssetManager am = getAssets();
+        try (InputStream in = am.open("pdfs/" + assetFileName)) {
+            // Kopieren in internes Verzeichnis
+            File outFile = new File(getFilesDir(), assetFileName);
+            try (FileOutputStream out = new FileOutputStream(outFile)) {
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+            }
+
+            // Intent zum Öffnen
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(
+                    Uri.fromFile(outFile),
+                    "application/pdf"
+            );
+            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY
+                    | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(intent);
+
+        } catch (IOException e) {
+            Toast.makeText(this, "Fehler beim Öffnen der PDF", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }
+
+
 }
