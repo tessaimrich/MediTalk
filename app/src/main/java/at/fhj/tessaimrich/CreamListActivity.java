@@ -42,17 +42,17 @@ public class CreamListActivity extends BaseDrawerActivity {
         if (db.medicationDao().findByCategory("cream").isEmpty()) {
             db.medicationDao().insertAll(
                     // Englisch
-                    new Medication("Protopic", "cream", "en", "protopic", "protopic_en.txt"),
+                    new Medication("Protopic", "cream", "en", "protopic", "protopic_en.txt", "Protopic_EN.pdf"),
                     // Slowenisch
-                    new Medication("Protopic", "cream", "sl", "protopic", "protopic_sl.txt"),
+                    new Medication("Protopic", "cream", "sl", "protopic", "protopic_sl.txt", "Protopic_SL.pdf"),
                     // Kroatisch
-                    new Medication("Protopic", "cream", "hr", "protopic", "protopic_hr.txt"),
+                    new Medication("Protopic", "cream", "hr", "protopic", "protopic_hr.txt", "Protopic_HR.pdf"),
                     // Italienisch
-                    new Medication("Protopic", "cream", "it", "protopic", "protopic_it.txt"),
+                    new Medication("Protopic", "cream", "it", "protopic", "protopic_it.txt", "Protopic_IT.pdf"),
                     // Spanisch
-                    new Medication("Protopic", "cream", "es", "protopic", "protopic_es.txt"),
+                    new Medication("Protopic", "cream", "es", "protopic", "protopic_es.txt", "Protopic_ES.pdf"),
                     // Französisch
-                    new Medication("Protopic", "cream", "fr", "protopic", "protopic_fr.txt")
+                    new Medication("Protopic", "cream", "fr", "protopic", "protopic_fr.txt", "Protopic_FR.pdf")
             );
             Log.d("DB", "Test-Creams wurden eingefügt");
         }
