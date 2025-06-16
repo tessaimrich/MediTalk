@@ -13,6 +13,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.content.FileProvider;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 
@@ -172,13 +174,13 @@ public class PillDetailActivity extends BaseDrawerActivity {
 
 
     /**
-     * Kopiert die angegebene PDF aus assets/pdfs/ in den App-Files-Ordner
+     * Kopiert die PDF aus assets in den App-Files-Ordner
      * und öffnet sie dann mit einem externen PDF-Viewer.
      */
     private void openPdfFromAssets(String assetFileName) {
         AssetManager am = getAssets();
         try (InputStream in = am.open("pdfs/" + assetFileName)) {
-            // Kopieren in internes Verzeichnis
+            // in internes Verzeichnis kopieren
             File outFile = new File(getFilesDir(), assetFileName);
             try (FileOutputStream out = new FileOutputStream(outFile)) {
                 byte[] buf = new byte[1024];
@@ -188,14 +190,14 @@ public class PillDetailActivity extends BaseDrawerActivity {
                 }
             }
 
-            // Intent zum Öffnen
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(
-                    Uri.fromFile(outFile),
-                    "application/pdf"
+            Uri uri = FileProvider.getUriForFile(
+                    this,
+                    getPackageName() + ".fileprovider",
+                    outFile
             );
-            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY
-                    | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.setDataAndType(uri, "application/pdf");
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             startActivity(intent);
 
         } catch (IOException e) {
