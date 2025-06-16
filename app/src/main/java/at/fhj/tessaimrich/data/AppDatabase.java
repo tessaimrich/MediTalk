@@ -12,12 +12,22 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Medication.class}, version = 3, exportSchema = false)
+@Database(entities = {Medication.class}, version = 4, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static final Migration MIGRATION_2_3 = new Migration(2, 3) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase db) {
             db.execSQL("ALTER TABLE medications ADD COLUMN filename TEXT");
+        }
+    };
+    //Migration von Version 3 → 4 hinzufügen
+    private static final Migration MIGRATION_3_4 = new Migration(3, 4) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+
+            db.execSQL(  "ALTER TABLE medications ADD COLUMN pdf_asset TEXT DEFAULT 'undefined'"
+            );
+            // hier alle weiteren Änderungen eintragen, die im Schema gemacht werden
         }
     };
     public abstract MedicationDao medicationDao();
@@ -37,7 +47,7 @@ public abstract class AppDatabase extends RoomDatabase {
                                     AppDatabase.class,
                                     "medidb"
                             )
-                            .addMigrations(MIGRATION_2_3)
+                            .addMigrations(MIGRATION_2_3,MIGRATION_3_4)
                             .allowMainThreadQueries()           // DB-Abfragen im Main-Thread erlauben
                             .build();
 
