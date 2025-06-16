@@ -192,43 +192,16 @@ public class PillDetailActivity extends BaseDrawerActivity {
         }
     }
     private void openPdfFromAssets(String rawAssetName) {
-        logAllAssets();
         AssetManager am = getAssets();
 
-        // 1) Liste alle PDFs im Ordner assets/pdfs/
-        String[] files = new String[0];
-        try {
-            files = am.list("pdfs");
-            Log.d("PillDetail", "assets/pdfs enthält: " + Arrays.toString(files));
-        } catch (IOException e) {
-            Log.e("PillDetail", "Fehler beim Listen von assets/pdfs", e);
-        }
+        // Sorge dafür, dass der Name auf .pdf endet
+        String assetFileName = rawAssetName.toLowerCase().endsWith(".pdf")
+                ? rawAssetName
+                : rawAssetName + ".pdf";
 
-        // 2) Baue den gewünschten Namen (mit .pdf-Endung)
-        String desired = rawAssetName;
-        if (!desired.toLowerCase().endsWith(".pdf")) {
-            desired = desired + ".pdf";
-        }
-        Log.d("PillDetail", "Gewünschter Name (case-insensitive): " + desired);
-
-        // 3) Suche in files[] nach einem Eintrag, der equalsIgnoreCase(desired) ist
-        String actualFile = null;
-        for (String f : files) {
-            if (f.equalsIgnoreCase(desired)) {
-                actualFile = f;
-                break;
-            }
-        }
-        if (actualFile == null) {
-            Log.e("PillDetail", "Kein Asset gefunden, das '" + desired + "' entspricht");
-            Toast.makeText(this, "PDF nicht gefunden: " + desired, Toast.LENGTH_LONG).show();
-            return;
-        }
-        Log.d("PillDetail", "Gefundenes Asset (exakt): " + actualFile);
-
-        // 4) Öffne das gefundene Asset und kopiere es ins interne Verzeichnis
-        try (InputStream in = am.open("pdfs/" + actualFile)) {
-            File outFile = new File(getFilesDir(), actualFile);
+        try (InputStream in = am.open("pdfs/" + assetFileName)) {
+            // Kopiere ins interne Verzeichnis
+            File outFile = new File(getFilesDir(), assetFileName);
             try (FileOutputStream out = new FileOutputStream(outFile)) {
                 byte[] buf = new byte[1024];
                 int len;
@@ -237,7 +210,7 @@ public class PillDetailActivity extends BaseDrawerActivity {
                 }
             }
 
-            // 5) Erzeuge URI via FileProvider und starte den externen Viewer
+            // Erzeuge URI und starte externen PDF-Viewer
             Uri uri = FileProvider.getUriForFile(
                     this,
                     getPackageName() + ".fileprovider",
@@ -249,11 +222,15 @@ public class PillDetailActivity extends BaseDrawerActivity {
             startActivity(intent);
 
         } catch (FileNotFoundException fnf) {
-            Log.e("PillDetail", "Asset nicht gefunden beim Öffnen: " + actualFile, fnf);
-            Toast.makeText(this, "PDF nicht gefunden: " + actualFile, Toast.LENGTH_LONG).show();
+            Log.e("PillDetail", "PDF nicht gefunden: " + assetFileName, fnf);
+            Toast.makeText(this,
+                    "PDF nicht gefunden: " + assetFileName,
+                    Toast.LENGTH_LONG).show();
         } catch (IOException e) {
-            Log.e("PillDetail", "Fehler beim Kopieren/Öffnen der PDF", e);
-            Toast.makeText(this, "Fehler beim Öffnen der PDF", Toast.LENGTH_SHORT).show();
+            Log.e("PillDetail", "Fehler beim Öffnen der PDF", e);
+            Toast.makeText(this,
+                    "Fehler beim Öffnen der PDF",
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
