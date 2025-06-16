@@ -15,3 +15,5 @@
 local.properties
 .idea/deploymentTargetSelector.xml
 /.idea/deviceManager.xml
+/.idea/kotlinc.xml
+.idea/kotlin.xml
