@@ -46,45 +46,45 @@ public class PillListActivity extends BaseDrawerActivity {
         if (db.medicationDao().getAll("en").isEmpty()) {
             db.medicationDao().insertAll(
                     // Englisch
-                    new Medication("Amlodipine Valsartan Mylan", "Pills", "en", "amlodipin", "amlodipin_en.txt", "AmlodipineValsartanMylan.pdf"),
-                    new Medication("Cymbalta",                  "Pills", "en", "cymbalta",  "cymbalta_en.txt"),
-                    new Medication("Eliquis",                   "Pills", "en", "eliquis",   "eliquis_en.txt"),
-                    new Medication("Nilemdo",                   "Pills", "en", "nilemdo",   "nilemdo_en.txt"),
-                    new Medication("Qtern",                     "Pills", "en", "qtern",     "qtern_en.txt"),
+                    new Medication("Amlodipine Valsartan Mylan", "Pills", "en", "amlodipin", "amlodipin_en.txt", "AmlodipineValsartanMylan_EN.pdf"),
+                    new Medication("Cymbalta",                  "Pills", "en", "cymbalta",  "cymbalta_en.txt", "Cymbalta_EN.pdf"),
+                    new Medication("Eliquis",                   "Pills", "en", "eliquis",   "eliquis_en.txt", "Eliquis_EN.pdf"),
+                    new Medication("Nilemdo",                   "Pills", "en", "nilemdo",   "nilemdo_en.txt", "Nilemdo_EN.pdf"),
+                    new Medication("Qtern",                     "Pills", "en", "qtern",     "qtern_en.txt", "Qtern_EN.pdf"),
                     // Slowenisch
-            new Medication("Amlodipine Valsartan Mylan", "Pills", "sl", "amlodipin", "amlodipin_sl.txt"),
-                    new Medication("Cymbalta",                  "Pills", "sl", "cymbalta",  "cymbalta_sl.txt"),
-                    new Medication("Eliquis",                   "Pills", "sl", "eliquis",   "eliquis_sl.txt"),
-                    new Medication("Nilemdo",                   "Pills", "sl", "nilemdo",   "nilemdo_sl.txt"),
-                    new Medication("Qtern",                     "Pills", "sl", "qtern",     "qtern_sl.txt"),
+            new Medication("Amlodipine Valsartan Mylan", "Pills", "sl", "amlodipin", "amlodipin_sl.txt", "AmlodipineValsartanMylan_SL.pdf"),
+                    new Medication("Cymbalta",                  "Pills", "sl", "cymbalta",  "cymbalta_sl.txt", "Cymbalta_SL.pdf"),
+                    new Medication("Eliquis",                   "Pills", "sl", "eliquis",   "eliquis_sl.txt", "Eliquis_SL.pdf"),
+                    new Medication("Nilemdo",                   "Pills", "sl", "nilemdo",   "nilemdo_sl.txt", "Nilemdo_SL.pdf"),
+                    new Medication("Qtern",                     "Pills", "sl", "qtern",     "qtern_sl.txt", "Qtern_SL.pdf"),
 
                     // Kroatisch
-                    new Medication("Amlodipine Valsartan Mylan", "Pills", "hr", "amlodipin", "amlodipin_hr.txt"),
-                    new Medication("Cymbalta",                  "Pills", "hr", "cymbalta",  "cymbalta_hr.txt"),
-                    new Medication("Eliquis",                   "Pills", "hr", "eliquis",   "eliquis_hr.txt"),
-                    new Medication("Nilemdo",                   "Pills", "hr", "nilemdo",   "nilemdo_hr.txt"),
-                    new Medication("Qtern",                     "Pills", "hr", "qtern",     "qtern_hr.txt"),
+                    new Medication("Amlodipine Valsartan Mylan", "Pills", "hr", "amlodipin", "amlodipin_hr.txt", "AmlodipineValsartanMylan_HR.pdf"),
+                    new Medication("Cymbalta",                  "Pills", "hr", "cymbalta",  "cymbalta_hr.txt", "Cymbalta_HR.pdf"),
+                    new Medication("Eliquis",                   "Pills", "hr", "eliquis",   "eliquis_hr.txt", "Eliquis_HR.pdf"),
+                    new Medication("Nilemdo",                   "Pills", "hr", "nilemdo",   "nilemdo_hr.txt", "Nilemdo_HR.pdf"),
+                    new Medication("Qtern",                     "Pills", "hr", "qtern",     "qtern_hr.txt", "Qtern_HR.pdf"),
 
                     // Italienisch
-                    new Medication("Amlodipine Valsartan Mylan", "Pills", "it", "amlodipin", "amlodipin_it.txt"),
-                    new Medication("Cymbalta",                  "Pills", "it", "cymbalta",  "cymbalta_it.txt"),
-                    new Medication("Eliquis",                   "Pills", "it", "eliquis",   "eliquis_it.txt"),
-                    new Medication("Nilemdo",                   "Pills", "it", "nilemdo",   "nilemdo_it.txt"),
-                    new Medication("Qtern",                     "Pills", "it", "qtern",     "qtern_it.txt"),
+                    new Medication("Amlodipine Valsartan Mylan", "Pills", "it", "amlodipin", "amlodipin_it.txt", "AmlodipineValsartanMylan_IT.pdf"),
+                    new Medication("Cymbalta",                  "Pills", "it", "cymbalta",  "cymbalta_it.txt", "Cymbalta_IT.pdf"),
+                    new Medication("Eliquis",                   "Pills", "it", "eliquis",   "eliquis_it.txt", "Eliquis_IT.pdf"),
+                    new Medication("Nilemdo",                   "Pills", "it", "nilemdo",   "nilemdo_it.txt", "Nilemdo_IT.pdf"),
+                    new Medication("Qtern",                     "Pills", "it", "qtern",     "qtern_it.txt", "Qtern_IT.pdf"),
 
                     // Spanisch
-                    new Medication("Amlodipine Valsartan Mylan", "Pills", "es", "amlodipin", "amlodipin_es.txt"),
-                    new Medication("Cymbalta",                  "Pills", "es", "cymbalta",  "cymbalta_es.txt"),
-                    new Medication("Eliquis",                   "Pills", "es", "eliquis",   "eliquis_es.txt"),
-                    new Medication("Nilemdo",                   "Pills", "es", "nilemdo",   "nilemdo_es.txt"),
-                    new Medication("Qtern",                     "Pills", "es", "qtern",     "qtern_es.txt"),
+                    new Medication("Amlodipine Valsartan Mylan", "Pills", "es", "amlodipin", "amlodipin_es.txt", "AmlodipineValsartanMylan_ES.pdf"),
+                    new Medication("Cymbalta",                  "Pills", "es", "cymbalta",  "cymbalta_es.txt", "Cymbalta_ES.pdf"),
+                    new Medication("Eliquis",                   "Pills", "es", "eliquis",   "eliquis_es.txt", "Eliquis_ES.pdf"),
+                    new Medication("Nilemdo",                   "Pills", "es", "nilemdo",   "nilemdo_es.txt", "Nilemdo_ES.pdf"),
+                    new Medication("Qtern",                     "Pills", "es", "qtern",     "qtern_es.txt", "Qtern_ES.pdf"),
 
                     // Französisch
-                    new Medication("Amlodipine Valsartan Mylan", "Pills", "fr", "amlodipin", "amlodipin_fr.txt"),
-                    new Medication("Cymbalta",                  "Pills", "fr", "cymbalta",  "cymbalta_fr.txt"),
-                    new Medication("Eliquis",                   "Pills", "fr", "eliquis",   "eliquis_fr.txt"),
-                    new Medication("Nilemdo",                   "Pills", "fr", "nilemdo",   "nilemdo_fr.txt"),
-                    new Medication("Qtern",                     "Pills", "fr", "qtern",     "qtern_fr.txt")
+                    new Medication("Amlodipine Valsartan Mylan", "Pills", "fr", "amlodipin", "amlodipin_fr.txt", "AmlodipineValsartanMylan_FR.pdf"),
+                    new Medication("Cymbalta",                  "Pills", "fr", "cymbalta",  "cymbalta_fr.txt", "Cymbalta_FR.pdf"),
+                    new Medication("Eliquis",                   "Pills", "fr", "eliquis",   "eliquis_fr.txt", "Eliquis_FR.pdf"),
+                    new Medication("Nilemdo",                   "Pills", "fr", "nilemdo",   "nilemdo_fr.txt", "Nilemdo_FR.pdf"),
+                    new Medication("Qtern",                     "Pills", "fr", "qtern",     "qtern_fr.txt", "Qtern_FR.pdf")
             );
             Log.d("DB", "Testmedikamente wurden eingefügt");
         }
