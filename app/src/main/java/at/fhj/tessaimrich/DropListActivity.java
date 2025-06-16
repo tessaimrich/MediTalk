@@ -1,26 +1,32 @@
 package at.fhj.tessaimrich;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import at.fhj.tessaimrich.data.AppDatabase;
+import at.fhj.tessaimrich.data.Medication;
 
 public class DropListActivity extends BaseDrawerActivity {
 
     private ListView lvDrops;
     private ImageButton btnHome, btnNext;
-    private String[] drops = {
-            "Catiolanze",
-            "Simbrinza"
-    };
+    private List<String> drops;
     private int selectedPos = -1;  // aktuell ausgewählter Eintrag
 
 
@@ -33,8 +39,46 @@ public class DropListActivity extends BaseDrawerActivity {
                 findViewById(R.id.content_frame),
                 true
         );
+        // Sprache aus SharedPreferences
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String lang = prefs.getString("language", Locale.getDefault().getLanguage());
 
-        lvDrops  = findViewById(R.id.lvDrops);
+        // DB-Instanz holen
+        AppDatabase db = AppDatabase.getInstance(getApplicationContext());
+
+        // Nur einmalig Drops für diese Sprache einfügen
+        List<Medication> existing = db.medicationDao()
+                .findByCategoryAndLanguage("drops", lang);
+        if (existing.isEmpty()) {
+            db.medicationDao().insertAll(
+                    new Medication(
+                            "Catiolanze",
+                            "drops",
+                            lang,
+                            "catiolanze",
+                            "catiolanze_" + lang + ".txt",
+                            "Catiolanze_" + lang.toUpperCase() + ".pdf"
+                    ),
+                    new Medication(
+                            "Simbrinza",
+                            "drops",
+                            lang,
+                            "simbrinza",
+                            "simbrinza_" + lang + ".txt",
+                            "Simbrinza_" + lang.toUpperCase() + ".pdf"
+                    )
+            );
+            Log.d("DB", "Drops für Sprache " + lang + " eingefügt");
+        }
+
+        // 4. Nur aktuelle Sprache laden
+        List<Medication> meds = db.medicationDao()
+                .findByCategoryAndLanguage("drops", lang);
+        drops = new ArrayList<>();
+        for (Medication m : meds) {
+            drops.add(m.getName());
+        }
+            lvDrops  = findViewById(R.id.lvDrops);
         btnHome  = findViewById(R.id.btnHome);
         btnNext  = findViewById(R.id.btnNext);
 
@@ -79,7 +123,7 @@ public class DropListActivity extends BaseDrawerActivity {
         btnNext.setOnClickListener(v -> {
             if (selectedPos >= 0) {         // Nur weiter wenn ein Medikament ausgewählt ist
                 Intent intent = new Intent(DropListActivity.this, DropDetailActivity.class);
-                intent.putExtra("drop_name", drops[selectedPos]);
+                intent.putExtra("drop_name", drops.get(selectedPos));
                 startActivity(intent);
             }
         });
