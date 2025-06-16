@@ -86,7 +86,11 @@ public class TTSService extends Service {
             tts.stop();
         }
     }
-
+    public void setSpeechRate(float rate) {
+        if (tts != null && ttsReady) {
+            tts.setSpeechRate(rate);
+        }
+    }
     public void setLanguage(String languageCode) {
         Locale locale = new Locale(languageCode);
         int result = tts.setLanguage(locale);

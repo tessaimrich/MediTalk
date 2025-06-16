@@ -207,23 +207,26 @@
                 android:layout_height="1dp"
                 android:background="@color/secondary_text_gray" />
 
-            <!-- HomeButton-Zeile -->
-            <LinearLayout
+            <!--  Menu-Bar mit Home und Weiter -->
+            <RelativeLayout
+                android:id="@+id/bottomBar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center"
+                android:layout_height="56dp"
+                android:layout_alignParentBottom="true"
+                android:background="@color/white"
                 android:padding="8dp">
 
-                <ImageButton
-                    android:id="@+id/btnHome"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/home_button_"
-                    android:background="@null"
-                    android:contentDescription="@string/home"
-                    android:scaleType="fitCenter" />
-            </LinearLayout>
+
+            <!-- Home-Button -->
+            <ImageButton
+                android:id="@+id/btnHome"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/home_button_"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/home"
+                android:layout_centerHorizontal="true"/>
+            </RelativeLayout>
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>

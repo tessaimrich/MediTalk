@@ -125,6 +125,11 @@ public class PillDetailActivity extends BaseDrawerActivity {
             // sofort die aktuelle Sprache setzen
             SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
             ttsService.setLanguage(prefs.getString("selected_language", "en"));
+
+            SharedPreferences speechPrefs =
+                    getSharedPreferences("tts_prefs", MODE_PRIVATE);
+            float savedRate = speechPrefs.getFloat("speech_rate", 1.0f);
+            ttsService.setSpeechRate(savedRate);
         }
         @Override public void onServiceDisconnected(ComponentName name) {
             ttsService = null;
