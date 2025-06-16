@@ -3,6 +3,7 @@ package at.fhj.tessaimrich;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,7 +21,12 @@ public class InhalationDetailActivity extends BaseDrawerActivity {
                 findViewById(R.id.content_frame),
                 true
         );
+        // Gewählten Inhalations-Namen auslesen
+        String inhalationName = getIntent().getStringExtra("inhalation_name");
 
+        // Überschrift-TextView setzen
+        ((TextView) findViewById(R.id.tvInhalationName))
+                .setText(inhalationName != null ? inhalationName : "");
 
         ImageButton btnHome = findViewById(R.id.btnHome);
         if (btnHome != null) {
