@@ -1,8 +1,10 @@
 package at.fhj.tessaimrich;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +18,7 @@ import at.fhj.tessaimrich.data.AppDatabase;
 import at.fhj.tessaimrich.data.Medication;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class CreamListActivity extends BaseDrawerActivity {
 
@@ -37,26 +40,32 @@ public class CreamListActivity extends BaseDrawerActivity {
                 true
         );
 
+        //Sprache ermitteln
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String lang = prefs.getString("language", Locale.getDefault().getLanguage());
+
+        // DB-Instanz
         AppDatabase db = AppDatabase.getInstance(getApplicationContext());
 
-        if (db.medicationDao().findByCategory("cream").isEmpty()) {
+        // Nur EINEN Cream-Eintrag pro Sprache einfügen
+        List<Medication> existing = db.medicationDao()
+                .findByCategoryAndLanguage("cream", lang);
+        if (existing.isEmpty()) {
             db.medicationDao().insertAll(
-                    // Englisch
-                    new Medication("Protopic", "cream", "en", "protopic", "protopic_en.txt", "Protopic_EN.pdf"),
-                    // Slowenisch
-                    new Medication("Protopic", "cream", "sl", "protopic", "protopic_sl.txt", "Protopic_SL.pdf"),
-                    // Kroatisch
-                    new Medication("Protopic", "cream", "hr", "protopic", "protopic_hr.txt", "Protopic_HR.pdf"),
-                    // Italienisch
-                    new Medication("Protopic", "cream", "it", "protopic", "protopic_it.txt", "Protopic_IT.pdf"),
-                    // Spanisch
-                    new Medication("Protopic", "cream", "es", "protopic", "protopic_es.txt", "Protopic_ES.pdf"),
-                    // Französisch
-                    new Medication("Protopic", "cream", "fr", "protopic", "protopic_fr.txt", "Protopic_FR.pdf")
+                    new Medication(
+                            "Protopic",            // Name
+                            "cream",               // Kategorie
+                            lang,                  // Sprache
+                            "protopic",            // resourceKey
+                            "protopic_" + lang + ".txt",
+                            "Protopic_" + lang.toUpperCase() + ".pdf"
+                    )
             );
-            Log.d("DB", "Test-Creams wurden eingefügt");
+            Log.d("DB", "Cream Protopic für Sprache " + lang + " eingefügt");
         }
-        List<Medication> meds = db.medicationDao().findByCategory("cream");
+        List<Medication> meds = db.medicationDao()
+                .findByCategoryAndLanguage("cream", lang);
+
         creams = new ArrayList<>();
         for (Medication m : meds) {
             creams.add(m.getName());

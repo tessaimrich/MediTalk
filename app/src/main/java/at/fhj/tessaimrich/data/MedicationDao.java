@@ -45,4 +45,6 @@ public interface MedicationDao {
     // Exakte Namenssuche synchron
     @Query("SELECT * FROM medications WHERE name = :name LIMIT 1")
     Medication findByName(String name);
+    @Query("SELECT * FROM medications WHERE category = :category AND language = :lang")
+    List<Medication> findByCategoryAndLanguage(String category, String lang);
 }
