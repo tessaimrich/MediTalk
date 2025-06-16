@@ -1,8 +1,15 @@
 package at.fhj.tessaimrich;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
 import android.widget.ImageButton;
 import android.widget.RadioGroup;
@@ -10,12 +17,19 @@ import android.widget.RadioGroup;
 import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.widget.Switch;
 
 
 public class SettingsActivity extends BaseDrawerActivity {
     private SharedPreferences prefs;
     private static final String PREFS_NAME = "tts_prefs";
     private static final String KEY_SPEECH_RATE = "speech_rate";
+    private static final String KEY_AUTO_BRIGHTNESS = "auto_brightness";
+    private static final int REQUEST_CODE_WRITE_SETTINGS = 1001;
+    private Switch brightnessSwitch;
+    private SensorManager sensorManager;
+    private Sensor lightSensor;
+    private SensorEventListener lightListener;
     private TTSService ttsService;
     private boolean isServiceBound = false;
     private TextToSpeech tts;
@@ -37,6 +51,26 @@ public class SettingsActivity extends BaseDrawerActivity {
 
         setupSpeechRateControls();
         setupHomeButton();
+
+        if (!Settings.System.canWrite(this)) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
+                    Uri.parse("package:" + getPackageName()));
+            startActivityForResult(intent, REQUEST_CODE_WRITE_SETTINGS);
+        }
+
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+
+        brightnessSwitch = findViewById(R.id.brightnessSwitch);
+        boolean isAuto = prefs.getBoolean(KEY_AUTO_BRIGHTNESS, false);
+        brightnessSwitch.setChecked(isAuto);
+        setupLightListener();
+        applyAutoBrightness(isAuto);
+
+        brightnessSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            prefs.edit().putBoolean(KEY_AUTO_BRIGHTNESS, isChecked).apply();
+            applyAutoBrightness(isChecked);
+        });
     }
     private void setupSpeechRateControls() {
         // statt R.id.rgSpeechRate:
@@ -102,6 +136,47 @@ public class SettingsActivity extends BaseDrawerActivity {
             unbindService(settingsServiceConnection);
             isServiceBound = false;
         }
+    }
+    private void setupLightListener() {
+        lightListener = new SensorEventListener() {
+            @Override
+            public void onSensorChanged(SensorEvent event) {
+                float lux = event.values[0];
+                int brightness = (int) (Math.min(lux, 1000) / 1000 * 255);
+                Settings.System.putInt(getContentResolver(),
+                        Settings.System.SCREEN_BRIGHTNESS, brightness);
+            }
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int accuracy) { }
+        };
+    }
+    private void applyAutoBrightness(boolean enable) {
+        if (enable) {
+            Settings.System.putInt(getContentResolver(),
+                    Settings.System.SCREEN_BRIGHTNESS_MODE,
+                    Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC);
+            sensorManager.registerListener(lightListener,
+                    lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        } else {
+            Settings.System.putInt(getContentResolver(),
+                    Settings.System.SCREEN_BRIGHTNESS_MODE,
+                    Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+            sensorManager.unregisterListener(lightListener);
+        }
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (brightnessSwitch.isChecked()) {
+            sensorManager.registerListener(lightListener,
+                    lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(lightListener);
     }
 
 }
