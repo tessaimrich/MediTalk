@@ -30,11 +30,11 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawer);
 
-        // 1) Toolbar als ActionBar setzen
+        //Toolbar als ActionBar setzen
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // 2) DrawerToggle (Hamburger-Icon) koppeln
+        //DrawerToggle (Hamburger-Icon) koppeln
         drawer = findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(
                 this,
@@ -46,7 +46,7 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        // 3) NavigationItem‐Listener setzen
+        //NavigationItem‐Listener setzen
         NavigationView navView = findViewById(R.id.nav_view);
         navView.setNavigationItemSelectedListener(this);
     }
