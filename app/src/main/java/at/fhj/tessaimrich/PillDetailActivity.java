@@ -8,6 +8,7 @@ import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -85,8 +86,8 @@ public class PillDetailActivity extends BaseDrawerActivity {
         btnPdf = findViewById(R.id.btnPdf1);
         btnPdf.setOnClickListener(v -> {
             //gewählte Sprache aus SharedPreferences holen
-            SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
-            String lang = prefs.getString("selected_language", "en");
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            String lang = prefs.getString("language", Locale.getDefault().getLanguage());
 
             // Jetzt gezielt nach Name+Sprache fragen
             Medication med = AppDatabase
