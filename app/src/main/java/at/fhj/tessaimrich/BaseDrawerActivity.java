@@ -64,8 +64,8 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
             TextView tvLanguage = headerView.findViewById(R.id.tvLanguage);
 
             if (tvLanguage != null) {
-                SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
-                String language = prefs.getString("selected_language", "Deutsch");
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                String language = prefs.getString("language", "Deutsch");
                 tvLanguage.setText("Sprache: " + language);
             }
         }
@@ -118,8 +118,8 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
                     String selectedLabel = languages[which];  // nur zur Anzeige
 
                     // ISO-Sprachcode speichern
-                    SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
-                    prefs.edit().putString("selected_language", selectedCode).apply();
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                    prefs.edit().putString("language", selectedCode).apply();
 
                     try {
                         java.lang.reflect.Field field = BaseDrawerActivity.this.getClass().getDeclaredField("ttsService");

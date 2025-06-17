@@ -122,18 +122,18 @@ public class PillDetailActivity extends BaseDrawerActivity {
      * Lädt den TTS-Text aus DB + Assets
      */
     private String loadTtsTextForPill(String name) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String lang = prefs.getString("language", Locale.getDefault().getLanguage());
+
         Medication med = AppDatabase
                 .getInstance(getApplicationContext())
                 .medicationDao()
-                .findByNameAndLanguage(name,
-                        getSharedPreferences("app_settings", MODE_PRIVATE)
-                                .getString("selected_language", "en")
-                );
+                .findByNameAndLanguage(name,lang);
         if (med == null) return null;
 
         String key      = med.getTtsText();                  // z.B. "cymbalta"
-        String lang     = med.getLanguage();                 // z.B. "fr"
-        String requested= key + "_" + lang + ".txt";         // "cymbalta_fr.txt"
+        String filelang     = med.getLanguage();                 // z.B. "fr"
+        String requested= key + "_" + filelang + ".txt";         // "cymbalta_fr.txt"
         String file     = resolveAssetFilename("tts/pills", requested);
         if (file == null) return null;
 
