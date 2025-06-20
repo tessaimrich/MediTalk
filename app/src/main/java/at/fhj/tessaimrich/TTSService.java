@@ -47,10 +47,12 @@ public class TTSService extends Service {
                         public void onStart(String utteranceId) {
                             if (listener != null) listener.onSpeakStart();
                         }
+
                         @Override
                         public void onDone(String utteranceId) {
                             if (listener != null) listener.onSpeakDone();
                         }
+
                         @Override
                         public void onError(String utteranceId) {
                             if (listener != null) listener.onSpeakError();
@@ -77,6 +79,7 @@ public class TTSService extends Service {
         this.listener = listener;
     }
 
+
     public void speak(String text) {
         if (!ttsReady || tts == null || text == null || text.isEmpty()) return;
 
@@ -88,17 +91,34 @@ public class TTSService extends Service {
         }
     }
 
+
+    public void useEarpieceOutput() {
+        if (audioManager != null) {
+            audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);  //geändert, weil MODE_IN_CALL funktioniert bei manchen Smartphones nicht
+            audioManager.setSpeakerphoneOn(false);
+        }
+    }
+    public void useSpeakerOutput() {
+        if (audioManager != null) {
+            audioManager.setMode(AudioManager.MODE_NORMAL);
+            audioManager.setSpeakerphoneOn(true);
+        }
+    }
+
+
     public void stop() {
         if (tts != null && tts.isSpeaking()) {
             tts.stop();
             useSpeakerOutput(); //  für Näherungssensor: nach stop() wird wieder auf Normal-Modus geschaltet
         }
     }
+
     public void setSpeechRate(float rate) {
         if (tts != null && ttsReady) {
             tts.setSpeechRate(rate);
         }
     }
+
     public void setLanguage(String languageCode) {
         Locale locale = new Locale(languageCode);
         int result = tts.setLanguage(locale);
@@ -135,22 +155,16 @@ public class TTSService extends Service {
 
     public interface TTSListener {
         void onTTSInitialized(boolean isReady);
+
         void onSpeakStart();
+
         void onSpeakDone();
+
         void onSpeakError();
     }
 
 
     //Methoden um zwischen Lautsprecher und Ohrhörer zu wechseln:
-    public void useEarpieceOutput() {
-        audioManager.setMode(AudioManager.MODE_IN_CALL);
-        audioManager.setSpeakerphoneOn(false);
-    }
-    public void useSpeakerOutput() {
-        audioManager.setMode(AudioManager.MODE_NORMAL);
-        audioManager.setSpeakerphoneOn(true);
-    }
-
 
 
 
