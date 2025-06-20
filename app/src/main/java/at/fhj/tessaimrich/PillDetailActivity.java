@@ -32,6 +32,13 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Locale;
 
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+
+
+
 public class PillDetailActivity extends BaseDrawerActivity {
 
     private TTSService ttsService;
@@ -39,6 +46,9 @@ public class PillDetailActivity extends BaseDrawerActivity {
     private ImageButton btnPdf;
     private String pillName;
     private boolean isSpeaking = false;
+    private SensorManager sensorManager;
+    private Sensor proximitySensor;
+    private SensorEventListener proximityListener;
 
 
     @Override
@@ -116,7 +126,45 @@ public class PillDetailActivity extends BaseDrawerActivity {
         Intent intent = new Intent(this, TTSService.class);
         startService(intent);
         bindService(intent, serviceConnection, BIND_AUTO_CREATE);
+
+
+        //für Näherungssensor:
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        if (proximitySensor != null) {
+            proximityListener = new SensorEventListener() {
+                @Override
+                public void onSensorChanged(SensorEvent event) {
+                    float distance = event.values[0];
+                    if (ttsService != null) {
+                        if (distance < proximitySensor.getMaximumRange()) {
+                            // Handy am Ohr
+                            ttsService.useEarpieceOutput();
+                        } else {
+                            // Handy weiter weg
+                            ttsService.useSpeakerOutput();
+                        }
+                    }
+                }
+                @Override
+                public void onAccuracyChanged(Sensor sensor, int accuracy) {
+                }
+            };
+            sensorManager.registerListener(proximityListener, proximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+
+
+
+
+
     }
+
+
+
+
+
+
+
 
     /**
      * Lädt den TTS-Text aus DB + Assets
@@ -250,9 +298,15 @@ public class PillDetailActivity extends BaseDrawerActivity {
         }
     };
 
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (ttsService != null) unbindService(serviceConnection);
+        if (ttsService != null) unbindService(serviceConnection);    //trennt die Verbindung zum TTSService
+        if (sensorManager != null && proximityListener != null) {    //deaktiviert den Näherungssensor, um unnötige Hintergrundaktivität zu vermeiden
+            sensorManager.unregisterListener(proximityListener);
+        }
     }
+
+
 }
