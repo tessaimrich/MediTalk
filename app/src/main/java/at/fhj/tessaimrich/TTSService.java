@@ -8,18 +8,23 @@ import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
-
 import java.util.Locale;
+import android.media.AudioManager;
+
+
 
 public class TTSService extends Service {
     private TextToSpeech tts;
     private boolean ttsReady = false;
     private TTSListener listener;
     private final IBinder binder = new LocalBinder();
+    private AudioManager audioManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         tts = new TextToSpeech(this, status -> {
             if (status == TextToSpeech.SUCCESS) {
@@ -131,4 +136,19 @@ public class TTSService extends Service {
         void onSpeakDone();
         void onSpeakError();
     }
+
+
+    //Methoden um zwischen Lautsprecher und Ohrhörer zu wechseln:
+    public void useEarpieceOutput() {
+        audioManager.setMode(AudioManager.MODE_IN_CALL);
+        audioManager.setSpeakerphoneOn(false);
+    }
+    public void useSpeakerOutput() {
+        audioManager.setMode(AudioManager.MODE_NORMAL);
+        audioManager.setSpeakerphoneOn(true);
+    }
+
+
+
+
 }
