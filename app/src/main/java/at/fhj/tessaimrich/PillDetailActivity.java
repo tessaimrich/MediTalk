@@ -140,9 +140,11 @@ public class PillDetailActivity extends BaseDrawerActivity {
                         if (distance < proximitySensor.getMaximumRange()) {
                             // Handy am Ohr
                             ttsService.useEarpieceOutput();
+                            Toast.makeText(PillDetailActivity.this, "Ohr erkannt → Earpiece", Toast.LENGTH_SHORT).show();
                         } else {
                             // Handy weiter weg
                             ttsService.useSpeakerOutput();
+                            Toast.makeText(PillDetailActivity.this, "Lautsprecher", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
