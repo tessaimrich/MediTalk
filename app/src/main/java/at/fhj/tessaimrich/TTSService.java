@@ -1,6 +1,7 @@
 package at.fhj.tessaimrich;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Binder;
@@ -19,6 +20,7 @@ public class TTSService extends Service {
     private TTSListener listener;
     private final IBinder binder = new LocalBinder();
     private AudioManager audioManager;
+
 
     @Override
     public void onCreate() {
@@ -89,6 +91,7 @@ public class TTSService extends Service {
     public void stop() {
         if (tts != null && tts.isSpeaking()) {
             tts.stop();
+            useSpeakerOutput(); //  für Näherungssensor: nach stop() wird wieder auf Normal-Modus geschaltet
         }
     }
     public void setSpeechRate(float rate) {
