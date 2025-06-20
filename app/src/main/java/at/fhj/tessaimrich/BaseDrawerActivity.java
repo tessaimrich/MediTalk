@@ -121,32 +121,19 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
                     prefs.edit().putString("language", selectedCode).apply();
 
-                    try {
-                        java.lang.reflect.Field field = BaseDrawerActivity.this.getClass().getDeclaredField("ttsService");
-                        field.setAccessible(true);
-                        Object ttsObj = field.get(BaseDrawerActivity.this);
-                        if (ttsObj instanceof TTSService) {
-                            TTSService service = (TTSService) ttsObj;
-                            if (service.isTTSReady()) {
-                                service.setLanguage(selectedCode);
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    if (ttsService != null && ttsService.isTTSReady()) {
+                        ttsService.setLanguage(selectedCode);
                     }
 
+                    Toast.makeText(this,
+                            "Sprache geändert: " + selectedLabel,
+                            Toast.LENGTH_SHORT).show();
 
-                    Toast.makeText(this, "Sprache geändert: " + selectedLabel, Toast.LENGTH_SHORT).show();
+                    //Activity neu starten, damit UI (Header, PillList etc.) aktualisiert wird
                     recreate();
-                    // UI aktualisieren (optional)
-                    updateLanguageUI(selectedLabel);
-
-                    // Header neu laden
-                    onResume();
                 })
                 .show();
     }
-
 
     // leere Methode
     protected void updateLanguageUI(String newLanguage) {

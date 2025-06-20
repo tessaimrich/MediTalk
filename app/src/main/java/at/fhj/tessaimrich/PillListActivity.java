@@ -62,7 +62,7 @@ public class PillListActivity extends BaseDrawerActivity {
             Log.d("DB", "Pill-Testdaten für Sprache " + lang + " eingefügt");
         }
 
-        // 4) Alle Pills dieser Sprache aus DB lesen
+        //Alle Pills dieser Sprache aus DB lesen
         List<Medication> meds = db.medicationDao()
                 .findByCategoryAndLanguage("Pills", lang);
 

@@ -13,6 +13,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -21,8 +22,7 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String PREFS_NAME   = "app_settings";
-    private static final String KEY_LANGUAGE = "selected_language";
+    private static final String KEY_LANGUAGE = "language";
 
     // Wird gesetzt, wenn der Nutzer eine Flagge wählt
     private String selectedLanguage = null;
@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         // Wenn bereits eine Sprache gespeichert ist, direkt zur CategoryActivity und MainActivity beenden
 
 
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 /* ZUM TESTEN AUSKOMMENTIERT:
         if (prefs.contains(KEY_LANGUAGE)) {
             startActivity(new Intent(this, CategoryActivity.class));
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
             // Sprachname speichern
             prefs.edit()
-                    .putString(KEY_LANGUAGE, selectedLanguage)
+                    .putString("language", selectedLanguage)
                     .apply();
             // zur nächsten Activity, Sprache per Intent mitgeben
             Intent intent = new Intent(MainActivity.this, CategoryActivity.class);

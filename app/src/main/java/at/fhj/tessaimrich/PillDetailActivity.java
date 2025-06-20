@@ -206,13 +206,13 @@ public class PillDetailActivity extends BaseDrawerActivity {
         try {
             String[] files = getAssets().list(dir);
             if (files != null) {
-                // 1) exakter case-insensitive Match
+                //exakter case-insensitive Match
                 for (String f : files) {
                     if (f.equalsIgnoreCase(requestedName)) {
                         return f;
                     }
                 }
-                // 2) Fallback: Matching auf Suffix (z.B. "_EN.pdf" oder "_de.txt")
+                //Fallback: Matching auf Suffix (z.B. "_EN.pdf" oder "_de.txt")
                 String lowerReq = requestedName.toLowerCase(Locale.ROOT);
                 String suffix   = lowerReq.substring(lowerReq.lastIndexOf('_'));
                 for (String f : files) {
@@ -234,9 +234,10 @@ public class PillDetailActivity extends BaseDrawerActivity {
         public void onServiceConnected(ComponentName name, IBinder binder) {
             ttsService = ((TTSService.LocalBinder) binder).getService();
             // sofort die aktuelle Sprache setzen
-            SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
-            ttsService.setLanguage(prefs.getString("selected_language", "en"));
-
+            SharedPreferences prefs = PreferenceManager
+                    .getDefaultSharedPreferences(PillDetailActivity.this);
+            String lang = prefs.getString("language", Locale.getDefault().getLanguage());
+            ttsService.setLanguage(lang);
             SharedPreferences speechPrefs =
                     getSharedPreferences("tts_prefs", MODE_PRIVATE);
             float savedRate = speechPrefs.getFloat("speech_rate", 1.0f);
