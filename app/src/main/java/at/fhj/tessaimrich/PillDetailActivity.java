@@ -151,8 +151,9 @@ public class PillDetailActivity extends BaseDrawerActivity {
                     if (ttsService != null && audioManager != null) {
                         if (distance < proximitySensor.getMaximumRange()) {
                             if (!isVolumeAdjusted) {
-                                int minVolume = audioManager.getStreamMinVolume(AudioManager.STREAM_MUSIC);
-                                int reducedVolume = minVolume + 1;
+                                int minVolume = audioManager.getStreamMinVolume(AudioManager.STREAM_MUSIC);    //fragt den minimal möglichen Wert ab
+                                int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);    //fragt den maximal möglichen Wert ab
+                                int reducedVolume = Math.max(1, maxVolume / 3);  // ca. 30 % der Maximallautstärke     //Math.max(1, ...) sorgt dafür, dass die Lautstärke nie auf 0 fällt.
                                 audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, reducedVolume, 0);
                                 isVolumeAdjusted = true;
                                 Toast.makeText(PillDetailActivity.this, "Ohr erkannt → Lautstärke reduziert", Toast.LENGTH_SHORT).show();
