@@ -320,6 +320,14 @@ public class PillDetailActivity extends BaseDrawerActivity {
     };
 
 
+    /**
+     * Wird aufgerufen, wenn die PillDetailActivity endgültig beendet wird.
+     * Diese Methode stellt sicher, dass alle laufenden Komponenten ordnungsgemäß
+     *  * gestoppt und Systemressourcen freigegeben werden:
+     *  *   - Trennt die Verbindung zum TTSService
+     *  *   - Deaktiviert den Näherungssensor
+     *  *   - Stellt die ursprüngliche Lautstärke wieder her, falls sie zuvor durch Annäherung reduziert wurde.
+     */
     @Override
     protected void onDestroy() {    //was passiert, wenn die Activity endgültig beendet wird:
         super.onDestroy();
