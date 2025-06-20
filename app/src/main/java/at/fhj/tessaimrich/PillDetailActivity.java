@@ -37,6 +37,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
+import android.media.AudioManager;
+
 
 
 public class PillDetailActivity extends BaseDrawerActivity {
@@ -46,9 +48,15 @@ public class PillDetailActivity extends BaseDrawerActivity {
     private ImageButton btnPdf;
     private String pillName;
     private boolean isSpeaking = false;
+    // für Näherungssensor:
     private SensorManager sensorManager;
     private Sensor proximitySensor;
     private SensorEventListener proximityListener;
+    // AudioManager für Lautstärkesteuerung:
+    private AudioManager audioManager;
+    private int originalVolume;
+    private boolean isVolumeAdjusted = false;
+
 
 
     @Override
@@ -127,8 +135,12 @@ public class PillDetailActivity extends BaseDrawerActivity {
         startService(intent);
         bindService(intent, serviceConnection, BIND_AUTO_CREATE);
 
+     //für Näherungssensor:
+        //AudioManager initialisieren und Lautstärke merken
+        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        originalVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
 
-        //für Näherungssensor:
+        // Näherungs-Sensor einrichten
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         if (proximitySensor != null) {
@@ -136,15 +148,21 @@ public class PillDetailActivity extends BaseDrawerActivity {
                 @Override
                 public void onSensorChanged(SensorEvent event) {
                     float distance = event.values[0];
-                    if (ttsService != null) {
+                    if (ttsService != null && audioManager != null) {
                         if (distance < proximitySensor.getMaximumRange()) {
-                            // Handy am Ohr
-                            ttsService.useEarpieceOutput();
-                            Toast.makeText(PillDetailActivity.this, "Ohr erkannt → Earpiece", Toast.LENGTH_SHORT).show();
+                            if (!isVolumeAdjusted) {
+                                int minVolume = audioManager.getStreamMinVolume(AudioManager.STREAM_MUSIC);
+                                int reducedVolume = minVolume + 1;
+                                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, reducedVolume, 0);
+                                isVolumeAdjusted = true;
+                                Toast.makeText(PillDetailActivity.this, "Ohr erkannt → Lautstärke reduziert", Toast.LENGTH_SHORT).show();
+                            }
                         } else {
-                            // Handy weiter weg
-                            ttsService.useSpeakerOutput();
-                            Toast.makeText(PillDetailActivity.this, "Lautsprecher", Toast.LENGTH_SHORT).show();
+                            if (isVolumeAdjusted) {
+                                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, originalVolume, 0);
+                                isVolumeAdjusted = false;
+                                Toast.makeText(PillDetailActivity.this, "Lautsprecher", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
                 }
@@ -155,13 +173,7 @@ public class PillDetailActivity extends BaseDrawerActivity {
             sensorManager.registerListener(proximityListener, proximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
 
-
-
-
-
     }
-
-
 
 
 
@@ -302,12 +314,16 @@ public class PillDetailActivity extends BaseDrawerActivity {
 
 
     @Override
-    protected void onDestroy() {
+    protected void onDestroy() {    //was passiert, wenn die Activity endgültig beendet wird:
         super.onDestroy();
         if (ttsService != null) unbindService(serviceConnection);    //trennt die Verbindung zum TTSService
         if (sensorManager != null && proximityListener != null) {    //deaktiviert den Näherungssensor, um unnötige Hintergrundaktivität zu vermeiden
             sensorManager.unregisterListener(proximityListener);
         }
+        if (audioManager != null && isVolumeAdjusted) {              // Lautstärke zurücksetzen, falls wegen Näherung verändert
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, originalVolume, 0);
+        }
+
     }
 
 
