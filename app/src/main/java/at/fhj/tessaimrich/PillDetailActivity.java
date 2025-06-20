@@ -139,7 +139,14 @@ public class PillDetailActivity extends BaseDrawerActivity {
         //AudioManager initialisieren und Lautstärke merken
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         originalVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-
+            // Sicherstellen, dass Ausgangslautstärke nicht zu leise ist:
+            originalVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+            int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+            if (originalVolume < maxVolume / 2) {
+                originalVolume = maxVolume - 1;
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, originalVolume, 0);
+                Toast.makeText(this, "Basis-Lautstärke erhöht für optimale Sprachausgabe", Toast.LENGTH_SHORT).show();
+            }
         // Näherungs-Sensor einrichten
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
@@ -178,8 +185,7 @@ public class PillDetailActivity extends BaseDrawerActivity {
 
 
 
-
-
+//METHODEN
 
     /**
      * Lädt den TTS-Text aus DB + Assets
