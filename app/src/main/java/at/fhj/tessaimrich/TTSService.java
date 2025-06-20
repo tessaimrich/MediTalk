@@ -19,14 +19,12 @@ public class TTSService extends Service {
     private boolean ttsReady = false;
     private TTSListener listener;
     private final IBinder binder = new LocalBinder();
-    private AudioManager audioManager;
+
 
 
     @Override
     public void onCreate() {
         super.onCreate();
-
-        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         tts = new TextToSpeech(this, status -> {
             if (status == TextToSpeech.SUCCESS) {
@@ -92,24 +90,10 @@ public class TTSService extends Service {
     }
 
 
-    public void useEarpieceOutput() {
-        if (audioManager != null) {
-            audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);  //geändert, weil MODE_IN_CALL funktioniert bei manchen Smartphones nicht
-            audioManager.setSpeakerphoneOn(false);
-        }
-    }
-    public void useSpeakerOutput() {
-        if (audioManager != null) {
-            audioManager.setMode(AudioManager.MODE_NORMAL);
-            audioManager.setSpeakerphoneOn(true);
-        }
-    }
-
 
     public void stop() {
         if (tts != null && tts.isSpeaking()) {
             tts.stop();
-            useSpeakerOutput(); //  für Näherungssensor: nach stop() wird wieder auf Normal-Modus geschaltet
         }
     }
 
@@ -162,10 +146,5 @@ public class TTSService extends Service {
 
         void onSpeakError();
     }
-
-
-    //Methoden um zwischen Lautsprecher und Ohrhörer zu wechseln:
-
-
 
 }
