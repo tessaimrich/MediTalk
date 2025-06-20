@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:text="MediTalk"
         android:textSize="24sp"
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/darker_gray"
         android:textStyle="bold" />
 
     <TextView
@@ -23,6 +23,6 @@
         android:layout_height="wrap_content"
         android:text="Sprache: Englisch"
         android:textSize="14sp"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/darker_gray" />
 
 </LinearLayout>
