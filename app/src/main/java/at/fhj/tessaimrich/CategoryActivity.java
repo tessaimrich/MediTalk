@@ -16,13 +16,16 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 
+import java.util.List;
+
 import at.fhj.tessaimrich.data.AppDatabase;
 import at.fhj.tessaimrich.data.Medication;
 
 public class CategoryActivity extends BaseDrawerActivity {
 
     private MaterialAutoCompleteTextView searchInput;
-     private AppDatabase db;  // Room-Datenbank
+    private AppDatabase db;  // Room-Datenbank
+    private String lang;   // aktuell gewählte Sprache
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,15 +37,17 @@ public class CategoryActivity extends BaseDrawerActivity {
     );
 
         // Room-Instanz holen (Singleton)
-
         db = AppDatabase.getInstance(getApplicationContext());
 
+        // Sprache lesen (die in MainActivity gesetzt)
+        SharedPreferences prefs = getSharedPreferences("MediTalkPrefs", MODE_PRIVATE);
+        lang = prefs.getString("language", "en");   // Default: Englisch
 
         // Suchfeld: Enter/Search löst Suche aus
         searchInput = findViewById(R.id.search_input);
-
+        searchInput.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         searchInput.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE) {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 String input = searchInput.getText().toString().trim();
                 if (!input.isEmpty()) {
                     performSearch(input);
@@ -85,43 +90,43 @@ public class CategoryActivity extends BaseDrawerActivity {
         });
 
     }
+
+
+
+
+//METHODEN
+
     /**
      * Führt die Suche in der Room-DB durch.
      * Datenzugriff läuft in einem Hintergrund-Thread, damit die UI nicht blockiert wird
      * Bei Fund: Start der passenden Detail-Activity, ansonsten Toast.
      */
-
     private void performSearch(String name) {
+        // das DAO in einem Background-Thread aufrufen
         new Thread(() -> {
-            try {
-                Medication med = db.medicationDao().findByName(name);
-
-                runOnUiThread(() -> {
-                    if (med == null) {
-                        Toast.makeText(this, "Nicht gefunden: " + name, Toast.LENGTH_SHORT).show();
-                        Log.w("Search", "Kein Medikament gefunden für: " + name);
-                    } else {
-                        Class<?> target;
-                        switch (med.getCategory()) {
-                            case "PILL":       target = PillDetailActivity.class;       break;
-                            case "CREAM":      target = CreamDetailActivity.class;      break;
-                            case "DROP":       target = DropDetailActivity.class;       break;
-                            case "INHALATION": target = InhalationDetailActivity.class; break;
-                            default:
-                                Toast.makeText(this, "Unbekannter Typ: " + med.getCategory(), Toast.LENGTH_SHORT).show();
-                                return;
-                        }
-                        Intent intent = new Intent(this, target);
-                        intent.putExtra("pill_name", med.getName()); // oder "item_id" wenn gewünscht
-                        startActivity(intent);
+            Medication med = db.medicationDao().findByNameAndLanguage(name, lang);
+            runOnUiThread(() -> {
+                if (med == null) {
+                    Toast.makeText(this, "Nicht gefunden: " + name, Toast.LENGTH_SHORT).show();
+                } else {
+                    // DetailActivity anhand der Kategorie wählen
+                    Class<?> target;
+                    switch (med.getCategory().toLowerCase()) {
+                        case "pill":       target = PillDetailActivity.class;       break;
+                        case "cream":      target = CreamDetailActivity.class;      break;
+                        case "drop":       target = DropDetailActivity.class;       break;
+                        case "inhalation": target = InhalationDetailActivity.class; break;
+                        default:
+                            Toast.makeText(this, "Unbekannter Typ: " + med.getCategory(), Toast.LENGTH_SHORT).show();
+                            return;
                     }
-                });
-            } catch (Exception e) {
-                Log.e("Search", "Fehler bei performSearch(): ", e);
-                runOnUiThread(() ->
-                        Toast.makeText(this, "Fehler bei der Suche", Toast.LENGTH_SHORT).show()
-                );
-            }
+
+                    // Intent: ID mitgeben (statt Name)
+                    Intent intent = new Intent(this, target);
+                    intent.putExtra("med_id", med.getId());
+                    startActivity(intent);
+                }
+            });
         }).start();
 
     }

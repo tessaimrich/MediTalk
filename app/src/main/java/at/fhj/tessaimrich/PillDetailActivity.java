@@ -68,9 +68,22 @@ public class PillDetailActivity extends BaseDrawerActivity {
                 true
         );
 
-        // Pillenname holen und anzeigen
-        pillName = getIntent().getStringExtra("pill_name");
-        ((TextView) findViewById(R.id.tvPillName)).setText(pillName != null ? pillName : "");
+        // med_id holen
+        int medId = getIntent().getIntExtra("med_id", -1);
+        if (medId == -1) {
+            finish(); return;
+        }
+        // Medication laden
+        Medication currentMed = AppDatabase
+                .getInstance(this)
+                .medicationDao()
+                .getById(medId);
+        if (currentMed == null) {
+            finish(); return;
+        }
+        // Name anzeigen
+        TextView tvName = findViewById(R.id.tvPillName);
+        tvName.setText(currentMed.getName());
 
 
         // Audio-Button referenzieren
@@ -100,7 +113,17 @@ public class PillDetailActivity extends BaseDrawerActivity {
             }
         });
 
-        // für pdf:
+        // PDF-Button
+        ImageButton btnPdf = findViewById(R.id.btnPdf1);
+        btnPdf.setOnClickListener(v -> {
+            String assetFile = currentMed.getPdfAsset();
+            if (assetFile == null) {
+                Toast.makeText(this, "Keine PDF verfügbar", Toast.LENGTH_SHORT).show();
+            } else {
+                openPdfFromAssets(assetFile);
+            }
+        });
+        /* ALTE VERSION:  für pdf:
         btnPdf = findViewById(R.id.btnPdf1);
         btnPdf.setOnClickListener(v -> {
             //gewählte Sprache aus SharedPreferences holen
@@ -119,7 +142,7 @@ public class PillDetailActivity extends BaseDrawerActivity {
             }
             // PDF öffnen
             openPdfFromAssets(med.getPdfAsset());
-        });
+        });*/
 
 
         findViewById(R.id.btnHome).setOnClickListener(v -> {

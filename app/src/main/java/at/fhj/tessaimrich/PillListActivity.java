@@ -23,12 +23,18 @@ import java.util.Locale;
 import at.fhj.tessaimrich.data.AppDatabase;
 import at.fhj.tessaimrich.data.Medication;
 
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+
 public class PillListActivity extends BaseDrawerActivity {
 
     private ListView lvPills;
     private ImageButton btnHome, btnNext;
-    private List<String> pills;
+    private List<Medication> pillList;
     private int selectedPos = -1;  // aktuell ausgewählter Eintrag
+
 
 
 
@@ -62,29 +68,33 @@ public class PillListActivity extends BaseDrawerActivity {
             Log.d("DB", "Pill-Testdaten für Sprache " + lang + " eingefügt");
         }
 
-        //Alle Pills dieser Sprache aus DB lesen
-        List<Medication> meds = db.medicationDao()
+        // Alle Pills (als Objekte) in pillList laden
+        pillList = db.medicationDao()
                 .findByCategoryAndLanguage("Pills", lang);
-
-        // Namen extrahieren
-        pills = new ArrayList<>();
-        for (Medication m : meds) {
-            pills.add(m.getName());
+        // Dann nur die Namen für den Adapter extrahieren
+        List<String> pillNames = new ArrayList<>();
+        for (Medication m : pillList) {
+            pillNames.add(m.getName());
         }
+
         lvPills  = findViewById(R.id.lvPills);
         btnHome  = findViewById(R.id.btnHome);
         btnNext  = findViewById(R.id.btnNext);
 
+
         // Adapter, der im getView() das ausgewählte Item fettgedruckt macht
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, pills) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_list_item_1,
+                pillNames        // <-- nicht mehr "pills", sondern "pillNames"
+        ) {
             @Override
-            public View getView(int position, View convertView, android.view.ViewGroup parent) {
+            public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
                 TextView tv = view.findViewById(android.R.id.text1);
                 tv.setTextColor(ContextCompat.getColor(getContext(), R.color.med_text_darkgray));
-
                 if (position == selectedPos) {
-                    tv.setTypeface(null, Typeface.BOLD);    // fettgedruckt, wenn ausgewählt
+                    tv.setTypeface(null, Typeface.BOLD);
                 } else {
                     tv.setTypeface(null, Typeface.NORMAL);
                 }
@@ -93,13 +103,14 @@ public class PillListActivity extends BaseDrawerActivity {
         };
         lvPills.setAdapter(adapter);
 
-
-
-        // Tippen auf Medikamentennamen: Auswahl merken
+        // Und direkt **danach** den neuen Item-Click-Listener:
         lvPills.setOnItemClickListener((parent, view, position, id) -> {
-            selectedPos = position;
-            adapter.notifyDataSetChanged();
+            Medication selected = pillList.get(position);
+            Intent i = new Intent(PillListActivity.this, PillDetailActivity.class);
+            i.putExtra("med_id", selected.getId());
+            startActivity(i);
         });
+
 
 
         // Home-Button: zurück zur CategoryActivity
@@ -114,11 +125,17 @@ public class PillListActivity extends BaseDrawerActivity {
 
         // Weiter-Button
         btnNext.setOnClickListener(v -> {
-            if (selectedPos >= 0) {         // Nur weiter wenn ein Medikament ausgewählt ist
+            if (selectedPos >= 0) {
+                Medication sel = pillList.get(selectedPos);
                 Intent intent = new Intent(PillListActivity.this, PillDetailActivity.class);
-                intent.putExtra("pill_name", pills.get(selectedPos));
+                intent.putExtra("med_id", sel.getId());
                 startActivity(intent);
+            } else {
+                Toast.makeText(this, "Bitte ein Medikament auswählen", Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+
+
 }
