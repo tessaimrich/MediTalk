@@ -166,7 +166,12 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
                 })
                 .show();
     }
-
+    /**
+     * Wird aufgerufen, wenn die Activity endgültig beendet wird.
+     * Diese Methode führt erst die Standard-Aufräumarbeiten der Elternklasse aus
+     * und trennt anschließend – falls vorhanden – die Verbindung zum TTSService,
+     * um Hintergrundressourcen freizugeben und Speicherlecks zu vermeiden.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
