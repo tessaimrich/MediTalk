@@ -2,7 +2,6 @@ package at.fhj.tessaimrich;
 
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.net.Uri;
@@ -42,8 +41,6 @@ import android.media.AudioManager;
 
 
 public class PillDetailActivity extends BaseDrawerActivity {
-
-    private TTSService ttsService;
     private ImageButton btnAudio;
     private ImageButton btnPdf;
     private String pillName;
@@ -78,7 +75,7 @@ public class PillDetailActivity extends BaseDrawerActivity {
 
         // Button-Logik: einmal Play, nächstes Mal Stop
         btnAudio.setOnClickListener(v -> {
-            if (ttsService == null || !ttsService.isTTSReady()) {
+            if (this.ttsService == null || !this.ttsService.isTTSReady()) {
                 Toast.makeText(this, "Sprachausgabe nicht bereit", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -128,12 +125,6 @@ public class PillDetailActivity extends BaseDrawerActivity {
             startActivity(intent);
             finish();
         });
-
-
-        // TTS-Service starten und binden
-        Intent intent = new Intent(this, TTSService.class);
-        startService(intent);
-        bindService(intent, serviceConnection, BIND_AUTO_CREATE);
 
      //für Näherungssensor:
         //AudioManager initialisieren und Lautstärke merken
@@ -295,29 +286,10 @@ public class PillDetailActivity extends BaseDrawerActivity {
         }
         return null;
     }
-    /**
-     * Verbindung zum TTSService
-     */
-    private final ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder binder) {
-            ttsService = ((TTSService.LocalBinder) binder).getService();
-            // sofort die aktuelle Sprache setzen
-            SharedPreferences prefs = PreferenceManager
-                    .getDefaultSharedPreferences(PillDetailActivity.this);
-            String lang = prefs.getString("language", Locale.getDefault().getLanguage());
-            ttsService.setLanguage(lang);
-            SharedPreferences speechPrefs =
-                    getSharedPreferences("tts_prefs", MODE_PRIVATE);
-            float savedRate = speechPrefs.getFloat("speech_rate", 1.0f);
-            ttsService.setSpeechRate(savedRate);
-        }
 
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            ttsService = null;
-        }
-    };
+
+
+
 
 
     /**
@@ -331,13 +303,7 @@ public class PillDetailActivity extends BaseDrawerActivity {
     @Override
     protected void onDestroy() {    //was passiert, wenn die Activity endgültig beendet wird:
         super.onDestroy();
-        if (ttsService != null) unbindService(serviceConnection);    //trennt die Verbindung zum TTSService
-        if (sensorManager != null && proximityListener != null) {    //deaktiviert den Näherungssensor, um unnötige Hintergrundaktivität zu vermeiden
-            sensorManager.unregisterListener(proximityListener);
-        }
-        if (audioManager != null && isVolumeAdjusted) {              // Lautstärke zurücksetzen, falls wegen Näherung verändert
-            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, originalVolume, 0);
-        }
+
 
     }
 

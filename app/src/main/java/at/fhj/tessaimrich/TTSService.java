@@ -104,13 +104,39 @@ public class TTSService extends Service {
     }
 
     public void setLanguage(String languageCode) {
-        Locale locale = new Locale(languageCode);
+        Locale locale;
+        switch (languageCode) {
+            case "en":
+                locale = Locale.US; // echtes US-Englisch
+                break;
+            case "de":
+                locale = Locale.GERMANY;
+                break;
+            case "fr":
+                locale = Locale.FRANCE;
+                break;
+            case "it":
+                locale = Locale.ITALY;
+                break;
+            case "es":
+                locale = new Locale("es", "ES");
+                break;
+            case "hr":
+                locale = new Locale("hr", "HR");
+                break;
+            case "sl":
+                locale = new Locale("sl", "SI");
+                break;
+            default:
+                locale = Locale.getDefault();    // Fallback auf System-Locale
+        }
+
         int result = tts.setLanguage(locale);
         if (result == TextToSpeech.LANG_MISSING_DATA
                 || result == TextToSpeech.LANG_NOT_SUPPORTED) {
             Log.e("TTSService", "Language not supported: " + languageCode);
         } else {
-            Log.d("TTSService", "Language set to: " + languageCode);
+            Log.d("TTSService", "Language set to: " + locale);
         }
     }
 

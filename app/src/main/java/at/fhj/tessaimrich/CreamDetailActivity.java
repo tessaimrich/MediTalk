@@ -8,6 +8,7 @@ import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -21,13 +22,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Locale;
+
 import at.fhj.tessaimrich.data.AppDatabase;
 import at.fhj.tessaimrich.data.Medication;
 
 
 public class CreamDetailActivity extends BaseDrawerActivity {
 
-    private TTSService ttsService;
     private ImageButton btnAudio;
     private ImageButton btnPdf;
     private String creamName;
@@ -92,9 +94,6 @@ public class CreamDetailActivity extends BaseDrawerActivity {
             startActivity(intent);
             finish();
         });
-        Intent intent = new Intent(this, TTSService.class);
-        startService(intent);
-        bindService(intent, serviceConnection, BIND_AUTO_CREATE);
     }
 
     private String loadTtsTextForCream(String name) {
@@ -106,8 +105,8 @@ public class CreamDetailActivity extends BaseDrawerActivity {
             if (med == null) return null;
 
             String key = med.getTtsText();
-            SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
-            String lang = prefs.getString("selected_language", "en");
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            String lang = prefs.getString("language", Locale.getDefault().getLanguage());
             String filename = "tts/pills/cream/" + key + "_" + lang + ".txt";
 
             BufferedReader reader = new BufferedReader(
@@ -126,23 +125,9 @@ public class CreamDetailActivity extends BaseDrawerActivity {
         }
     }
 
-    private final ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override public void onServiceConnected(ComponentName name, IBinder binder) {
-            ttsService = ((TTSService.LocalBinder)binder).getService();
-            SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
-            ttsService.setLanguage(prefs.getString("selected_language", "en"));
-        }
-        @Override public void onServiceDisconnected(ComponentName name) {
-            ttsService = null;
-        }
-    };
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (ttsService != null) {
-            unbindService(serviceConnection);
-        }
     }
 
 

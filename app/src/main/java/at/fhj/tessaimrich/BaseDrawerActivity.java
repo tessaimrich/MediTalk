@@ -1,8 +1,11 @@
 package at.fhj.tessaimrich;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -18,12 +21,36 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.Locale;
+
 public abstract class BaseDrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     protected DrawerLayout drawer;
     private ActionBarDrawerToggle toggle;
     public TTSService ttsService;
+    private final ServiceConnection serviceConnection = new ServiceConnection() {
+        /**
+         * Verbindung zum TTSService
+         */
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder binder) {
+            ttsService = ((TTSService.LocalBinder) binder).getService();
+            // aktuelle Sprache setzen
+            SharedPreferences prefs = PreferenceManager
+                    .getDefaultSharedPreferences(BaseDrawerActivity.this);
+            String lang = prefs.getString("language", Locale.getDefault().getLanguage());
+            ttsService.setLanguage(lang);
+            // ggf. Rate setzen, falls du das auch hier zentralisieren möchtest
+            float rate = getSharedPreferences("tts_prefs", MODE_PRIVATE)
+                    .getFloat("speech_rate", 1.0f);
+            ttsService.setSpeechRate(rate);
+        }
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            ttsService = null;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +76,11 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
         //NavigationItem‐Listener setzen
         NavigationView navView = findViewById(R.id.nav_view);
         navView.setNavigationItemSelectedListener(this);
+
+        Intent ttsIntent = new Intent(this, TTSService.class);
+        startService(ttsIntent);
+        bindService(ttsIntent, serviceConnection, BIND_AUTO_CREATE);
+
     }
 
     @Override
@@ -115,7 +147,7 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
         builder.setTitle("Sprache wählen")
                 .setItems(languages, (dialog, which) -> {
                     String selectedCode  = codes[which];      // wird gespeichert
-                    String selectedLabel = languages[which];  // nur zur Anzeige
+                    //String selectedLabel = languages[which];  // nur zur Anzeige
 
                     // ISO-Sprachcode speichern
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -126,7 +158,7 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
                     }
 
                     Toast.makeText(this,
-                            "Sprache geändert: " + selectedLabel,
+                            "Sprache geändert: " + languages[which],
                             Toast.LENGTH_SHORT).show();
 
                     //Activity neu starten, damit UI (Header, PillList etc.) aktualisiert wird
@@ -135,8 +167,12 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
                 .show();
     }
 
-    // leere Methode
-    protected void updateLanguageUI(String newLanguage) {
-        // Standard: nichts tun
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (ttsService != null) {
+            unbindService(serviceConnection);
+        }
     }
+
 }
