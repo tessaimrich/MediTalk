@@ -1,12 +1,9 @@
 package at.fhj.tessaimrich;
 
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.ImageButton;
@@ -17,48 +14,40 @@ import androidx.core.content.FileProvider;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
+import java.io.IOException;
+import java.util.Locale;
 
 import at.fhj.tessaimrich.data.AppDatabase;
 import at.fhj.tessaimrich.data.Medication;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Locale;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-
 import android.media.AudioManager;
-
-
 
 public class PillDetailActivity extends BaseDrawerActivity {
     private ImageButton btnAudio;
     private ImageButton btnPdf;
     private String pillName;
     private boolean isSpeaking = false;
-    // für Näherungssensor:
+
     private SensorManager sensorManager;
     private Sensor proximitySensor;
     private SensorEventListener proximityListener;
-    // AudioManager für Lautstärkesteuerung:
+
     private AudioManager audioManager;
     private int originalVolume;
     private boolean isVolumeAdjusted = false;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         getLayoutInflater().inflate(
                 R.layout.activity_pill_detail,
                 findViewById(R.id.content_frame),
@@ -69,24 +58,18 @@ public class PillDetailActivity extends BaseDrawerActivity {
         pillName = getIntent().getStringExtra("pill_name");
         ((TextView) findViewById(R.id.tvPillName)).setText(pillName != null ? pillName : "");
 
-
-        // Audio-Button referenzieren
+        // Audio-Button referenzieren und Logik setzen
         btnAudio = findViewById(R.id.btnAudio1);
-
-        // Button-Logik: einmal Play, nächstes Mal Stop
         btnAudio.setOnClickListener(v -> {
             if (this.ttsService == null || !this.ttsService.isTTSReady()) {
                 Toast.makeText(this, "Sprachausgabe nicht bereit", Toast.LENGTH_SHORT).show();
                 return;
             }
-
             if (isSpeaking) {
-                // Stoppen
                 ttsService.stop();
                 isSpeaking = false;
                 Toast.makeText(this, "Wiedergabe gestoppt", Toast.LENGTH_SHORT).show();
             } else {
-                // Starten
                 String text = loadTtsTextForPill(pillName);
                 if (text != null && !text.isEmpty()) {
                     ttsService.speak(text);
@@ -97,14 +80,12 @@ public class PillDetailActivity extends BaseDrawerActivity {
             }
         });
 
-        // für pdf:
+        // PDF-Button referenzieren und Logik setzen
         btnPdf = findViewById(R.id.btnPdf1);
         btnPdf.setOnClickListener(v -> {
-            //gewählte Sprache aus SharedPreferences holen
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             String lang = prefs.getString("language", Locale.getDefault().getLanguage());
 
-            // Jetzt gezielt nach Name+Sprache fragen
             Medication med = AppDatabase
                     .getInstance(getApplicationContext())
                     .medicationDao()
@@ -114,11 +95,14 @@ public class PillDetailActivity extends BaseDrawerActivity {
                 Toast.makeText(this, "Keine PDF verfügbar („" + lang + "“)", Toast.LENGTH_SHORT).show();
                 return;
             }
-            // PDF öffnen
-            openPdfFromAssets(med.getPdfAsset());
+
+            String rawPdf = med.getPdfAsset();
+            String cleanPdf = rawPdf.replaceAll("\\s+", "");
+
+            openPdfFromAssets(cleanPdf);
         });
 
-
+        // Home-Button zurück zur Kategorie
         findViewById(R.id.btnHome).setOnClickListener(v -> {
             Intent intent = new Intent(PillDetailActivity.this, CategoryActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -126,18 +110,16 @@ public class PillDetailActivity extends BaseDrawerActivity {
             finish();
         });
 
-     //für Näherungssensor:
-        //AudioManager initialisieren und Lautstärke merken
+        // AudioManager init und Basis-Lautstärke setzen
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         originalVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-            // Sicherstellen, dass Ausgangslautstärke nicht zu leise ist:
-            originalVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-            int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-            if (originalVolume < maxVolume / 2) {
-                originalVolume = maxVolume - 1;
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, originalVolume, 0);
-                Toast.makeText(this, "Basis-Lautstärke erhöht für optimale Sprachausgabe", Toast.LENGTH_SHORT).show();
-            }
+        int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        if (originalVolume < maxVolume / 2) {
+            originalVolume = maxVolume - 1;
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, originalVolume, 0);
+            Toast.makeText(this, "Basis-Lautstärke erhöht für optimale Sprachausgabe", Toast.LENGTH_SHORT).show();
+        }
+
         // Näherungs-Sensor einrichten
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
@@ -149,9 +131,8 @@ public class PillDetailActivity extends BaseDrawerActivity {
                     if (ttsService != null && audioManager != null) {
                         if (distance < proximitySensor.getMaximumRange()) {
                             if (!isVolumeAdjusted) {
-                                int minVolume = audioManager.getStreamMinVolume(AudioManager.STREAM_MUSIC);    //fragt den minimal möglichen Wert ab
-                                int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);    //fragt den maximal möglichen Wert ab
-                                int reducedVolume = Math.max(1, maxVolume / 3);  // ca. 30 % der Maximallautstärke     //Math.max(1, ...) sorgt dafür, dass die Lautstärke nie auf 0 fällt.
+                                int maxVol = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                                int reducedVolume = Math.max(1, maxVol / 3);
                                 audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, reducedVolume, 0);
                                 isVolumeAdjusted = true;
                                 Toast.makeText(PillDetailActivity.this, "Ohr erkannt → Lautstärke reduziert", Toast.LENGTH_SHORT).show();
@@ -166,17 +147,11 @@ public class PillDetailActivity extends BaseDrawerActivity {
                     }
                 }
                 @Override
-                public void onAccuracyChanged(Sensor sensor, int accuracy) {
-                }
+                public void onAccuracyChanged(Sensor sensor, int accuracy) {}
             };
             sensorManager.registerListener(proximityListener, proximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
-
     }
-
-
-
-//METHODEN
 
     /**
      * Lädt den TTS-Text aus DB + Assets
@@ -191,10 +166,10 @@ public class PillDetailActivity extends BaseDrawerActivity {
                 .findByNameAndLanguage(name,lang);
         if (med == null) return null;
 
-        String key      = med.getTtsText();                  // z.B. "cymbalta"
-        String filelang     = med.getLanguage();                 // z.B. "fr"
-        String requested= key + "_" + filelang + ".txt";         // "cymbalta_fr.txt"
-        String file     = resolveAssetFilename("tts/pills", requested);
+        String key = med.getTtsText();
+        String filelang = med.getLanguage();
+        String requested = key + "_" + filelang + ".txt";
+        String file = resolveAssetFilename("tts/pills", requested);
         if (file == null) return null;
 
         try (BufferedReader reader = new BufferedReader(
@@ -212,17 +187,14 @@ public class PillDetailActivity extends BaseDrawerActivity {
         }
     }
 
-
-
     /**
      * Kopiert die PDF aus assets in den App-Files-Ordner
      * und öffnet sie dann mit einem externen PDF-Viewer.
      */
-
-
     private void openPdfFromAssets(String rawAssetName) {
-        // rawAssetName kommt direkt aus der DB, z.B. "Cymbalta_EN.pdf"
-        String assetFileName = resolveAssetFilename("pdfs", rawAssetName);
+        String cleanAssetName = rawAssetName.replaceAll("\\s+", "");
+        String assetFileName = resolveAssetFilename("pdfs", cleanAssetName);
+
         if (assetFileName == null) {
             Toast.makeText(this,
                     "PDF nicht gefunden für „" + pillName + "“",
@@ -262,22 +234,46 @@ public class PillDetailActivity extends BaseDrawerActivity {
                     Toast.LENGTH_SHORT).show();
         }
     }
+
+    /**
+     * Sucht eine Datei im angegebenen Asset-Ordner (case-insensitive, mit verschiedenen Matching-Strategien).
+     */
     private String resolveAssetFilename(String dir, String requestedName) {
         try {
             String[] files = getAssets().list(dir);
             if (files != null) {
-                //exakter case-insensitive Match
+                String cleanRequestedName = requestedName.replaceAll("\\s+", "");
                 for (String f : files) {
-                    if (f.equalsIgnoreCase(requestedName)) {
+                    if (f.equalsIgnoreCase(cleanRequestedName)) {
                         return f;
                     }
                 }
-                //Fallback: Matching auf Suffix (z.B. "_EN.pdf" oder "_de.txt")
-                String lowerReq = requestedName.toLowerCase(Locale.ROOT);
-                String suffix   = lowerReq.substring(lowerReq.lastIndexOf('_'));
                 for (String f : files) {
-                    if (f.toLowerCase(Locale.ROOT).endsWith(suffix)) {
+                    String cleanFileName = f.replaceAll("\\s+", "");
+                    if (cleanFileName.equalsIgnoreCase(cleanRequestedName)) {
                         return f;
+                    }
+                }
+                if (cleanRequestedName.toLowerCase().contains("_en.")) {
+                    String upperCaseRequest = cleanRequestedName.replaceAll("_en\\.", "_EN.");
+                    for (String f : files) {
+                        String cleanFileName = f.replaceAll("\\s+", "");
+                        if (cleanFileName.equalsIgnoreCase(upperCaseRequest)) {
+                            return f;
+                        }
+                    }
+                }
+                String lowerReq = cleanRequestedName.toLowerCase(Locale.ROOT);
+                if (lowerReq.contains("_")) {
+                    String baseName = lowerReq.substring(0, lowerReq.lastIndexOf('_'));
+                    String langPart = lowerReq.substring(lowerReq.lastIndexOf('_'));
+                    for (String f : files) {
+                        String cleanFileName = f.replaceAll("\\s+", "").toLowerCase();
+                        if (cleanFileName.startsWith(baseName) &&
+                                (cleanFileName.contains(langPart) ||
+                                        cleanFileName.contains(langPart.toUpperCase()))) {
+                            return f;
+                        }
                     }
                 }
             }
@@ -286,6 +282,7 @@ public class PillDetailActivity extends BaseDrawerActivity {
         }
         return null;
     }
+
     /**
      * Wird aufgerufen, wenn die PillDetailActivity endgültig zerstört wird.
      * Diese Methode ruft lediglich den Super-Aufruf auf, da alle dienstspezifischen
@@ -293,11 +290,7 @@ public class PillDetailActivity extends BaseDrawerActivity {
      * BaseDrawerActivity.onDestroy() durchgeführt werden.
      */
     @Override
-    protected void onDestroy() {    //was passiert, wenn die Activity endgültig beendet wird:
+    protected void onDestroy() {
         super.onDestroy();
-
-
     }
-
-
 }
