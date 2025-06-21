@@ -49,11 +49,4 @@ public interface MedicationDao {
     List<Medication> findByCategoryAndLanguage(String category, String lang);
     @Query("SELECT * FROM medications WHERE name = :name AND language = :lang LIMIT 1")
     Medication findByNameAndLanguage(String name, String lang);
-    // für Teil-Matches:
-    @Query("SELECT * FROM medications WHERE name LIKE '%' || :search || '%' AND language = :lang ORDER BY name")
-    List<Medication> searchByNameAndLanguage(String search, String lang);
-    // AutoComplete-Vorschläge (Wenn man alle Medikamenten-Namen einmalig aus der DB zieht)
-    @Query("SELECT name FROM medications WHERE language = :lang ORDER BY name")
-    List<String> getAllNamesForLanguage(String lang);
-
 }

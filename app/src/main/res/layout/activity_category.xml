@@ -25,9 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:paddingStart="50dp"
-            android:hint="Medikamente suchen..."
-            android:inputType="text"
-            android:imeOptions="actionSearch" />
+            android:hint="Medikamente suchen..." />
         
     </com.google.android.material.textfield.TextInputLayout>
 
