@@ -57,7 +57,7 @@ public class InhalationListActivity extends BaseDrawerActivity {
                             "inhalation",
                             lang,
                             "enerzair",
-                            "enerzair_" + lang + ".txt",
+                            "",
                             "Enerzair_" + lang.toUpperCase() + ".pdf"
                     ),
                     new Medication(
@@ -65,7 +65,7 @@ public class InhalationListActivity extends BaseDrawerActivity {
                             "inhalation",
                             lang,
                             "ultibro",
-                            "ultibro_" + lang + ".txt",
+                            "",
                             "Ultibro_" + lang.toUpperCase() + ".pdf"
                     )
             );

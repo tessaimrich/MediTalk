@@ -68,7 +68,7 @@
                 android:layout_marginBottom="24dp">
 
                 <ImageButton
-                    android:id="@+id/btnPdf1"
+                    android:id="@+id/btnPdfinhalation"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_marginStart="32dp"
