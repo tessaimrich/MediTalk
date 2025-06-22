@@ -56,7 +56,7 @@ public class DropListActivity extends BaseDrawerActivity {
                             "drops",
                             lang,
                             "catiolanze",
-                            "catiolanze_" + lang + ".txt",
+                            "",
                             "Catiolanze_" + lang.toUpperCase() + ".pdf"
                     ),
                     new Medication(
@@ -64,14 +64,14 @@ public class DropListActivity extends BaseDrawerActivity {
                             "drops",
                             lang,
                             "simbrinza",
-                            "simbrinza_" + lang + ".txt",
+                            "",
                             "Simbrinza_" + lang.toUpperCase() + ".pdf"
                     )
             );
             Log.d("DB", "Drops für Sprache " + lang + " eingefügt");
         }
 
-        // 4. Nur aktuelle Sprache laden
+        //Nur aktuelle Sprache laden
         List<Medication> meds = db.medicationDao()
                 .findByCategoryAndLanguage("drops", lang);
         drops = new ArrayList<>();
