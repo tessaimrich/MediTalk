@@ -76,10 +76,30 @@ public class CreamDetailActivity extends BaseDrawerActivity {
         // PDF-Button
         btnPdf = findViewById(R.id.btnPdfCreamPdf);
         btnPdf.setOnClickListener(v -> {
+            SharedPreferences prefs = PreferenceManager
+                    .getDefaultSharedPreferences(this);
+            String rawLang = prefs.getString("language",
+                    Locale.getDefault().getLanguage());
+            String lang = rawLang.split("-")[0].toLowerCase();
+            Log.d("CreamDetail", "rawLang=" + rawLang + " → lang=" + lang);
             Medication med = AppDatabase
                     .getInstance(getApplicationContext())
                     .medicationDao()
-                    .findByName(creamName);
+                    .findByNameAndLanguage(creamName,lang);
+            if (med != null) {
+                Log.d("CreamDetail", "DAO findByNameAndLanguage liefert pdfAsset=" + med.getPdfAsset());
+            } else {
+                Log.w("CreamDetail", "DAO findByNameAndLanguage liefert null für lang=" + lang);
+            }
+            if (med == null) {
+                med = AppDatabase
+                        .getInstance(getApplicationContext())
+                        .medicationDao()
+                        .findByName(creamName);
+                if (med != null) {
+                    Log.d("CreamDetail", "DAO findByName liefert pdfAsset=" + med.getPdfAsset());
+                }
+            }
             if (med == null || med.getPdfAsset() == null) {
                 Toast.makeText(this, "Keine PDF verfügbar", Toast.LENGTH_SHORT).show();
                 return;
