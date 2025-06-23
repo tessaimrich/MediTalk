@@ -82,6 +82,18 @@ public class CreamDetailActivity extends BaseDrawerActivity {
                     Locale.getDefault().getLanguage());
             String lang = rawLang.split("-")[0].toLowerCase();
             Log.d("CreamDetail", "rawLang=" + rawLang + " → lang=" + lang);
+            // Prüfen, ob für Kroatisch (hr) Einträge in der Datenbank vorhanden sind
+            if (lang.equals("hr")) {
+                Medication med = AppDatabase
+                        .getInstance(getApplicationContext())
+                        .medicationDao()
+                        .findByNameAndLanguage(creamName, "hr");
+                if (med == null) {
+                    Log.d("CreamDetail", "Keine Einträge für Kroatisch (hr) in der Datenbank.");
+                } else {
+                    Log.d("CreamDetail", "Eintrag für Kroatisch (hr) gefunden.");
+                }
+            }
             Medication med = AppDatabase
                     .getInstance(getApplicationContext())
                     .medicationDao()
