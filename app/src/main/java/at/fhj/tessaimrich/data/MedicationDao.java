@@ -24,8 +24,10 @@ public interface MedicationDao {
     Medication getById(int id);
 
     // Gibt nur die Pillennamen zurück
-    @Query("SELECT name FROM medications")
-    List<String> getAllNames();
+    /** Alle Medikamentennamen für eine gegebene Sprache, alphabetisch */
+    @Query("SELECT name FROM medications WHERE language = :lang ORDER BY name ASC")
+    List<String> getAllNames(String lang);
+
 
     // alte Methode entfernt oder umbenannt
     @Query("SELECT * FROM medications WHERE category = :category")
