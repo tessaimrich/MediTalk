@@ -25,7 +25,7 @@ public interface MedicationDao {
 
     // Gibt nur die Pillennamen zurück
     /** Alle Medikamentennamen für eine gegebene Sprache, alphabetisch */
-    @Query("SELECT name FROM medications WHERE language = :lang ORDER BY name ASC")
+    @Query("SELECT DISTINCT name FROM medications WHERE language = :lang ORDER BY name ASC")
     List<String> getAllNames(String lang);
 
 
