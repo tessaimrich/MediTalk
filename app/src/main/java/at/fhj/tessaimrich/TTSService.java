@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
@@ -28,41 +29,34 @@ public class TTSService extends Service {
 
         tts = new TextToSpeech(this, status -> {
             if (status == TextToSpeech.SUCCESS) {
-                SharedPreferences prefs = getSharedPreferences("app_settings", MODE_PRIVATE);
-                String languageCode = prefs.getString("selected_language", "en");
-                Locale locale = new Locale(languageCode);
+// Engine ist bereit
+                ttsReady = true;
+                tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+                    @Override
+                    public void onStart(String utteranceId) {
+                        if (listener != null) listener.onSpeakStart();
+                    }
 
-                int result = tts.setLanguage(locale);
-                if (result != TextToSpeech.LANG_MISSING_DATA
-                        && result != TextToSpeech.LANG_NOT_SUPPORTED) {
+                    @Override
+                    public void onDone(String utteranceId) {
+                        if (listener != null) listener.onSpeakDone();
+                    }
 
-                    // Engine ist bereit
-                    ttsReady = true;
+                    @Override
+                    public void onError(String utteranceId) {
+                        if (listener != null) listener.onSpeakError();
+                    }
+                });
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                String languageCode = prefs.getString("language", "en");
 
-                    // UtteranceProgressListener nur einmal registrieren
-                    tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
-                        @Override
-                        public void onStart(String utteranceId) {
-                            if (listener != null) listener.onSpeakStart();
-                        }
+                setLanguage(languageCode);
 
-                        @Override
-                        public void onDone(String utteranceId) {
-                            if (listener != null) listener.onSpeakDone();
-                        }
-
-                        @Override
-                        public void onError(String utteranceId) {
-                            if (listener != null) listener.onSpeakError();
-                        }
-                    });
-
-                    Log.d("TTS", "TextToSpeech initialized successfully.");
-                    if (listener != null) listener.onTTSInitialized(true);
-                }
+                Log.d("TTS", "Initialized and set language to " + languageCode);
+                if (listener != null) listener.onTTSInitialized(true);
             } else {
                 ttsReady = false;
-                Log.e("TTS", "TextToSpeech initialization failed.");
+                Log.e("TTS", "Initialization failed");
                 if (listener != null) listener.onTTSInitialized(false);
             }
         });
@@ -107,13 +101,22 @@ public class TTSService extends Service {
         Locale locale;
         switch (languageCode) {
             case "en":
-                locale = Locale.US; // echtes US-Englisch
+                locale = Locale.US; // US-Englisch
                 break;
             case "de":
                 locale = Locale.GERMANY;
                 break;
             case "fr":
-                locale = Locale.FRANCE;
+                // try FR first, then generic
+                if (tts.setLanguage(Locale.FRANCE)
+                        == TextToSpeech.LANG_MISSING_DATA
+                        || tts.setLanguage(Locale.FRANCE)
+                        == TextToSpeech.LANG_NOT_SUPPORTED) {
+                    locale = Locale.FRENCH;
+                } else {
+                    Log.d("TTSService","Using fr-FR");
+                    return;
+                }
                 break;
             case "it":
                 locale = Locale.ITALY;

@@ -61,11 +61,14 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
                         Toast.makeText(this, "Wiedergabe gestoppt", Toast.LENGTH_SHORT).show();
                         // ggf. Icon zurücksetzen: btnAudio.setImageResource(R.drawable.ic_play);
                     } else {
-                ttsService.setLanguage(currentLang);
+
                 String rawKey = med.getTtsText();
                 String key = rawKey.toLowerCase(Locale.ROOT);
-                String path = "tts/pills/" + med.getTtsText() + "_" + currentLang + ".txt";
+                String lang = currentLang.toLowerCase(Locale.ROOT);
+
+                String path = "tts/pills/" + key + "_" + lang + ".txt";
                 Log.d("PillDetail", "Trying to load TTS asset: " + path);
+
                 String text = loadAssetText(path);
                 if (text != null && !text.isEmpty()) {
                     ttsService.speak(text);

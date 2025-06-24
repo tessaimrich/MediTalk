@@ -59,8 +59,12 @@ public class CreamDetailActivity extends BaseMedicationDetailActivity {
                 // optional: btnAudio.setImageResource(R.drawable.ic_play);
             } else {
                 // starten
+                String rawKey = med.getTtsText();
+                String key = rawKey.toLowerCase(Locale.ROOT);
+                String lang = currentLang.toLowerCase(Locale.ROOT);
+
                 String assetPath = "tts/pills/cream/"
-                        + med.getTtsText() + "_" + currentLang + ".txt";
+                        + key + "_" + lang + ".txt";
                 String text = loadAssetText(assetPath);
                 if (text != null && !text.isEmpty()) {
                     ttsService.speak(text);
