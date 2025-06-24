@@ -1,79 +1,64 @@
 package at.fhj.tessaimrich;
 
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
-import android.content.res.AssetManager;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.util.Log;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.preference.PreferenceManager;
-import java.util.Locale;
+
 import androidx.core.content.FileProvider;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.util.Locale;
 
-import at.fhj.tessaimrich.data.AppDatabase;
 import at.fhj.tessaimrich.data.Medication;
 
-public class DropDetailActivity extends BaseDrawerActivity {
+public class DropDetailActivity extends BaseMedicationDetailActivity {
     private ImageButton btnPdf;
-    private String dropName;
+    @Override protected Class<?> getParentActivityClass() {
+        return DropListActivity.class;
+    }
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getLayoutInflater().inflate(
-                R.layout.activity_drop_detail,
-                findViewById(R.id.content_frame),
-                true
-        );
-        //  Gewählten Tropfen-Namen auslesen
-        dropName = getIntent().getStringExtra("drop_name");
-        ((TextView) findViewById(R.id.tvDropName))
-                .setText(dropName != null ? dropName : "");
+    protected int getLayoutResource() {
+        return R.layout.activity_drop_detail;
+    }
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String lang = prefs.getString("language", Locale.getDefault().getLanguage());
+    @Override
+    protected int getTitleViewId() {
+        return R.id.tvDropName;
+    }
 
-        Log.d("DropDetail", "Current language code: '" + lang + "'");
-
-        //pdf-Button
+    @Override
+    protected void onMedicationLoaded(Medication med) {
+        // PDF-Button initialisieren
         btnPdf = findViewById(R.id.btnPdfdrop);
         btnPdf.setOnClickListener(v -> {
-            Medication med = AppDatabase
-                    .getInstance(getApplicationContext())
-                    .medicationDao()
-                    .findByNameAndLanguage(dropName,lang);
-            if (med == null || med.getPdfAsset() == null) {
+            String original = med.getPdfAsset();
+            if (original == null || original.isEmpty()) {
                 Toast.makeText(this, "Keine PDF verfügbar", Toast.LENGTH_SHORT).show();
                 return;
             }
-            openPdfFromAssets(med.getPdfAsset());
+
+            // Basisschlüssel extrahieren (alles vor dem Unterstrich)
+            int u = original.lastIndexOf('_');
+            String base = (u > 0)
+                    ? original.substring(0, u)
+                    : original.replaceAll("\\.pdf$", "");
+
+            // PDF-Name mit aktueller Sprache zusammensetzen
+            String pdfName = base + "_" + currentLang.toUpperCase(Locale.ROOT) + ".pdf";
+            openPdfFromAssets("pdfs/" + pdfName);
         });
-        ImageButton btnHome = findViewById(R.id.btnHome);
-        if (btnHome != null) {
-            btnHome.setOnClickListener(v -> {
-                Intent intent = new Intent(this, CategoryActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
-                finish();
-            });
-        }
+
+        // Home-Button kommt automatisch aus BaseDrawerActivity
     }
-    private void openPdfFromAssets(String assetFileName) {
-        AssetManager am = getAssets();
-        try (InputStream in = am.open("pdfs/" + assetFileName)) {
-            File outFile = new File(getFilesDir(), assetFileName);
+
+    /** Kopiert die PDF aus assets und öffnet sie */
+    private void openPdfFromAssets(String assetPath) {
+        try (InputStream in = getAssets().open(assetPath)) {
+            File outFile = new File(getFilesDir(), new File(assetPath).getName());
             try (FileOutputStream out = new FileOutputStream(outFile)) {
                 byte[] buf = new byte[1024];
                 int len;
@@ -81,21 +66,17 @@ public class DropDetailActivity extends BaseDrawerActivity {
                     out.write(buf, 0, len);
                 }
             }
-
-            Intent intent = new Intent(Intent.ACTION_VIEW);
             Uri uri = FileProvider.getUriForFile(
                     this,
                     getPackageName() + ".fileprovider",
                     outFile
             );
-            intent.setDataAndType(uri, "application/pdf");
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            startActivity(intent);
-
+            startActivity(new Intent(Intent.ACTION_VIEW)
+                    .setDataAndType(uri, "application/pdf")
+                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            );
         } catch (IOException e) {
             Toast.makeText(this, "Fehler beim Öffnen der PDF", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
         }
     }
 }
-

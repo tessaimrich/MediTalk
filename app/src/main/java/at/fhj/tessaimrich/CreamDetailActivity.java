@@ -1,72 +1,71 @@
 package at.fhj.tessaimrich;
 
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
-import android.content.res.AssetManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.media.AudioManager;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.content.FileProvider;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Locale;
 
-import at.fhj.tessaimrich.data.AppDatabase;
 import at.fhj.tessaimrich.data.Medication;
 
-
-public class CreamDetailActivity extends BaseDrawerActivity {
-
-    private ImageButton btnAudio;
-    private ImageButton btnPdf;
-    private String creamName;
-    private boolean isSpeaking = false;
-
+public class CreamDetailActivity extends BaseMedicationDetailActivity {
+    private ImageButton btnAudio, btnPdf;
+    private SensorManager sensorManager;
+    private Sensor proximitySensor;
+    private SensorEventListener proximityListener;
+    private AudioManager audioManager;
+    private int originalVolume;
+    private boolean isVolumeAdjusted = false;
+    @Override protected Class<?> getParentActivityClass() {
+        return CreamListActivity.class;
+    }
+    @Override
+    protected int getLayoutResource() {
+        return R.layout.activity_cream_detail;
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getLayoutInflater().inflate(
-                R.layout.activity_cream_detail,
-                findViewById(R.id.content_frame),
-                true
-        );
+    protected int getTitleViewId() {
+        return R.id.tvCreamName;
+    }
 
-        creamName = getIntent().getStringExtra("cream_name");
-        ((TextView)findViewById(R.id.tvCreamName))
-                .setText(creamName != null ? creamName : "");
-
-        // Audio-Button referenzieren
+    @Override
+    protected void onMedicationLoaded(Medication med) {
+        // TTS-Button
         btnAudio = findViewById(R.id.btnAudioCream);
-
-        // Play/Stop-Logik
+        final boolean[] isSpeaking = {false};
         btnAudio.setOnClickListener(v -> {
             if (ttsService == null || !ttsService.isTTSReady()) {
                 Toast.makeText(this, "Sprachausgabe nicht bereit", Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (isSpeaking) {
+            if (isSpeaking[0]) {
+                // stoppen
                 ttsService.stop();
-                isSpeaking = false;
+                isSpeaking[0] = false;
                 Toast.makeText(this, "Wiedergabe gestoppt", Toast.LENGTH_SHORT).show();
+                // optional: btnAudio.setImageResource(R.drawable.ic_play);
             } else {
-                String text = loadTtsTextForCream(creamName);
+                // starten
+                String assetPath = "tts/pills/cream/"
+                        + med.getTtsText() + "_" + currentLang + ".txt";
+                String text = loadAssetText(assetPath);
                 if (text != null && !text.isEmpty()) {
                     ttsService.speak(text);
-                    isSpeaking = true;
+                    isSpeaking[0] = true;
+                    Toast.makeText(this, "Wiedergabe gestartet", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(this, "Text nicht gefunden", Toast.LENGTH_SHORT).show();
                 }
@@ -76,123 +75,82 @@ public class CreamDetailActivity extends BaseDrawerActivity {
         // PDF-Button
         btnPdf = findViewById(R.id.btnPdfCreamPdf);
         btnPdf.setOnClickListener(v -> {
-            SharedPreferences prefs = PreferenceManager
-                    .getDefaultSharedPreferences(this);
-            String rawLang = prefs.getString("language",
-                    Locale.getDefault().getLanguage());
-            String lang = rawLang.split("-")[0].toLowerCase();
-            Log.d("CreamDetail", "rawLang=" + rawLang + " → lang=" + lang);
-            // Prüfen, ob für Kroatisch (hr) Einträge in der Datenbank vorhanden sind
-            if (lang.equals("hr")) {
-                Medication med = AppDatabase
-                        .getInstance(getApplicationContext())
-                        .medicationDao()
-                        .findByNameAndLanguage(creamName, "hr");
-                if (med == null) {
-                    Log.d("CreamDetail", "Keine Einträge für Kroatisch (hr) in der Datenbank.");
-                } else {
-                    Log.d("CreamDetail", "Eintrag für Kroatisch (hr) gefunden.");
-                }
-            }
-            Medication med = AppDatabase
-                    .getInstance(getApplicationContext())
-                    .medicationDao()
-                    .findByNameAndLanguage(creamName,lang);
-            if (med != null) {
-                Log.d("CreamDetail", "DAO findByNameAndLanguage liefert pdfAsset=" + med.getPdfAsset());
-            } else {
-                Log.w("CreamDetail", "DAO findByNameAndLanguage liefert null für lang=" + lang);
-            }
-            if (med == null) {
-                med = AppDatabase
-                        .getInstance(getApplicationContext())
-                        .medicationDao()
-                        .findByName(creamName);
-                if (med != null) {
-                    Log.d("CreamDetail", "DAO findByName liefert pdfAsset=" + med.getPdfAsset());
-                }
-            }
-            if (med == null || med.getPdfAsset() == null) {
+            String asset = med.getPdfAsset();
+            if (asset == null|| asset.isEmpty()) {
                 Toast.makeText(this, "Keine PDF verfügbar", Toast.LENGTH_SHORT).show();
                 return;
             }
-            openPdfFromAssets(med.getPdfAsset());
+            openPdf("pdfs/" + asset.trim());
         });
-
-        // Home-Button und TTS-Service
-        findViewById(R.id.btnHome).setOnClickListener(v -> {
-            Intent intent = new Intent(this, CategoryActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
-            finish();
-        });
+        setupAudioAndProximity();
+        // Home-Button: automatisch von BaseDrawerActivity
     }
-
-    private String loadTtsTextForCream(String name) {
-        try {
-            Medication med = AppDatabase
-                    .getInstance(getApplicationContext())
-                    .medicationDao()
-                    .findByName(name);
-            if (med == null) return null;
-
-            String key = med.getTtsText();
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            String lang = prefs.getString("language", Locale.getDefault().getLanguage());
-            String filename = "tts/pills/cream/" + key + "_" + lang + ".txt";
-
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(getAssets().open(filename))
-            );
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line).append(" ");
+    private void setupAudioAndProximity() {
+        // AudioManager initialisieren & Basislautstärke merken
+        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        originalVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        int maxVol = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        if (originalVolume < maxVol / 2) {
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVol - 1, 0);
+            Toast.makeText(this, "Basis-Lautstärke erhöht", Toast.LENGTH_SHORT).show();
+        }
+    // Näherungssensor initialisieren
+    sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+    proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        if (proximitySensor != null) {
+        proximityListener = new SensorEventListener() {
+            @Override
+            public void onSensorChanged(SensorEvent event) {
+                float distance = event.values[0];
+                if (ttsService != null) {
+                    if (distance < proximitySensor.getMaximumRange() && !isVolumeAdjusted) {
+                        int reduced = Math.max(1, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC) / 3);
+                        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, reduced, 0);
+                        isVolumeAdjusted = true;
+                        Toast.makeText(CreamDetailActivity.this,
+                                "Ohr erkannt → Lautstärke reduziert",
+                                Toast.LENGTH_SHORT).show();
+                    } else if (distance >= proximitySensor.getMaximumRange() && isVolumeAdjusted) {
+                        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, originalVolume, 0);
+                        isVolumeAdjusted = false;
+                        Toast.makeText(CreamDetailActivity.this,
+                                "Lautsprecher", Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
-            reader.close();
-            return sb.toString().trim();
+            @Override public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+        };
+        sensorManager.registerListener(proximityListener, proximitySensor,
+                SensorManager.SENSOR_DELAY_NORMAL);
+    }
+}
+    // Hilfsmethode aus der Basisklasse kopiert oder ggf. in Utility auslagern
+    private String loadAssetText(String assetPath) {
+        try (InputStream in = getAssets().open(assetPath)) {
+            byte[] buf = new byte[in.available()];
+            in.read(buf);
+            return new String(buf);
         } catch (IOException e) {
-            Log.e("CreamDetail", "Fehler beim Laden der TTS-Datei", e);
             return null;
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-
-    /** kopiert PDFs aus assets/pdfs/ und öffnet sie */
-    private void openPdfFromAssets(String assetFileName) {
-        AssetManager am = getAssets();
-        try (InputStream in = am.open("pdfs/" + assetFileName)) {
-            File outFile = new File(getFilesDir(), assetFileName);
-            try (FileOutputStream out = new FileOutputStream(outFile)) {
+    private void openPdf(String assetPath) {
+        try (InputStream in = getAssets().open(assetPath)) {
+            File out = new File(getFilesDir(), new File(assetPath).getName());
+            try (FileOutputStream fos = new FileOutputStream(out)) {
                 byte[] buf = new byte[1024];
                 int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
+                while ((len = in.read(buf)) > 0) fos.write(buf, 0, len);
             }
-            Intent intent = new Intent(Intent.ACTION_VIEW);
             Uri uri = FileProvider.getUriForFile(
-                    this,
-                    getPackageName() + ".fileprovider",
-                    outFile
+                    this, getPackageName() + ".fileprovider", out
             );
-            intent.setDataAndType(uri, "application/pdf");
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            startActivity(intent);
-
+            startActivity(new Intent(Intent.ACTION_VIEW)
+                    .setDataAndType(uri, "application/pdf")
+                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
         } catch (IOException e) {
             Toast.makeText(this, "Fehler beim Öffnen der PDF", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
         }
     }
-
-
-
-
-
 }
