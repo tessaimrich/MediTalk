@@ -50,21 +50,21 @@ public class PillListActivity extends BaseDrawerActivity {
 
         // Testdaten für Pills nur einmal pro Sprache anlegen
         List<Medication> existing = db.medicationDao()
-                .findByCategoryAndLanguage("Pills", lang);
+                .findByCategoryAndLanguage("pills", lang);
         if (existing.isEmpty()) {
             db.medicationDao().insertAll(
-                    new Medication("Amlodipine Valsartan Mylan", "Pills", lang, "amlodipin", "amlodipin_" + lang + ".txt", "AmlodipineValsartanMylan_" + lang.toUpperCase() + ".pdf"),
-                    new Medication("Cymbalta",                  "Pills", lang, "cymbalta",    "cymbalta_"  + lang + ".txt", "Cymbalta_"                + lang.toUpperCase() + ".pdf"),
-                    new Medication("Eliquis",                   "Pills", lang, "eliquis",     "eliquis_"   + lang + ".txt", "Eliquis_"                 + lang.toUpperCase() + ".pdf"),
-                    new Medication("Nilemdo",                   "Pills", lang, "nilemdo",     "nilemdo_"   + lang + ".txt", "Nilemdo_"                 + lang.toUpperCase() + ".pdf"),
-                    new Medication("Qtern",                     "Pills", lang, "qtern",       "qtern_"     + lang + ".txt", "Qtern_"                   + lang.toUpperCase() + ".pdf")
+                    new Medication("Amlodipine Valsartan Mylan", "pills", lang, "amlodipin", "amlodipin_" + lang + ".txt", "AmlodipineValsartanMylan_" + lang.toUpperCase() + ".pdf"),
+                    new Medication("Cymbalta",                  "pills", lang, "cymbalta",    "cymbalta_"  + lang + ".txt", "Cymbalta_"                + lang.toUpperCase() + ".pdf"),
+                    new Medication("Eliquis",                   "pills", lang, "eliquis",     "eliquis_"   + lang + ".txt", "Eliquis_"                 + lang.toUpperCase() + ".pdf"),
+                    new Medication("Nilemdo",                   "pills", lang, "nilemdo",     "nilemdo_"   + lang + ".txt", "Nilemdo_"                 + lang.toUpperCase() + ".pdf"),
+                    new Medication("Qtern",                     "pills", lang, "qtern",       "qtern_"     + lang + ".txt", "Qtern_"                   + lang.toUpperCase() + ".pdf")
             );
             Log.d("DB", "Pill-Testdaten für Sprache " + lang + " eingefügt");
         }
 
         //Alle Pills dieser Sprache aus DB lesen
         List<Medication> meds = db.medicationDao()
-                .findByCategoryAndLanguage("Pills", lang);
+                .findByCategoryAndLanguage("pills", lang);
 
         // Namen extrahieren
         pills = new ArrayList<>();
@@ -116,7 +116,7 @@ public class PillListActivity extends BaseDrawerActivity {
         btnNext.setOnClickListener(v -> {
             if (selectedPos >= 0) {         // Nur weiter wenn ein Medikament ausgewählt ist
                 Intent intent = new Intent(PillListActivity.this, PillDetailActivity.class);
-                intent.putExtra("pill_name", pills.get(selectedPos));
+                intent.putExtra("med_name", pills.get(selectedPos));
                 startActivity(intent);
             }
         });

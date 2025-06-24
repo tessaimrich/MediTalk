@@ -72,11 +72,11 @@ public class InhalationListActivity extends BaseDrawerActivity {
             Log.d("DB", "Inhalation-Testdaten für Sprache " + lang + " eingefügt");
         }
 
-        // 4) Alle Inhalations-Einträge dieser Sprache aus DB lesen
+        // Alle Inhalations-Einträge dieser Sprache aus DB lesen
         List<Medication> meds = db.medicationDao()
                 .findByCategoryAndLanguage("inhalation", lang);
 
-        // 5) Nur die Namen extrahieren
+        //Nur die Namen extrahieren
         inhalations = new ArrayList<>();
         for (Medication m : meds) {
             inhalations.add(m.getName());
@@ -126,7 +126,7 @@ public class InhalationListActivity extends BaseDrawerActivity {
         btnNext.setOnClickListener(v -> {
             if (selectedPos >= 0) {         // Nur weiter wenn ein Medikament ausgewählt ist
                 Intent intent = new Intent(InhalationListActivity.this, InhalationDetailActivity.class);
-                intent.putExtra("inhalation_name", inhalations.get(selectedPos));
+                intent.putExtra("med_name", inhalations.get(selectedPos));
                 startActivity(intent);
             }
         });

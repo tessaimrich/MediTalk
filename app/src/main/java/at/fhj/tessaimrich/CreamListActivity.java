@@ -111,7 +111,7 @@ public class CreamListActivity extends BaseDrawerActivity {
         btnNext.setOnClickListener(v -> {
             if (selectedPos >= 0) {         // Nur weiter wenn ein Medikament ausgewählt ist
                 Intent intent = new Intent(CreamListActivity.this, CreamDetailActivity.class);
-                intent.putExtra("cream_name", creams.get(selectedPos));
+                intent.putExtra("med_name", creams.get(selectedPos));
                 startActivity(intent);
             }
         });

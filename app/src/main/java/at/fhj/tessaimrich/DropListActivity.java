@@ -123,7 +123,7 @@ public class DropListActivity extends BaseDrawerActivity {
         btnNext.setOnClickListener(v -> {
             if (selectedPos >= 0) {         // Nur weiter wenn ein Medikament ausgewählt ist
                 Intent intent = new Intent(DropListActivity.this, DropDetailActivity.class);
-                intent.putExtra("drop_name", drops.get(selectedPos));
+                intent.putExtra("med_name", drops.get(selectedPos));
                 startActivity(intent);
             }
         });
