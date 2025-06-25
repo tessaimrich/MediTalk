@@ -168,67 +168,24 @@
             android:layout_height="wrap_content"
             android:text="2x" />
     </RadioGroup>
+    <!-- Bottom-Bar mit Home-Button -->
+    <RelativeLayout
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/white"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <!-- Trennlinie oberhalb der Menüleiste -->
-    <View
-        android:id="@+id/bottom_line"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:background="@color/secondary_text_gray"
-        app:layout_constraintBottom_toTopOf="@id/bottom_container"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- Home Button als untere Leiste -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/bottom_container"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="0dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="6dp"
-        app:cardBackgroundColor="@color/white">
-
-
-        <!-- Menüleiste unten -->
-        <LinearLayout
-            android:id="@+id/bottom_menu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@color/white">
-
-            <!-- Trennlinie oben -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/secondary_text_gray" />
-
-            <!--  Menu-Bar mit Home und Weiter -->
-            <RelativeLayout
-                android:id="@+id/bottomBar"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_alignParentBottom="true"
-                android:background="@color/white"
-                android:padding="8dp">
-
-
-            <!-- Home-Button -->
-            <ImageButton
-                android:id="@+id/btnHome"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/home_button_"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/home"
-                android:layout_centerHorizontal="true"/>
-            </RelativeLayout>
-        </LinearLayout>
-
-    </com.google.android.material.card.MaterialCardView>
+        <ImageButton
+            android:id="@+id/btnHome"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/home_button_"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/home"
+            android:layout_centerHorizontal="true"/>
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
