@@ -28,9 +28,6 @@ public class CreamDetailActivity extends BaseMedicationDetailActivity {
     private AudioManager audioManager;
     private int originalVolume;
     private boolean isVolumeAdjusted = false;
-    @Override protected Class<?> getParentActivityClass() {
-        return CreamListActivity.class;
-    }
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_cream_detail;

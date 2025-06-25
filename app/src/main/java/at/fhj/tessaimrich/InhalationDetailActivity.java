@@ -17,9 +17,6 @@ import at.fhj.tessaimrich.data.Medication;
 
 public class InhalationDetailActivity extends BaseMedicationDetailActivity {
     private ImageButton btnPdf;
-    @Override protected Class<?> getParentActivityClass() {
-        return InhalationListActivity.class;
-    }
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_inhalation_detail;

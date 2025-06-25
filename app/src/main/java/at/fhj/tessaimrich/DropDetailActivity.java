@@ -17,9 +17,6 @@ import at.fhj.tessaimrich.data.Medication;
 
 public class DropDetailActivity extends BaseMedicationDetailActivity {
     private ImageButton btnPdf;
-    @Override protected Class<?> getParentActivityClass() {
-        return DropListActivity.class;
-    }
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_drop_detail;

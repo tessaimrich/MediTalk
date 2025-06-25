@@ -61,8 +61,9 @@ public abstract class BaseMedicationDetailActivity extends BaseDrawerActivity {
         // Hook für TTS/PDF in Subklassen
         onMedicationLoaded(med);
     }
-    protected abstract Class<?> getParentActivityClass();
-    /** Liefert das Layout-Ressourcen-ID der Subklasse zurück */
+    protected Class<?>getParentActivityClass(){
+       return CategoryActivity.class;
+    }
     protected abstract int getLayoutResource();
 
     /** Liefert die ID des Titel-TextViews zurück (z.B. R.id.tvPillName) */

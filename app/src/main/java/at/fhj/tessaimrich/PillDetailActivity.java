@@ -32,9 +32,6 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
     private AudioManager audioManager;
     private int originalVolume;
     private boolean isVolumeAdjusted = false;
-    @Override protected Class<?> getParentActivityClass() {
-        return PillListActivity.class;
-    }
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_pill_detail;
