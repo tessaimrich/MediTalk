@@ -76,34 +76,7 @@
         app:layout_constraintTop_toTopOf="@id/brightnessTextBlock"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Näherungssensor ohne Unterzeile -->
-    <ImageView
-        android:id="@+id/proximityIcon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/sound_proximity_sensor"
-        app:layout_constraintTop_toBottomOf="@id/brightnessIcon"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="40dp" />
 
-    <TextView
-        android:id="@+id/proximityLabel"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Ton-Ausgabe bei Nähe ans Ohr anpassen"
-        android:textColor="#000000"
-        android:layout_marginStart="12dp"
-        app:layout_constraintStart_toEndOf="@id/proximityIcon"
-        app:layout_constraintTop_toTopOf="@id/proximityIcon"
-        app:layout_constraintEnd_toStartOf="@id/proximitySwitch"
-        app:layout_constraintBottom_toBottomOf="@id/proximityIcon" />
-
-    <Switch
-        android:id="@+id/proximitySwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@id/proximityLabel"
-        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Wiedergabegeschwindigkeit -->
     <TextView
@@ -114,7 +87,7 @@
         android:textStyle="bold"
         android:textColor="#000000"
         android:layout_marginTop="36dp"
-        app:layout_constraintTop_toBottomOf="@id/proximityIcon"
+        app:layout_constraintTop_toBottomOf="@id/brightnessIcon"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
