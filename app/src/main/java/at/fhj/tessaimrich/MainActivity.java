@@ -103,11 +103,9 @@ public class MainActivity extends AppCompatActivity {
         // „Logout“-Button
         ImageButton btnLogout = findViewById(R.id.btnLogout);
         TextView tvLogout = findViewById(R.id.tvLogoutLabel);
-        tvLogout.setText("Logout");
         btnLogout.setOnClickListener(v -> {
             finishAffinity();      // App beenden
         });
-
 
     }  //Ende onCreate()
 

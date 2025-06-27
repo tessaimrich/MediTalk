@@ -5,8 +5,10 @@
     <!-- App-Titel, SplashActivity Icon-Beschreibung -->
     <string name="app_name">MediTalk</string>
     <string name="app_icon">MediTalk App Icon</string>
+
     <!-- MainActivity Titel -->
     <string name="main_title">MediTalk</string>
+
     <!-- Buttons unten / allgemein -->
     <string name="weiter">Weiter</string>
     <string name="Weiter">Weiter</string>
