@@ -5,18 +5,18 @@
         <item
             android:id="@+id/nav_language"
             android:icon="@drawable/_language_navigationdrawer"
-            android:title="Sprache ändern" />
+            android:title="@string/nav_language" />
         <item
             android:id="@+id/nav_display"
             android:icon="@drawable/_settings_"
-            android:title="Anzeigeeinstellungen" />
+            android:title="@string/nav_display" />
         <item
             android:id="@+id/nav_info"
             android:icon="@drawable/info_navigationdrawer"
-            android:title="Info zur App" />
+            android:title="@string/nav_info" />
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_back"
-            android:title="Zurück zum vorherigen Screen"/>
+            android:title="@string/nav_home"/>
     </group>
 </menu>

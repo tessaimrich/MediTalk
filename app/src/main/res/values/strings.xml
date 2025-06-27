@@ -37,6 +37,10 @@
     <string name="drop_icon">drop_icon</string>
     <string name="inhalation_icon">inhalation_icon</string>
 
-
+    <!-- Nav_drawer_menu-->
+    <string name="nav_language">Sprache ändern</string>
+    <string name="nav_display">Anzeigeeinstellungen</string>
+    <string name="nav_info">Info zur App</string>
+    <string name="nav_home">Zurück zum vorherigen Screen</string>
 
 </resources>
