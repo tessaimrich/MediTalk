@@ -43,4 +43,8 @@
     <string name="nav_info">Info zur App</string>
     <string name="nav_home">Zurück zum vorherigen Screen</string>
 
+    <!-- Nav_header_drawer-->
+    <string name="app_title">MediTalk</string>
+    <string name="current_language_english">Sprache: Englisch</string>
+
 </resources>
