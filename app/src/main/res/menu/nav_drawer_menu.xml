@@ -16,7 +16,7 @@
             android:title="Info zur App" />
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/home_button_"
+            android:icon="@drawable/ic_back"
             android:title="Zurück zum vorherigen Screen"/>
     </group>
 </menu>
