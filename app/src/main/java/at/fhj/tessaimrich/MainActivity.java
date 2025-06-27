@@ -86,8 +86,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Keine Sprache gewählt. Bitte tippen Sie auf eine Flagge.", Toast.LENGTH_SHORT).show();
                 return;
             }
-            // Sprachname (für Anzeige) ermitteln
-            String languageDisplayName = getLanguageDisplayName(selectedLanguage);
+
 
             // Sprachname speichern
             prefs.edit()
@@ -123,7 +122,6 @@ public class MainActivity extends AppCompatActivity {
      */
     private void setupFlag(ImageButton flagBtn, TextView flagLabel, String langCode, SharedPreferences prefs) {
         // Beschriftung unterhalb der Flagge
-        flagLabel.setText(getLanguageDisplayName(langCode));
 
         flagBtn.setOnClickListener(v -> {
             // Sprache setzen

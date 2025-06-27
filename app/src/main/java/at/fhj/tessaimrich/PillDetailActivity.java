@@ -60,13 +60,18 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
                     } else {
 
                 String rawKey = med.getTtsText();
+                if (rawKey.equalsIgnoreCase("amlodipinevalsartanmylan")) {
+                    rawKey = "amlodipin";
+                }
                 String key = rawKey.toLowerCase(Locale.ROOT);
                 String lang = currentLang.toLowerCase(Locale.ROOT);
 
+
                 String path = "tts/pills/" + key + "_" + lang + ".txt";
-                Log.d("PillDetail", "Trying to load TTS asset: " + path);
+
 
                 String text = loadAssetText(path);
+
                 if (text != null && !text.isEmpty()) {
                     ttsService.speak(text);
                     isSpeaking[0] = true;
@@ -137,6 +142,7 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
             in.read(buf);
             return new String(buf);
         } catch (IOException e) {
+            Log.e("TESSA", "Fehler beim Öffnen der Datei: " + path, e);
             return null;
         }
     }

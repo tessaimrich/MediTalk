@@ -2,10 +2,11 @@
 
 <resources>
 
-    <!-- App-Titel, Icon-Beschreibung -->
+    <!-- App-Titel, SplashActivity Icon-Beschreibung -->
     <string name="app_name">MediTalk</string>
     <string name="app_icon">MediTalk App Icon</string>
-
+    <!-- MainActivity Titel -->
+    <string name="main_title">MediTalk</string>
     <!-- Buttons unten / allgemein -->
     <string name="weiter">Weiter</string>
     <string name="Weiter">Weiter</string>
@@ -35,6 +36,7 @@
     <string name="app_version">1.0</string>
     <string name="drop_icon">drop_icon</string>
     <string name="inhalation_icon">inhalation_icon</string>
+
 
 
 </resources>
