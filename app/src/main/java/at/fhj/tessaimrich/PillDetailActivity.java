@@ -21,6 +21,17 @@ import java.util.Locale;
 
 import at.fhj.tessaimrich.data.Medication;
 
+/**
+ * Diese Activity zeigt die Detailinformationen zu einer Tablette an.
+ * <p>
+ * Sie ermöglicht:
+ * <ul>
+ *   <li>Wiedergabe eines Textes via Text-to-Speech (TTS)</li>
+ *   <li>Anzeige einer PDF-Datei</li>
+ *   <li>Automatische Lautstärkeregelung bei Näherung</li>
+ * </ul>
+ * Die Activity basiert auf {@link BaseMedicationDetailActivity}, welche die gemeinsame Logik übernimmt.
+ */
 public class PillDetailActivity extends BaseMedicationDetailActivity {
     private ImageButton btnAudio, btnPdf;
     // Näherungssensor
@@ -32,15 +43,28 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
     private AudioManager audioManager;
     private int originalVolume;
     private boolean isVolumeAdjusted = false;
+    /**
+     * Gibt das Layout dieser Detailansicht zurück.
+     * Wird von der Basisklasse zur Anzeige verwendet.
+     */
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_pill_detail;
     }
+    /**
+     * Gibt die ID des Views zurück, in dem der Medikamentenname angezeigt wird.
+     * Dieser View wird von der Basisklasse gesetzt.
+     */
     @Override
     protected int getTitleViewId() {
         return R.id.tvPillName;
     }
-
+    /**
+     * Wird aufgerufen, sobald die Medikamentendaten geladen sind.
+     * Initialisiert TTS-Button, PDF-Button und die automatische Lautstärkeregelung.
+     *
+     * @param med Das geladene Medikamentenobjekt
+     */
     @Override
     protected void onMedicationLoaded(Medication med) {
         // TTS-Button
@@ -58,6 +82,7 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
                         // ggf. Icon zurücksetzen: btnAudio.setImageResource(R.drawable.ic_play);
                     } else {
 
+                // TTS-Dateipfad generieren (Name + Sprache)
                 String rawKey = med.getTtsText();
                 if (rawKey.equalsIgnoreCase("amlodipinevalsartanmylan")) {
                     rawKey = "amlodipin";
@@ -89,11 +114,20 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
                 Toast.makeText(this, "Keine PDF verfügbar", Toast.LENGTH_SHORT).show();
                 return;
             }
+
+            // Leerzeichen entfernen
             String pdfName = pdfAsset.trim().replaceAll("\\s+","");
             openPdf("pdfs/" + pdfName);
         });
         setupAudioAndSensor();
     }
+
+
+
+    /**
+     * Initialisiert AudioManager und Näherungssensor.
+     * Bei erkannter Nähe wird die Lautstärke reduziert.
+     */
     private void setupAudioAndSensor() {
         // AudioManager initialisieren und Lautstärke speichern
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
@@ -139,7 +173,13 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
 
 
 
-    // Utility aus BaseMedicationDetailActivity oder kopieren
+    /**
+     * Lädt eine Textdatei aus dem Assets-Ordner.
+     * Wird für TTS-Textverarbeitung verwendet.
+     *
+     * @param path Pfad zur Datei
+     * @return Inhalt als String oder {@code null} bei Fehler
+     */
     private String loadAssetText(String path) {
         try (InputStream in = getAssets().open(path)) {
             byte[] buf = new byte[in.available()];
@@ -151,6 +191,13 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
         }
     }
 
+
+    /**
+     * Öffnet eine PDF-Datei aus dem Assets-Ordner.
+     * Die Datei wird in den internen Speicher kopiert und dann angezeigt.
+     *
+     * @param assetPath Pfad zur PDF-Datei im Assets-Ordner
+     */
     private void openPdf(String assetPath) {
         try (InputStream in = getAssets().open(assetPath)) {
             File out = new File(getFilesDir(), new File(assetPath).getName());
@@ -169,6 +216,12 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
             Toast.makeText(this, "PDF nicht gefunden", Toast.LENGTH_SHORT).show();
         }
     }
+
+
+    /**
+     * Wird beim Beenden der Activity aufgerufen.
+     * Der SensorListener wird abgemeldet und die Lautstärke zurückgesetzt.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();

@@ -36,12 +36,18 @@ public class CreamDetailActivity extends BaseMedicationDetailActivity {
     private AudioManager audioManager;
     private int originalVolume;
     private boolean isVolumeAdjusted = false;
-    //getLayoutResource() Gibt das Layout dieser Detailansicht zurück.Wird von der Basisklasse beim Laden verwendet
+    /**
+     * Gibt das Layout dieser Detailansicht zurück.
+     * Wird von der Basisklasse beim Laden verwendet.
+     */
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_cream_detail;
     }
-    // getTitleViewId() Gibt die ID des TextViews zurück, das den Medikamentennamen enthält. Wird in der Basisklasse zur Titelanzeige verwendet.
+    /**
+     * Gibt die ID des TextViews zurück, das den Medikamentennamen enthält.
+     * Wird in der Basisklasse zur Titelanzeige verwendet.
+     */
     @Override
     protected int getTitleViewId() {
         return R.id.tvCreamName;
@@ -72,7 +78,6 @@ public class CreamDetailActivity extends BaseMedicationDetailActivity {
                 ttsService.stop();
                 isSpeaking[0] = false;
                 Toast.makeText(this, "Wiedergabe gestoppt", Toast.LENGTH_SHORT).show();
-                // optional: btnAudio.setImageResource(R.drawable.ic_play);
             } else {
                 // Text aus Assets laden und vorlesen
                 String rawKey = med.getTtsText();
@@ -105,6 +110,8 @@ public class CreamDetailActivity extends BaseMedicationDetailActivity {
         setupAudioAndProximity();
         // Home-Button: automatisch von BaseDrawerActivity
     }
+
+
     /**
      * Initialisiert AudioManager und registiert einen Proximity-Sensor-Listener.
      * <p>
