@@ -34,31 +34,22 @@ import at.fhj.tessaimrich.data.Medication;
  */
 public class PillDetailActivity extends BaseMedicationDetailActivity {
     private ImageButton btnAudio, btnPdf;
-    // Näherungssensor
     private SensorManager sensorManager;
     private Sensor proximitySensor;
     private SensorEventListener proximityListener;
-
-    // AudioManager für Lautstärke
     private AudioManager audioManager;
     private int originalVolume;
     private boolean isVolumeAdjusted = false;
-    /**
-     * Gibt das Layout dieser Detailansicht zurück.
-     * Wird von der Basisklasse zur Anzeige verwendet.
-     */
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_pill_detail;
     }
-    /**
-     * Gibt die ID des Views zurück, in dem der Medikamentenname angezeigt wird.
-     * Dieser View wird von der Basisklasse gesetzt.
-     */
     @Override
     protected int getTitleViewId() {
         return R.id.tvPillName;
     }
+
+
     /**
      * Wird aufgerufen, sobald die Medikamentendaten geladen sind.
      * Initialisiert TTS-Button, PDF-Button und die automatische Lautstärkeregelung.
@@ -67,7 +58,6 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
      */
     @Override
     protected void onMedicationLoaded(Medication med) {
-        // TTS-Button
         btnAudio = findViewById(R.id.btnAudio1);
         final boolean[] isSpeaking = {false};
         btnAudio.setOnClickListener(v -> {
@@ -75,14 +65,12 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
                 Toast.makeText(this, "Sprachausgabe nicht bereit", Toast.LENGTH_SHORT).show();
                 return;
             }if (isSpeaking[0]) {
-                        // gerade am Sprechen → stoppen
                         ttsService.stop();
                         isSpeaking[0] = false;
                         Toast.makeText(this, "Wiedergabe gestoppt", Toast.LENGTH_SHORT).show();
-                        // ggf. Icon zurücksetzen: btnAudio.setImageResource(R.drawable.ic_play);
                     } else {
 
-                // TTS-Dateipfad generieren (Name + Sprache)
+
                 String rawKey = med.getTtsText();
                 if (rawKey.equalsIgnoreCase("amlodipinevalsartanmylan")) {
                     rawKey = "amlodipin";
@@ -106,7 +94,7 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
             }
         });
 
-        // PDF-Button
+
         btnPdf = findViewById(R.id.btnPdf1);
         btnPdf.setOnClickListener(v -> {
             String pdfAsset = med.getPdfAsset();
@@ -115,7 +103,7 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
                 return;
             }
 
-            // Leerzeichen entfernen
+
             String pdfName = pdfAsset.trim().replaceAll("\\s+","");
             openPdf("pdfs/" + pdfName);
         });
@@ -129,7 +117,6 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
      * Bei erkannter Nähe wird die Lautstärke reduziert.
      */
     private void setupAudioAndSensor() {
-        // AudioManager initialisieren und Lautstärke speichern
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         originalVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         int maxVol = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
@@ -138,7 +125,6 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
             Toast.makeText(this, "Basis-Lautstärke erhöht", Toast.LENGTH_SHORT).show();
         }
 
-        // Näherungssensor initialisieren
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         if (proximitySensor != null) {
@@ -168,8 +154,6 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
                     SensorManager.SENSOR_DELAY_NORMAL);
         }
     }
-
-
 
 
 
@@ -225,11 +209,9 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Sensor-Listener abmelden
         if (sensorManager != null && proximityListener != null) {
             sensorManager.unregisterListener(proximityListener);
         }
-        // Lautstärke zurücksetzen
         if (audioManager != null && isVolumeAdjusted) {
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, originalVolume, 0);
         }
