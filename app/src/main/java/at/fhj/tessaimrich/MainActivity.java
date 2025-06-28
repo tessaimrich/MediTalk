@@ -1,51 +1,49 @@
 package at.fhj.tessaimrich;
 
 
-import static android.app.ProgressDialog.show;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
 import android.preference.PreferenceManager;
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
+/**
+ * Die MainActivity ist der Einstiegspunkt der App.
+ * Sie erlaubt es dem Nutzer, eine Sprache auszuwählen, und navigiert anschließend zur CategoryActivity.
+ * Die Sprachwahl wird in den SharedPreferences gespeichert.
+ */
 public class MainActivity extends AppCompatActivity {
 
+    /** Schlüssel zur Übergabe der Sprache an die nächste Activity */
     private static final String KEY_LANGUAGE = "language";
-
-    // Wird gesetzt, wenn der Nutzer eine Flagge wählt
+    /** Vom Benutzer gewählte Sprache im ISO-639-1-Format (z.B. "en") */
     private String selectedLanguage = null;
 
 
 
-
+    /**
+     * Initialisiert die Activity,
+     * setzt das Layout und das Statusleisten-Padding,
+     * verbindet Buttons mit Aktionen zur Sprachauswahl und Navigation.
+     *
+     * @param savedInstanceState Zustand der Activity bei erneutem Erstellen
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        // Wenn bereits eine Sprache gespeichert ist, direkt zur CategoryActivity und MainActivity beenden
-
-
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-/* ZUM TESTEN AUSKOMMENTIERT:
-        if (prefs.contains(KEY_LANGUAGE)) {
-            startActivity(new Intent(this, CategoryActivity.class));
-            finish();
-            return;
-        }  */
 
         // Padding für SystemBars
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -54,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-    // Flaggen-Buttons mit Beschriftung
+    // Sprach-Buttons initialisieren
         // verbindet das Bild, das Label, den Sprachcode und das Preferences-Objekt
         //"en": Sprachcode aus ISO 639-1: internationale Norm für Namen von Sprachen
         // prefs: SharedPreferences-Objekt, in das die Auswahl gespeichert werden soll
@@ -64,18 +62,9 @@ public class MainActivity extends AppCompatActivity {
         setupFlag(findViewById(R.id.btnFlagCroatian),   findViewById(R.id.tvLangCroatian),   "hr", prefs);
         setupFlag(findViewById(R.id.btnFlagItalian), findViewById(R.id.tvLangItalian), "it", prefs);
         setupFlag(findViewById(R.id.btnFlagFrench),  findViewById(R.id.tvLangFrench),  "fr", prefs);
-        /*... ist eine zusammenfassende Lösung, statt einzeln für jede Sprache:
-        ImageButton btnFlagEnglish = findViewById(R.id.btnFlagEnglish);
-        TextView    tvLangEnglish  = findViewById(R.id.tvLangEnglish);
-        btnFlagEnglish.setOnClickListener(v -> {
-            selectedLanguage = "en";
-            tvLangEnglish.setTypeface(null, Typeface.BOLD);
-            btnWeiter.setEnabled(true);
-        }); */
 
 
-
-        // „Weiter“-Button: nur aktiv, wenn Sprache gewählt
+        // Weiter-Button vorbereiten
         ImageButton btnWeiter = findViewById(R.id.btnWeiter);
         btnWeiter.setEnabled(true);
         TextView tvWeiter = findViewById(R.id.tvWeiterLabel);
@@ -87,12 +76,11 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-
             // Sprachname speichern
             prefs.edit()
                     .putString("language", selectedLanguage)
                     .apply();
-            // zur nächsten Activity, Sprache per Intent mitgeben
+            // Zur CategoryActivity wechseln, Sprache mitgeben
             Intent intent = new Intent(MainActivity.this, CategoryActivity.class);
             intent.putExtra(KEY_LANGUAGE, selectedLanguage);
             startActivity(intent);
@@ -100,11 +88,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        // „Logout“-Button
+        // Logout-Button: schließt die App
         ImageButton btnLogout = findViewById(R.id.btnLogout);
-        TextView tvLogout = findViewById(R.id.tvLogoutLabel);
         btnLogout.setOnClickListener(v -> {
-            finishAffinity();      // App beenden
+            finishAffinity();      // Alle Activities beenden → App geschlossen
         });
 
     }  //Ende onCreate()
@@ -115,14 +102,19 @@ public class MainActivity extends AppCompatActivity {
 
 
     /**
-     * Initialisiert einen Flaggen-Button mit Beschriftung
-     * und aktiviert den Weiter-Button, sobald eine Auswahl getroffen wurde.
+     * Verknüpft einen Flaggen-Button mit seiner zugehörigen Textanzeige und einer Sprache.
+     * Setzt die gewählte Sprache und hebt die entsprechende Beschriftung fett hervor.
+     *
+     * @param flagBtn   Button mit Flaggenbild
+     * @param flagLabel TextView mit Sprachbezeichnung
+     * @param langCode  Sprachcode
+     * @param prefs     SharedPreferences zur späteren Speicherung
      */
     private void setupFlag(ImageButton flagBtn, TextView flagLabel, String langCode, SharedPreferences prefs) {
         // Beschriftung unterhalb der Flagge
 
         flagBtn.setOnClickListener(v -> {
-            // Sprache setzen
+
             selectedLanguage = langCode;
 
             // Alle Markierungen zurücksetzen
@@ -136,6 +128,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Setzt alle Sprachlabels (unterhalb der Flaggen) auf normale Schrift.
+     * Dient dazu, die Hervorhebung bei Sprachauswahl zurückzusetzen.
+     */
     private void resetFlagLabels() {
         int[] labelIds = {
                 R.id.tvLangEnglish,
@@ -145,25 +141,12 @@ public class MainActivity extends AppCompatActivity {
                 R.id.tvLangItalian,
                 R.id.tvLangFrench
         };
-
         for (int id : labelIds) {
             TextView label = findViewById(id);
             label.setTypeface(null, android.graphics.Typeface.NORMAL);
         }
     }
 
-    /**
-     * Gibt den Sprachnamen für den Code zurück.
-     */
-    private String getLanguageDisplayName(String code) {
-        switch (code) {
-            case "en": return "English";
-            case "it": return "Italiano";
-            case "fr": return "Français";
-            case "es": return "Español";
-            case "sl": return "Slovenščina";
-            case "hr": return "Hrvatski";
-            default:   return code;
-        }
-    }
+
+
 }
