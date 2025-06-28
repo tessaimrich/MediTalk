@@ -36,7 +36,6 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
     protected int getLayoutResource() {
         return R.layout.activity_pill_detail;
     }
-
     @Override
     protected int getTitleViewId() {
         return R.id.tvPillName;
@@ -135,6 +134,11 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
                     SensorManager.SENSOR_DELAY_NORMAL);
         }
     }
+
+
+
+
+
     // Utility aus BaseMedicationDetailActivity oder kopieren
     private String loadAssetText(String path) {
         try (InputStream in = getAssets().open(path)) {

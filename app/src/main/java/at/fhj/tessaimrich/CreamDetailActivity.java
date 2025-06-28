@@ -20,6 +20,14 @@ import java.util.Locale;
 
 import at.fhj.tessaimrich.data.Medication;
 
+
+/**
+ * Detailansicht für ein Medikament der Kategorie „Cream“.
+ * <p>
+ * Diese Klasse erweitert {@link BaseMedicationDetailActivity} und implementiert das Layout,
+ * TTS-Funktionalität, PDF-Anzeige und die automatische Lautstärkeregelung
+ * mithilfe des Näherungssensors für Cremes.
+ */
 public class CreamDetailActivity extends BaseMedicationDetailActivity {
     private ImageButton btnAudio, btnPdf;
     private SensorManager sensorManager;
@@ -28,16 +36,27 @@ public class CreamDetailActivity extends BaseMedicationDetailActivity {
     private AudioManager audioManager;
     private int originalVolume;
     private boolean isVolumeAdjusted = false;
+    //getLayoutResource() Gibt das Layout dieser Detailansicht zurück.Wird von der Basisklasse beim Laden verwendet
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_cream_detail;
     }
-
+    // getTitleViewId() Gibt die ID des TextViews zurück, das den Medikamentennamen enthält. Wird in der Basisklasse zur Titelanzeige verwendet.
     @Override
     protected int getTitleViewId() {
         return R.id.tvCreamName;
     }
 
+
+
+
+    /**
+     * Wird aufgerufen, sobald das Medikament aus der Datenbank geladen wurde.
+     * Hier wird die TTS-Funktion eingerichtet, der PDF-Button aktiviert
+     * und der Näherungssensor initialisiert.
+     *
+     * @param med Das geladene Medikamentenobjekt
+     */
     @Override
     protected void onMedicationLoaded(Medication med) {
         // TTS-Button
@@ -55,7 +74,7 @@ public class CreamDetailActivity extends BaseMedicationDetailActivity {
                 Toast.makeText(this, "Wiedergabe gestoppt", Toast.LENGTH_SHORT).show();
                 // optional: btnAudio.setImageResource(R.drawable.ic_play);
             } else {
-                // starten
+                // Text aus Assets laden und vorlesen
                 String rawKey = med.getTtsText();
                 String key = rawKey.toLowerCase(Locale.ROOT);
                 String lang = currentLang.toLowerCase(Locale.ROOT);
@@ -86,6 +105,18 @@ public class CreamDetailActivity extends BaseMedicationDetailActivity {
         setupAudioAndProximity();
         // Home-Button: automatisch von BaseDrawerActivity
     }
+    /**
+     * Initialisiert AudioManager und registiert einen Proximity-Sensor-Listener.
+     * <p>
+     * • Speichert die aktuelle Musiklautstärke und erhöht sie auf fast Maximum,
+     *   wenn sie unter der Hälfte liegt – damit z.B. Text‑to‑Speech gut hörbar ist.
+     * • Initialisiert den Näherungssensor (in cm). Erkennt Geräte-Nähe (z.B. <≃5cm),
+     *   indem gemessen wird, ob der Wert < proximitySensor.getMaximumRange() ist.
+     * • Bei Nähe: Lautstärke auf ⅓ Max setzen, bei Entfernung: auf Original‑Wert zurückholen.
+     * • Toast-Meldungen informieren den Nutzer über „Ohr erkannt – Lautstärke reduziert“
+     *   oder Rückkehr zu „Lautsprecher“-Modus.
+     * </p>
+     */
     private void setupAudioAndProximity() {
         // AudioManager initialisieren & Basislautstärke merken
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
@@ -95,7 +126,6 @@ public class CreamDetailActivity extends BaseMedicationDetailActivity {
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVol - 1, 0);
             Toast.makeText(this, "Basis-Lautstärke erhöht", Toast.LENGTH_SHORT).show();
         }
-    // Näherungssensor initialisieren
     sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
     proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         if (proximitySensor != null) {
@@ -125,7 +155,16 @@ public class CreamDetailActivity extends BaseMedicationDetailActivity {
                 SensorManager.SENSOR_DELAY_NORMAL);
     }
 }
-    // Hilfsmethode aus der Basisklasse kopiert oder ggf. in Utility auslagern
+
+
+
+
+    /**
+     * Lädt Textdateien aus dem Assets-Ordner, z.B. für TTS-Wiedergabe.
+     *
+     * @param assetPath Pfad zur Datei im Assets-Ordner
+     * @return Der geladene Text oder {@code null}, falls nicht gefunden
+     */
     private String loadAssetText(String assetPath) {
         try (InputStream in = getAssets().open(assetPath)) {
             byte[] buf = new byte[in.available()];
@@ -136,6 +175,12 @@ public class CreamDetailActivity extends BaseMedicationDetailActivity {
         }
     }
 
+
+    /**
+     * Öffnet eine PDF-Datei aus dem Assets-Ordner über eine temporäre Datei im internen Speicher.
+     *
+     * @param assetPath Pfad zur PDF-Datei im Assets-Verzeichnis
+     */
     private void openPdf(String assetPath) {
         try (InputStream in = getAssets().open(assetPath)) {
             File out = new File(getFilesDir(), new File(assetPath).getName());
