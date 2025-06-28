@@ -27,7 +27,7 @@
             android:id="@+id/settingsTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Einstellungen"
+            android:text="@string/settings_title"
             android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="#000000" />
@@ -58,13 +58,13 @@
             android:id="@+id/brightnessLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bildschirmhelligkeit automatisch anpassen"
+            android:text="@string/brightness_label"
             android:textColor="#000000" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="(basierend auf Umgebungslicht)"
+            android:text="@string/brightness_subtext"
             android:textSize="12sp"
             android:textColor="#666666" />
     </LinearLayout>
@@ -83,7 +83,7 @@
         android:id="@+id/playbackTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Wiedergabegeschwindigkeit für Audio"
+        android:text="@string/playback_speed_title"
         android:textStyle="bold"
         android:textColor="#000000"
         android:layout_marginTop="36dp"
@@ -94,7 +94,7 @@
         android:id="@+id/playbackDesc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Passe die Abspielgeschwindigkeit von Audiodateien an."
+        android:text="@string/playback_speed_desc"
         android:textSize="12sp"
         android:textColor="#666666"
         android:layout_marginTop="4dp"
@@ -114,32 +114,32 @@
             android:id="@+id/speed0_5x"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0,5x" />
+            android:text="@string/speed_0_5x" />
 
         <RadioButton
             android:id="@+id/speed1x"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1x"
+            android:text="@string/speed_1x"
             android:checked="true" />
 
         <RadioButton
             android:id="@+id/speed1_25x"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1,25x" />
+            android:text="@string/speed_1_25x" />
 
         <RadioButton
             android:id="@+id/speed1_5x"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1,5x" />
+            android:text="@string/speed_1_5x" />
 
         <RadioButton
             android:id="@+id/speed2x"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="2x" />
+            android:text="@string/speed_2x" />
     </RadioGroup>
     <!-- Bottom-Bar mit Home-Button -->
     <RelativeLayout
