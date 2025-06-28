@@ -20,17 +20,24 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Locale;
 
+/**
+ * Activity zur Anzeige einer Liste von verfügbaren Cremen (Medikamenten-Kategorie "cream").
+ * Die Daten werden aus einer lokalen Room-Datenbank geladen, wobei Sprachpräferenzen berücksichtigt werden.
+ * Die Nutzer:innen können eine Creme auswählen und zur Detailansicht navigieren.
+ */
 public class CreamListActivity extends BaseDrawerActivity {
 
     private ListView lvCreams;
     private ImageButton btnHome, btnNext;
     private List<String> creams;
 
-    private int selectedPos = -1;  // aktuell ausgewählter Eintrag
+    private int selectedPos = -1;
 
-
-
-
+    /**
+     * Wird beim Starten der Activity aufgerufen. Lädt und zeigt die Cremen basierend auf der
+     * eingestellten Sprache, erlaubt die Auswahl einer Creme und ermöglicht Navigation zur Detailansicht.
+     * @param savedInstanceState Zustand der Activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,24 +46,20 @@ public class CreamListActivity extends BaseDrawerActivity {
                 findViewById(R.id.content_frame),
                 true
         );
-
-        //Sprache ermitteln
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String lang = prefs.getString("language", Locale.getDefault().getLanguage());
 
-        // DB-Instanz
         AppDatabase db = AppDatabase.getInstance(getApplicationContext());
 
-        // Nur EINEN Cream-Eintrag pro Sprache einfügen
         List<Medication> existing = db.medicationDao()
                 .findByCategoryAndLanguage("cream", lang);
         if (existing.isEmpty()) {
             db.medicationDao().insertAll(
                     new Medication(
-                            "Protopic",            // Name
-                            "cream",               // Kategorie
-                            lang,                  // Sprache
-                            "protopic",            // resourceKey
+                            "Protopic",
+                            "cream",
+                            lang,
+                            "protopic",
                             "protopic_" + lang + ".txt",
                             "Protopic_" + lang.toUpperCase() + ".pdf"
                     )
@@ -77,6 +80,14 @@ public class CreamListActivity extends BaseDrawerActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1,
                 creams) {
+            /**
+             * Liefert die Ansicht für jedes Listenelement.
+             * Das aktuell ausgewählte Element wird fett dargestellt.
+             * @param position Position des Elements in der Liste
+             * @param convertView Alte Ansicht (falls vorhanden) zum Wiederverwenden
+             * @param parent Übergeordnete Ansicht
+             * @return Die fertige Ansicht für das Listenelement.
+             */
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
@@ -90,26 +101,20 @@ public class CreamListActivity extends BaseDrawerActivity {
         };
         lvCreams.setAdapter(adapter);
 
-        // Tippen auf Medikamentennamen: Auswahl merken
         lvCreams.setOnItemClickListener((parent, view, position, id) -> {
             selectedPos = position;
             adapter.notifyDataSetChanged();
         });
 
-
-        // Home-Button: zurück zur CategoryActivity
         btnHome.setOnClickListener(v -> {
             Intent intent = new Intent(CreamListActivity.this, CategoryActivity.class);
-            // damit keine doppelten CategoryActivity-Instanzen im Back-Stack landen
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
-            finish();  // schließt die CreamListActivity
+            finish();
         });
 
-
-        // Weiter-Button
         btnNext.setOnClickListener(v -> {
-            if (selectedPos >= 0) {         // Nur weiter wenn ein Medikament ausgewählt ist
+            if (selectedPos >= 0) {
                 Intent intent = new Intent(CreamListActivity.this, CreamDetailActivity.class);
                 intent.putExtra("med_name", creams.get(selectedPos));
                 startActivity(intent);

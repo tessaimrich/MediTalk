@@ -7,13 +7,11 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
@@ -23,15 +21,24 @@ import java.util.Locale;
 import at.fhj.tessaimrich.data.AppDatabase;
 import at.fhj.tessaimrich.data.Medication;
 
+/**
+ * Diese Activity zeigt eine Liste aller Inhalationsmedikamente an,
+ * die in der Datenbank für die gewählte Sprache gespeichert sind.
+ * Die Nutzer:innen können ein Medikament auswählen und zur Detailansicht weitergehen.
+ * Es gibt außerdem einen Home-Button zurück zur Kategorieübersicht.
+ */
 public class InhalationListActivity extends BaseDrawerActivity {
 
     private ListView lvInhalations;
     private ImageButton btnHome, btnNext;
     private List<String> inhalations;
-    private int selectedPos = -1;  // aktuell ausgewählter Eintrag
+    private int selectedPos = -1;
 
-
-
+    /**
+     * Wird beim Starten der Activity aufgerufen.
+     * Initialisiert die Datenbank, lädt Medikamentendaten,
+     * bereitet die Ansicht vor und definiert das Verhalten der Buttons.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,14 +47,11 @@ public class InhalationListActivity extends BaseDrawerActivity {
                 findViewById(R.id.content_frame),
                 true
         );
-        //Sprache ermitteln
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String lang = prefs.getString("language", Locale.getDefault().getLanguage());
 
-        //DB-Instanz holen
         AppDatabase db = AppDatabase.getInstance(getApplicationContext());
 
-        // Testdaten für Inhalationen einmal pro Sprache anlegen
         List<Medication> existing = db.medicationDao()
                 .findByCategoryAndLanguage("inhalation", lang);
         if (existing.isEmpty()) {
@@ -72,11 +76,9 @@ public class InhalationListActivity extends BaseDrawerActivity {
             Log.d("DB", "Inhalation-Testdaten für Sprache " + lang + " eingefügt");
         }
 
-        // Alle Inhalations-Einträge dieser Sprache aus DB lesen
         List<Medication> meds = db.medicationDao()
                 .findByCategoryAndLanguage("inhalation", lang);
 
-        //Nur die Namen extrahieren
         inhalations = new ArrayList<>();
         for (Medication m : meds) {
             inhalations.add(m.getName());
@@ -85,8 +87,15 @@ public class InhalationListActivity extends BaseDrawerActivity {
         btnHome  = findViewById(R.id.btnHome);
         btnNext  = findViewById(R.id.btnNext);
 
-        // Adapter, der im getView() das ausgewählte Item fettgedruckt macht
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, inhalations) {
+            /**
+             * Liefert die Ansicht für jedes Listenelement.
+             * Das aktuell ausgewählte Element wird fett dargestellt.
+             * @param position Position des Elements in der Liste
+             * @param convertView Alte Ansicht (falls vorhanden) zum Wiederverwenden
+             * @param parent Übergeordnete Ansicht
+             * @return Die fertige Ansicht für das Listenelement.
+             */
             @Override
             public View getView(int position, View convertView, android.view.ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
@@ -94,7 +103,7 @@ public class InhalationListActivity extends BaseDrawerActivity {
                 tv.setTextColor(ContextCompat.getColor(getContext(), R.color.med_text_darkgray));
 
                 if (position == selectedPos) {
-                    tv.setTypeface(null, Typeface.BOLD);    // fettgedruckt, wenn ausgewählt
+                    tv.setTypeface(null, Typeface.BOLD);
                 } else {
                     tv.setTypeface(null, Typeface.NORMAL);
                 }
@@ -103,28 +112,20 @@ public class InhalationListActivity extends BaseDrawerActivity {
         };
         lvInhalations.setAdapter(adapter);
 
-
-
-        // Tippen auf Medikamentennamen: Auswahl merken
         lvInhalations.setOnItemClickListener((parent, view, position, id) -> {
             selectedPos = position;
             adapter.notifyDataSetChanged();
         });
 
-
-        // Home-Button: zurück zur CategoryActivity
         btnHome.setOnClickListener(v -> {
             Intent intent = new Intent(InhalationListActivity.this, CategoryActivity.class);
-            // damit keine doppelten CategoryActivity-Instanzen im Back-Stack landen
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
-            finish();  // schließt die InhalationListActivity
+            finish();
         });
 
-
-        // Weiter-Button
         btnNext.setOnClickListener(v -> {
-            if (selectedPos >= 0) {         // Nur weiter wenn ein Medikament ausgewählt ist
+            if (selectedPos >= 0) {
                 Intent intent = new Intent(InhalationListActivity.this, InhalationDetailActivity.class);
                 intent.putExtra("med_name", inhalations.get(selectedPos));
                 startActivity(intent);
