@@ -4,32 +4,29 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+/**
+ * Repräsentiert einen Eintrag in der {@code medications}-Tabelle der Room-Datenbank.
+ * Jede Instanz dieser Klasse enthält Informationen zu einem Medikament, einschließlich
+ * Name, Kategorie, Sprache, TTS-Text und zugehöriger Dateiressourcen.
+ */
 @Entity(tableName = "medications")
 public class Medication {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
-
     @ColumnInfo(name = "name")
     private String name;
-
     @ColumnInfo(name = "category")
-    private String category;    // "pill", "cream", "drop", "inhalation"
-
+    private String category;
     @ColumnInfo(name = "language")
-    private String language;    // z.B. "en" oder "es"
-
+    private String language;
     @ColumnInfo(name = "tts_text")
     private String ttsText;
-
     @ColumnInfo(name = "filename")
     private String filename;
     @ColumnInfo(name = "pdf_asset")
-    private String pdfAsset;    // Dateiname: "Amlodipine Valsartan Mylan.pdf" etc.
+    private String pdfAsset;
 
-
-
-    // Konstruktor
     public Medication(String name, String category, String language, String ttsText, String filename, String pdfAsset) {
         this.name = name;
         this.category = category;
@@ -38,11 +35,6 @@ public class Medication {
         this.filename  = filename;
         this.pdfAsset = pdfAsset;
     }
-
-
-
-
-    // Getter und Setter
 
     public int getId() {
         return id;

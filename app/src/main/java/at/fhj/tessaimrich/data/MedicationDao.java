@@ -7,48 +7,56 @@ import androidx.room.Query;
 
 import java.util.List;
 
+/**
+ * Data Access Object (DAO) für den Zugriff auf Medikamenten-Daten in der Room-Datenbank.
+ * Definiert Abfragen zum Laden, Einfügen und Löschen von {@link Medication}-Einträgen.
+ */
 @Dao
 public interface MedicationDao {
-    @Query("SELECT COUNT(*) FROM medications")
-    int countAll();
-    // Alle Medikamente einer Kategorie und Sprache synchron laden
-    @Query("SELECT * FROM medications WHERE category = :cat AND language = :lang ORDER BY name ASC")
-    List<Medication> getByCategory(String cat, String lang);
 
-    //  Nach Name suchen, Teilstring-Suche
-    @Query("SELECT * FROM medications WHERE name LIKE '%' || :search || '%' ORDER BY name ASC")
-    List<Medication> searchByName(String search);
 
-    // Einzelnes Medikament anhand der ID synchron abrufen
-    @Query("SELECT * FROM medications WHERE id = :id LIMIT 1")
-    Medication getById(int id);
 
-    // Gibt nur die Pillennamen zurück
-    /** Alle Medikamentennamen für eine gegebene Sprache, alphabetisch */
+    /**
+     * Gibt alle eindeutigen Medikamentennamen für eine bestimmte Sprache zurück.
+     * @param lang die Sprache (z. B. "en")
+     * @return alphabetisch sortierte Liste der Namen
+     */
     @Query("SELECT DISTINCT name FROM medications WHERE language = :lang ORDER BY name ASC")
     List<String> getAllNames(String lang);
 
 
-    // alte Methode entfernt oder umbenannt
-    @Query("SELECT * FROM medications WHERE category = :category")
-    List<Medication> findByCategory(String category);
-    //  Alle Medikamente einer Sprache synchron laden
+    /**
+     * Gibt alle Medikamente einer bestimmten Sprache zurück.
+     * Die Ergebnisse sind gruppiert nach Kategorie und alphabetisch sortiert nach Name.
+     * @param lang die Sprache
+     * @return Liste aller Medikamente in dieser Sprache
+     */
     @Query("SELECT * FROM medications WHERE language = :lang ORDER BY category, name")
     List<Medication> getAll(String lang);
 
-    //  Insert / Update (synchron, über Executor im AppDatabase)
+    /**
+     * Fügt eine oder mehrere Medikamenten-Einträge ein oder aktualisiert sie bei Konflikten.
+     * @param medications die einzufügenden Medikamente
+     */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(Medication... medications);
 
-    // Löschen aller Einträge
-    @Query("DELETE FROM medications")
-    void deleteAll();
 
-    // Exakte Namenssuche synchron
-    @Query("SELECT * FROM medications WHERE name = :name LIMIT 1")
-    Medication findByName(String name);
+    /**
+     * Gibt alle Medikamente zurück, die einer bestimmten Kategorie und Sprache entsprechen.
+     * @param category die Kategorie (z.B "cream")
+     * @param lang     die Sprache (z.B "es")
+     * @return Liste der passenden Medikamente
+     */
     @Query("SELECT * FROM medications WHERE category = :category AND language = :lang")
     List<Medication> findByCategoryAndLanguage(String category, String lang);
+
+    /**
+     * Sucht ein Medikament mit exakt übereinstimmendem Namen und Sprache.
+     * @param name der vollständige Name des Medikaments
+     * @param lang die Sprache
+     * @return das gefundene Medikament oder {@code null}, wenn nicht vorhanden
+     */
     @Query("SELECT * FROM medications WHERE name = :name AND language = :lang LIMIT 1")
     Medication findByNameAndLanguage(String name, String lang);
 }
