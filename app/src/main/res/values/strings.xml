@@ -50,4 +50,15 @@
     <string name="app_title">MediTalk</string>
     <string name="current_language_english">Sprache: Englisch</string>
 
+    <!-- SettingsActivity-->
+    <string name="settings_title">Einstellungen</string>
+    <string name="brightness_label">Bildschirmhelligkeit automatisch anpassen</string>
+    <string name="brightness_subtext">(basierend auf Umgebungslicht)</string>
+    <string name="playback_speed_title">Wiedergabegeschwindigkeit für Audio</string>
+    <string name="playback_speed_desc">Passe die Abspielgeschwindigkeit von Audiodateien an.</string>
+    <string name="speed_0_5x">0,5x</string>
+    <string name="speed_1x">1x</string>
+    <string name="speed_1_25x">1,25x</string>
+    <string name="speed_1_5x">1,5x</string>
+    <string name="speed_2x">2x</string>
 </resources>
