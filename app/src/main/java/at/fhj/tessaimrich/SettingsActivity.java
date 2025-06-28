@@ -19,6 +19,12 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.widget.Switch;
 
+/**
+ * SettingsActivity verwaltet die Benutzereinstellungen für Sprachgeschwindigkeit
+ * und automatische Helligkeit.
+ * Sie bindet den TTSService, ermöglicht die Anpassung der Sprechrate
+ * und nutzt den Lichtsensor zur Helligkeitsregelung.
+ */
 
 public class SettingsActivity extends BaseDrawerActivity {
     private SharedPreferences prefs;
@@ -32,8 +38,13 @@ public class SettingsActivity extends BaseDrawerActivity {
     private SensorEventListener lightListener;
     private TTSService ttsService;
     private boolean isServiceBound = false;
-    private TextToSpeech tts;
 
+    /**
+    * Initialisiert die Einstellungsansicht, lädt gespeicherte Präferenzen,
+    * startet und bindet den TTSService und setzt Listener für Spracheinstellungen und Helligkeit.
+    *
+    * @param savedInstanceState gespeicherter Zustand der Activity (bei Re-Creation)
+    */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,12 +83,15 @@ public class SettingsActivity extends BaseDrawerActivity {
             applyAutoBrightness(isChecked);
         });
     }
+
+    /**
+     * Richtet die RadioGroup zur Auswahl der Sprachgeschwindigkeit ein,
+     * lädt gespeicherte Werte und überträgt Änderungen an den TTSService.
+     */
     private void setupSpeechRateControls() {
-        // statt R.id.rgSpeechRate:
         RadioGroup rg = findViewById(R.id.playbackSpeedGroup);
 
         float currentRate = prefs.getFloat(KEY_SPEECH_RATE, 1.0f);
-        // Default-Button: speed1x
         int toCheck = R.id.speed1x;
         if (currentRate == 0.5f)    toCheck = R.id.speed0_5x;
         else if (currentRate == 1.25f) toCheck = R.id.speed1_25x;
@@ -106,6 +120,11 @@ public class SettingsActivity extends BaseDrawerActivity {
         });
 
     }
+
+    /**
+    * Initialisiert den Home-Button, um zur CategoryActivity zurückzukehren.
+    * Beendet diese Activity beim Zurücknavigieren.
+    */
     private void setupHomeButton() {
         ImageButton btnHome = findViewById(R.id.btnHome);
         btnHome.setOnClickListener(v -> {
@@ -115,12 +134,16 @@ public class SettingsActivity extends BaseDrawerActivity {
             finish();
         });
     }
+
+    /**
+    * ServiceConnection zur Bindung an den TTSService.
+    * Überträgt die gespeicherte Sprachgeschwindigkeit beim Verbinden.
+    */
     private final ServiceConnection settingsServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
             ttsService = ((TTSService.LocalBinder) binder).getService();
             isServiceBound = true;
-            // initial die gespeicherte Rate einstellen
             float savedRate = prefs.getFloat(KEY_SPEECH_RATE, 1.0f);
             ttsService.setSpeechRate(savedRate);
         }
@@ -129,6 +152,10 @@ public class SettingsActivity extends BaseDrawerActivity {
             isServiceBound = false;
         }
     };
+
+    /**
+    * Hebt die Servicebindung bei Zerstörung der Activity auf.
+    */
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -137,6 +164,11 @@ public class SettingsActivity extends BaseDrawerActivity {
             isServiceBound = false;
         }
     }
+
+    /**
+     * Initialisiert den Lichtsensor-Listener zur dynamischen Anpassung der Bildschirmhelligkeit
+     * basierend auf dem Umgebungslicht.
+     */
     private void setupLightListener() {
         lightListener = new SensorEventListener() {
             @Override
@@ -150,6 +182,13 @@ public class SettingsActivity extends BaseDrawerActivity {
             public void onAccuracyChanged(Sensor sensor, int accuracy) { }
         };
     }
+
+    /**
+    * Aktiviert oder deaktiviert den automatischen Helligkeitsmodus.
+    * Bei Aktivierung wird der Lichtsensor registriert, bei Deaktivierung entfernt.
+    *
+    * @param enable true für automatische Helligkeit, false für manuelle Steuerung
+    */
     private void applyAutoBrightness(boolean enable) {
         if (enable) {
             Settings.System.putInt(getContentResolver(),
@@ -164,6 +203,11 @@ public class SettingsActivity extends BaseDrawerActivity {
             sensorManager.unregisterListener(lightListener);
         }
     }
+
+    /**
+    * Registriert bei Aktivitätspause den Lichtsensor erneut,
+    * wenn automatische Helligkeit aktiviert ist.
+    */
     @Override
     protected void onResume() {
         super.onResume();
@@ -173,10 +217,12 @@ public class SettingsActivity extends BaseDrawerActivity {
         }
     }
 
+    /**
+    * Hebt die Registrierung des Lichtsensors auf, um unnötige Sensorereignisse zu vermeiden.
+    */
     @Override
     protected void onPause() {
         super.onPause();
         sensorManager.unregisterListener(lightListener);
     }
-
 }
