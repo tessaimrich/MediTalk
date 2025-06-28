@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Sprach-Buttons initialisieren
         // verbindet das Bild, das Label, den Sprachcode und das Preferences-Objekt
-        //"en": Sprachcode aus ISO 639-1: internationale Norm für Namen von Sprachen
+        // "en": Sprachcode aus ISO 639-1: internationale Norm für Namen von Sprachen
         // prefs: SharedPreferences-Objekt, in das die Auswahl gespeichert werden soll
         setupFlag(findViewById(R.id.btnFlagEnglish),   findViewById(R.id.tvLangEnglish),   "en", prefs);
         setupFlag(findViewById(R.id.btnFlagSlovenian),    findViewById(R.id.tvLangSlovenian),    "sl", prefs);

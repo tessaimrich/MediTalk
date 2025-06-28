@@ -15,6 +15,15 @@ import java.util.Locale;
 
 import at.fhj.tessaimrich.data.Medication;
 
+
+/**
+ * Die {@code DropDetailActivity} zeigt die Detailansicht eines Medikaments der Kategorie "Tropfen".
+ * <p>
+ * Diese Klasse bietet die Anzeige einer PDF-Datei in der gewünschten Sprache.
+ * <p>
+ * Die Klasse erbt von {@link BaseMedicationDetailActivity}, wodurch UI-Struktur, Sprachlogik
+ * und Home-Button automatisch verfügbar sind.
+ */
 public class DropDetailActivity extends BaseMedicationDetailActivity {
     private ImageButton btnPdf;
     @Override
@@ -27,6 +36,11 @@ public class DropDetailActivity extends BaseMedicationDetailActivity {
         return R.id.tvDropName;
     }
 
+    /**
+     * Wird automatisch aufgerufen, sobald die Medikamentendaten aus der Datenbank geladen wurden.
+     *
+     * @param med Das geladene Medikamentenobjekt
+     */
     @Override
     protected void onMedicationLoaded(Medication med) {
         // PDF-Button initialisieren
@@ -42,7 +56,7 @@ public class DropDetailActivity extends BaseMedicationDetailActivity {
             int u = original.lastIndexOf('_');
             String base = (u > 0)
                     ? original.substring(0, u)
-                    : original.replaceAll("\\.pdf$", "");
+                    : original.replaceAll("\\.pdf$", "");   // falls kein Unterstrich vorhanden
 
             // PDF-Name mit aktueller Sprache zusammensetzen
             String pdfName = base + "_" + currentLang.toUpperCase(Locale.ROOT) + ".pdf";
@@ -52,10 +66,18 @@ public class DropDetailActivity extends BaseMedicationDetailActivity {
         // Home-Button kommt automatisch aus BaseDrawerActivity
     }
 
-    /** Kopiert die PDF aus assets und öffnet sie */
+
+    /**
+     * Öffnet eine PDF-Datei aus dem Assets-Ordner.
+     * Dazu wird die Datei temporär in den internen Speicher kopiert und über einen PDF-Viewer geöffnet.
+     *
+     * @param assetPath Pfad zur PDF-Datei im assets-Verzeichnis
+     */
     private void openPdfFromAssets(String assetPath) {
         try (InputStream in = getAssets().open(assetPath)) {
+            // Ziel-Datei im internen App-Speicher
             File outFile = new File(getFilesDir(), new File(assetPath).getName());
+            // Datei byteweise kopieren
             try (FileOutputStream out = new FileOutputStream(outFile)) {
                 byte[] buf = new byte[1024];
                 int len;
@@ -63,11 +85,13 @@ public class DropDetailActivity extends BaseMedicationDetailActivity {
                     out.write(buf, 0, len);
                 }
             }
+            // Datei als URI bereitstellen über FileProvider
             Uri uri = FileProvider.getUriForFile(
                     this,
                     getPackageName() + ".fileprovider",
                     outFile
             );
+            // PDF-Viewer starten
             startActivity(new Intent(Intent.ACTION_VIEW)
                     .setDataAndType(uri, "application/pdf")
                     .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
