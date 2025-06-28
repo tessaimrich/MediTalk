@@ -30,7 +30,6 @@ public class DropDetailActivity extends BaseMedicationDetailActivity {
     protected int getLayoutResource() {
         return R.layout.activity_drop_detail;
     }
-
     @Override
     protected int getTitleViewId() {
         return R.id.tvDropName;
@@ -43,7 +42,6 @@ public class DropDetailActivity extends BaseMedicationDetailActivity {
      */
     @Override
     protected void onMedicationLoaded(Medication med) {
-        // PDF-Button initialisieren
         btnPdf = findViewById(R.id.btnPdfdrop);
         btnPdf.setOnClickListener(v -> {
             String original = med.getPdfAsset();
@@ -52,18 +50,15 @@ public class DropDetailActivity extends BaseMedicationDetailActivity {
                 return;
             }
 
-            // Basisschlüssel extrahieren (alles vor dem Unterstrich)
             int u = original.lastIndexOf('_');
             String base = (u > 0)
                     ? original.substring(0, u)
-                    : original.replaceAll("\\.pdf$", "");   // falls kein Unterstrich vorhanden
+                    : original.replaceAll("\\.pdf$", "");
 
-            // PDF-Name mit aktueller Sprache zusammensetzen
             String pdfName = base + "_" + currentLang.toUpperCase(Locale.ROOT) + ".pdf";
             openPdfFromAssets("pdfs/" + pdfName);
         });
 
-        // Home-Button kommt automatisch aus BaseDrawerActivity
     }
 
 
@@ -75,9 +70,7 @@ public class DropDetailActivity extends BaseMedicationDetailActivity {
      */
     private void openPdfFromAssets(String assetPath) {
         try (InputStream in = getAssets().open(assetPath)) {
-            // Ziel-Datei im internen App-Speicher
             File outFile = new File(getFilesDir(), new File(assetPath).getName());
-            // Datei byteweise kopieren
             try (FileOutputStream out = new FileOutputStream(outFile)) {
                 byte[] buf = new byte[1024];
                 int len;
@@ -85,13 +78,11 @@ public class DropDetailActivity extends BaseMedicationDetailActivity {
                     out.write(buf, 0, len);
                 }
             }
-            // Datei als URI bereitstellen über FileProvider
             Uri uri = FileProvider.getUriForFile(
                     this,
                     getPackageName() + ".fileprovider",
                     outFile
             );
-            // PDF-Viewer starten
             startActivity(new Intent(Intent.ACTION_VIEW)
                     .setDataAndType(uri, "application/pdf")
                     .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
