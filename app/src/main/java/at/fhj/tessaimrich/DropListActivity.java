@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -22,15 +21,24 @@ import java.util.Locale;
 import at.fhj.tessaimrich.data.AppDatabase;
 import at.fhj.tessaimrich.data.Medication;
 
+/**
+ * DropListActivity zeigt eine Liste von Medikamenten der Kategorie "drops" an.
+ * Nutzer:innen können ein Medikament auswählen und zur Drop-Detailansicht wechseln.
+ * Die Sprache wird über SharedPreferences bestimmt. Daten stammen aus Room-Datenbank.
+ */
+
 public class DropListActivity extends BaseDrawerActivity {
 
     private ListView lvDrops;
     private ImageButton btnHome, btnNext;
     private List<String> drops;
-    private int selectedPos = -1;  // aktuell ausgewählter Eintrag
+    private int selectedPos = -1;
 
-
-
+    /**
+     * Initialisiert die Aktivität, lädt Medikamente aus der Datenbank
+     * und setzt Adapter, Click Listener sowie Spracheinstellungen.
+     * @param savedInstanceState gespeicherter Zustand der Aktivität
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,14 +47,11 @@ public class DropListActivity extends BaseDrawerActivity {
                 findViewById(R.id.content_frame),
                 true
         );
-        // Sprache aus SharedPreferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String lang = prefs.getString("language", Locale.getDefault().getLanguage());
 
-        // DB-Instanz holen
         AppDatabase db = AppDatabase.getInstance(getApplicationContext());
 
-        // Nur einmalig Drops für diese Sprache einfügen
         List<Medication> existing = db.medicationDao()
                 .findByCategoryAndLanguage("drops", lang);
         if (existing.isEmpty()) {
@@ -70,8 +75,6 @@ public class DropListActivity extends BaseDrawerActivity {
             );
             Log.d("DB", "Drops für Sprache " + lang + " eingefügt");
         }
-
-        //Nur aktuelle Sprache laden
         List<Medication> meds = db.medicationDao()
                 .findByCategoryAndLanguage("drops", lang);
         drops = new ArrayList<>();
@@ -82,8 +85,15 @@ public class DropListActivity extends BaseDrawerActivity {
         btnHome  = findViewById(R.id.btnHome);
         btnNext  = findViewById(R.id.btnNext);
 
-        // Adapter, der im getView() das ausgewählte Item fettgedruckt macht
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, drops) {
+            /**
+             * Liefert die Ansicht für jedes Listenelement.
+             * Das aktuell ausgewählte Element wird fett dargestellt.
+             * @param position Position des Elements in der Liste
+             * @param convertView Alte Ansicht (falls vorhanden) zum Wiederverwenden
+             * @param parent Übergeordnete Ansicht
+             * @return Die fertige Ansicht für das Listenelement.
+             */
             @Override
             public View getView(int position, View convertView, android.view.ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
@@ -91,7 +101,7 @@ public class DropListActivity extends BaseDrawerActivity {
                 tv.setTextColor(ContextCompat.getColor(getContext(), R.color.med_text_darkgray));
 
                 if (position == selectedPos) {
-                    tv.setTypeface(null, Typeface.BOLD);    // fettgedruckt, wenn ausgewählt
+                    tv.setTypeface(null, Typeface.BOLD);
                 } else {
                     tv.setTypeface(null, Typeface.NORMAL);
                 }
@@ -100,28 +110,20 @@ public class DropListActivity extends BaseDrawerActivity {
         };
         lvDrops.setAdapter(adapter);
 
-
-
-        // Tippen auf Medikamentennamen: Auswahl merken
         lvDrops.setOnItemClickListener((parent, view, position, id) -> {
             selectedPos = position;
             adapter.notifyDataSetChanged();
         });
 
-
-        // Home-Button: zurück zur CategoryActivity
         btnHome.setOnClickListener(v -> {
             Intent intent = new Intent(DropListActivity.this, CategoryActivity.class);
-            // damit keine doppelten CategoryActivity-Instanzen im Back-Stack landen
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
-            finish();  // schließt die DropListActivity
+            finish();
         });
 
-
-        // Weiter-Button
         btnNext.setOnClickListener(v -> {
-            if (selectedPos >= 0) {         // Nur weiter wenn ein Medikament ausgewählt ist
+            if (selectedPos >= 0) {
                 Intent intent = new Intent(DropListActivity.this, DropDetailActivity.class);
                 intent.putExtra("med_name", drops.get(selectedPos));
                 startActivity(intent);

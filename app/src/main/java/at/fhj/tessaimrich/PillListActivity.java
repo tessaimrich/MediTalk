@@ -7,13 +7,11 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
@@ -23,15 +21,28 @@ import java.util.Locale;
 import at.fhj.tessaimrich.data.AppDatabase;
 import at.fhj.tessaimrich.data.Medication;
 
+/**
+ * Die PillListActivity zeigt alle Medikamente der Kategorie "pills" in der aktuell gewählten Sprache an.
+ * Diese Aktivity lädt die entsprechenden Medikamente aus der Datenbank und zeigt sie in einer Liste an.
+ * Nutzer:innen können ein Medikament auswählen, dadurch dann zur Detailansicht des gewählten Medikaments wechseln
+ * oder zur CategoryActivity zurückkehren
+ * Diese Klasse erbt von BaseDrawerActivity, damit das Navigationsmenü verwendet werden kann.
+ */
 public class PillListActivity extends BaseDrawerActivity {
 
     private ListView lvPills;
     private ImageButton btnHome, btnNext;
     private List<String> pills;
-    private int selectedPos = -1;  // aktuell ausgewählter Eintrag
+    private int selectedPos = -1;
 
-
-
+/**
+ * Wird beim Start der Aktivität aufgerufen.
+ * Diese Methode lädt die Benutzeroberfläche, liest die aktuell gewählte Sprache,
+ * initialisiert bei Bedarf Testdaten für Medikamente und zeigt die Liste aller
+ * Medikamente der Kategorie "pills" an. Außerdem werden die Schaltflächen zum
+ * Zurücknavigieren und Weiterklicken eingerichtet.
+ * @param savedInstanceState Zustand bei erneutem Erstellen, zum Beispiel nach dem Drehen des Bildschirms
+ */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,14 +52,11 @@ public class PillListActivity extends BaseDrawerActivity {
                 true
         );
 
-        //Sprache ermitteln
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String lang = prefs.getString("language", Locale.getDefault().getLanguage());
 
-        // DB-Instanz holen
         AppDatabase db = AppDatabase.getInstance(getApplicationContext());
 
-        // Testdaten für Pills nur einmal pro Sprache anlegen
         List<Medication> existing = db.medicationDao()
                 .findByCategoryAndLanguage("pills", lang);
         if (existing.isEmpty()) {
@@ -62,11 +70,9 @@ public class PillListActivity extends BaseDrawerActivity {
             Log.d("DB", "Pill-Testdaten für Sprache " + lang + " eingefügt");
         }
 
-        //Alle Pills dieser Sprache aus DB lesen
         List<Medication> meds = db.medicationDao()
                 .findByCategoryAndLanguage("pills", lang);
 
-        // Namen extrahieren
         pills = new ArrayList<>();
         for (Medication m : meds) {
             pills.add(m.getName());
@@ -75,16 +81,23 @@ public class PillListActivity extends BaseDrawerActivity {
         btnHome  = findViewById(R.id.btnHome);
         btnNext  = findViewById(R.id.btnNext);
 
-        // Adapter, der im getView() das ausgewählte Item fettgedruckt macht
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, pills) {
-            @Override
+        /**
+         * Liefert die Ansicht für jedes Listenelement.
+         * Das aktuell ausgewählte Element wird fett dargestellt.
+         * @param position Position des Elements in der Liste
+         * @param convertView Alte Ansicht (falls vorhanden) zum Wiederverwenden
+         * @param parent Übergeordnete Ansicht
+         * @return Die fertige Ansicht für das Listenelement.
+         */
+         @Override
             public View getView(int position, View convertView, android.view.ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
                 TextView tv = view.findViewById(android.R.id.text1);
                 tv.setTextColor(ContextCompat.getColor(getContext(), R.color.med_text_darkgray));
 
                 if (position == selectedPos) {
-                    tv.setTypeface(null, Typeface.BOLD);    // fettgedruckt, wenn ausgewählt
+                    tv.setTypeface(null, Typeface.BOLD);
                 } else {
                     tv.setTypeface(null, Typeface.NORMAL);
                 }
@@ -93,28 +106,20 @@ public class PillListActivity extends BaseDrawerActivity {
         };
         lvPills.setAdapter(adapter);
 
-
-
-        // Tippen auf Medikamentennamen: Auswahl merken
         lvPills.setOnItemClickListener((parent, view, position, id) -> {
             selectedPos = position;
             adapter.notifyDataSetChanged();
         });
 
-
-        // Home-Button: zurück zur CategoryActivity
         btnHome.setOnClickListener(v -> {
             Intent intent = new Intent(PillListActivity.this, CategoryActivity.class);
-            // damit keine doppelten CategoryActivity-Instanzen im Back-Stack landen
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
-            finish();  // schließt die PillListActivity
+            finish();
         });
 
-
-        // Weiter-Button
         btnNext.setOnClickListener(v -> {
-            if (selectedPos >= 0) {         // Nur weiter wenn ein Medikament ausgewählt ist
+            if (selectedPos >= 0) {
                 Intent intent = new Intent(PillListActivity.this, PillDetailActivity.class);
                 intent.putExtra("med_name", pills.get(selectedPos));
                 startActivity(intent);
