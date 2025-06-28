@@ -23,16 +23,31 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.util.Locale;
 
+
+
+/**
+ * Abstrakte Basisklasse für Activities mit Navigation Drawer.
+ * Implementiert das Grundlayout (Drawer, Toolbar, NavigationView)
+ * und die Integration des TTSService.
+ * Alle untergeordneten Activities (List-, Detail- ..) können so einheitlich
+ * Navigation und Spracheinstellungen nutzen.
+ */
 public abstract class BaseDrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    // Hauptcontainer für den Navigation Drawer
     protected DrawerLayout drawer;
+    // Öffnet/schließt den Drawer über das Hamburger-Menü in der Toolbar
     private ActionBarDrawerToggle toggle;
     public TTSService ttsService;
+
+
+    /**
+     * Verbindung zum {@link TTSService}, um ihn zu starten,
+     * ein Objekt vom Typ TTSService zu speichern und Sprache und Sprechgeschwindigkeit zu setzen.
+     */
     private final ServiceConnection serviceConnection = new ServiceConnection() {
-        /**
-         * Verbindung zum TTSService
-         */
+
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
             ttsService = ((TTSService.LocalBinder) binder).getService();
@@ -41,17 +56,26 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
                     .getDefaultSharedPreferences(BaseDrawerActivity.this);
             String lang = prefs.getString("language", Locale.getDefault().getLanguage());
             ttsService.setLanguage(lang);
-            // ggf. Rate setzen, falls du das auch hier zentralisieren möchtest
+            // Sprechgeschwindigkeit setzen
             float rate = getSharedPreferences("tts_prefs", MODE_PRIVATE)
                     .getFloat("speech_rate", 1.0f);
             ttsService.setSpeechRate(rate);
         }
+
         @Override
         public void onServiceDisconnected(ComponentName name) {
             ttsService = null;
         }
     };
 
+
+
+    /**
+     * Initialisiert das Layout (Drawer, Toolbar, NavigationView)
+     * und bindet den {@link TTSService}.
+     *
+     * @param savedInstanceState Zustand beim erneuten Starten
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +85,7 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //DrawerToggle (Hamburger-Icon) koppeln
+        // Drawer und Toggle initialisieren
         drawer = findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(
                 this,
@@ -77,12 +101,20 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
         NavigationView navView = findViewById(R.id.nav_view);
         navView.setNavigationItemSelectedListener(this);
 
+        // TTS-Service starten und binden
         Intent ttsIntent = new Intent(this, TTSService.class);
         startService(ttsIntent);
         bindService(ttsIntent, serviceConnection, BIND_AUTO_CREATE);
 
     }
 
+
+
+
+
+    /**
+     * Aktualisiert das Sprachlabel im Drawer-Header, wenn die Activity wieder sichtbar wird.
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -102,7 +134,16 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
             }
         }
     }
-    /** Drawer‐Menü‐Clicks auswerten */
+
+
+
+
+    /**
+     * Reagiert auf Klicks im Navigation Drawer.
+     *
+     * @param item Das gewählte Menüelement
+     * @return true, wenn das Event verarbeitet wurde
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         drawer.closeDrawer(GravityCompat.START);
@@ -130,7 +171,12 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
         return true;
     }
 
-    /** Back‐Button schließt den Drawer, falls geöffnet */
+
+
+    /**
+     * Wenn der Drawer geöffnet ist, wird dieser beim Drücken des Zurück-Buttons geschlossen,
+     * anstatt die Activity zu beenden.
+     */
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -139,6 +185,15 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
+
+
+
+
+    /**
+     * Zeigt einen Dialog zur Sprachauswahl an.
+     * Die neue Sprache wird gespeichert und auf den {@link TTSService} angewendet.
+     * Danach wird die Activity neu gestartet, um die UI zu aktualisieren.
+     */
     private void showLanguageSelectionDialog() {
         final String[] languages = {"English", "Kroatisch", "Slowenisch", "Italienisch", "Spanisch", "Französisch"};
         final String[] codes     = {"en",      "hr",        "sl",         "it",         "es",       "fr"};
@@ -161,16 +216,17 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
                             "Sprache geändert: " + languages[which],
                             Toast.LENGTH_SHORT).show();
 
-                    //Activity neu starten, damit UI (Header, PillList etc.) aktualisiert wird
-                    recreate();
+                    recreate();     // UI neu laden
                 })
                 .show();
     }
+
+
+
+
     /**
-     * Wird aufgerufen, wenn die Activity endgültig beendet wird.
-     * Diese Methode führt erst die Standard-Aufräumarbeiten der Elternklasse aus
-     * und trennt anschließend – falls vorhanden – die Verbindung zum TTSService,
-     * um Hintergrundressourcen freizugeben und Speicherlecks zu vermeiden.
+     * Trennt beim Beenden die Verbindung zum {@link TTSService},
+     * um Ressourcen freizugeben und Leaks zu vermeiden.
      */
     @Override
     protected void onDestroy() {

@@ -18,7 +18,7 @@ import android.widget.Toast;
 
 /**
  * Die MainActivity ist der Einstiegspunkt der App.
- * Sie erlaubt es dem Nutzer, eine Sprache auszuwählen, und navigiert anschließend zur CategoryActivity.
+ * Sie erlaubt es den Nutzer:innen, eine Sprache auszuwählen, und navigiert anschließend zur CategoryActivity.
  * Die Sprachwahl wird in den SharedPreferences gespeichert.
  */
 public class MainActivity extends AppCompatActivity {

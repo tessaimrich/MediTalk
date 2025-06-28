@@ -17,11 +17,14 @@ import java.util.regex.Pattern;
 import at.fhj.tessaimrich.data.AppDatabase;
 import at.fhj.tessaimrich.data.Medication;
 
+
 public class CategoryActivity extends BaseDrawerActivity {
 
     private MaterialAutoCompleteTextView searchInput;
     private AppDatabase db;
     private ArrayAdapter<String> adapter;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,34 +38,34 @@ public class CategoryActivity extends BaseDrawerActivity {
 
         db = AppDatabase.getInstance(getApplicationContext());
 
-        // 1) Sprache ermitteln
+        // Sprache ermitteln
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String lang = prefs
                 .getString("language", Locale.getDefault().getLanguage())
                 .split("-")[0]
                 .toLowerCase();
 
-        // 2) Falls noch keine Einträge für diese Sprache existieren, Test-Daten einfügen
+        // Falls noch keine Einträge für diese Sprache existieren, Test-Daten einfügen
         List<Medication> pillsExist = db.medicationDao()
                 .findByCategoryAndLanguage("pills", lang);
-        if (pillsExist.isEmpty()) {
+            if (pillsExist.isEmpty()) {
+                db.medicationDao().insertAll(
+                        new Medication("Amlodipine Valsartan Mylan", "pills", lang,
+                                "AmlodipineValsartanMylan", "", "AmlodipineValsartanMylan_" + lang.toUpperCase() + ".pdf"),
+                        new Medication("Cymbalta", "pills", lang,
+                                "Cymbalta", "", "Cymbalta_" + lang.toUpperCase() + ".pdf"),
+                        new Medication("Eliquis", "pills", lang,
+                                "Eliquis", "", "Eliquis_" + lang.toUpperCase() + ".pdf"),
+                        new Medication("Nilemdo", "pills", lang,
+                                "Nilemdo", "", "Nilemdo_" + lang.toUpperCase() + ".pdf"),
+                        new Medication("Qtern", "pills", lang,
+                                "Qtern", "", "Qtern_" + lang.toUpperCase() + ".pdf")
+                  );
+                        }
 
-                        // —––––– PILLS –––––—
-                        db.medicationDao().insertAll(
-                                new Medication("Amlodipine Valsartan Mylan", "pills", lang,
-                                        "AmlodipineValsartanMylan", "", "AmlodipineValsartanMylan_" + lang.toUpperCase() + ".pdf"),
-                                new Medication("Cymbalta", "pills", lang,
-                                        "Cymbalta", "", "Cymbalta_" + lang.toUpperCase() + ".pdf"),
-                                new Medication("Eliquis", "pills", lang,
-                                        "Eliquis", "", "Eliquis_" + lang.toUpperCase() + ".pdf"),
-                                new Medication("Nilemdo", "pills", lang,
-                                        "Nilemdo", "", "Nilemdo_" + lang.toUpperCase() + ".pdf"),
-                                new Medication("Qtern", "pills", lang,
-                                        "Qtern", "", "Qtern_" + lang.toUpperCase() + ".pdf")
-              );
-                    }
         AppDatabase.databaseWriteExecutor.execute(() -> {
-                List<Medication> dropsExist = db.medicationDao()
+
+        List<Medication> dropsExist = db.medicationDao()
                             .findByCategoryAndLanguage("drops", lang);
             if (dropsExist.isEmpty()) {
                 db.medicationDao().insertAll(
@@ -72,7 +75,7 @@ public class CategoryActivity extends BaseDrawerActivity {
                                 "Simbrinza", "", "Simbrinza_" + lang.toUpperCase() + ".pdf")
                 );
             }
-                // —––––– CREAMS –––––—
+
             List<Medication> creamsExist = db.medicationDao()
                     .findByCategoryAndLanguage("cream", lang);
             if (creamsExist.isEmpty()) {
@@ -81,7 +84,7 @@ public class CategoryActivity extends BaseDrawerActivity {
                                 "Protopic", "", "Protopic_" + lang.toUpperCase() + ".pdf")
                 );
             }
-                // —––––– INHALATIONS –––––—
+
             List<Medication> inhExist = db.medicationDao()
                     .findByCategoryAndLanguage("inhalation", lang);
             if (inhExist.isEmpty()) {
@@ -92,18 +95,20 @@ public class CategoryActivity extends BaseDrawerActivity {
                                 "Ultibro", "", "Ultibro_" + lang.toUpperCase() + ".pdf")
                 );
             }
-                // nach Insert: Adapter updaten
-                List<String> updated = db.medicationDao().getAllNames(lang);
-                runOnUiThread(() -> {
-                    adapter.clear();
-                    adapter.addAll(updated);
-                    adapter.notifyDataSetChanged();
-                });
 
+
+            // nach Insert: Adapter updaten
+            List<String> updated = db.medicationDao().getAllNames(lang);
+            runOnUiThread(() -> {
+                adapter.clear();
+                adapter.addAll(updated);
+                adapter.notifyDataSetChanged();
+            });
 
         });
 
-        // 3) Adapter mit allen Namen dieser Sprache
+
+        // Adapter mit allen Namen dieser Sprache
         List<String> suggestions = db.medicationDao().getAllNames(lang);
         adapter = new ArrayAdapter<>(
                 this,
@@ -114,7 +119,8 @@ public class CategoryActivity extends BaseDrawerActivity {
         searchInput.setAdapter(adapter);
         searchInput.setThreshold(1);
 
-        // 4) Enter/Search
+
+        // Enter/Search
         searchInput.setOnEditorActionListener((v, actionId, ev) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH
                     || actionId == EditorInfo.IME_ACTION_DONE) {
@@ -129,13 +135,13 @@ public class CategoryActivity extends BaseDrawerActivity {
             return false;
         });
 
-        // 5) Klick auf Vorschlag
+        // Klick auf Vorschlag
         searchInput.setOnItemClickListener((parent, view, pos, id) -> {
             String sel = adapter.getItem(pos);
             if (sel != null) performSearch(sel, lang);
         });
 
-        // 6) Icons → ListActivities
+        // Icons → ListActivities
         findViewById(R.id.ivPill).setOnClickListener(v ->
                 startActivity(new Intent(this, PillListActivity.class))
         );
@@ -149,6 +155,11 @@ public class CategoryActivity extends BaseDrawerActivity {
                 startActivity(new Intent(this, InhalationListActivity.class))
         );
     }
+
+
+
+
+
 
     /** regex-basierte Suche über alle Medikamente der aktuellen Sprache */
     private void performSearch(String pattern, String lang) {
