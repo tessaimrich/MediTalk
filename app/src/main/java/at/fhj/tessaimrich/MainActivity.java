@@ -111,22 +111,20 @@ public class MainActivity extends AppCompatActivity {
      * @param prefs     SharedPreferences zur späteren Speicherung
      */
     private void setupFlag(ImageButton flagBtn, TextView flagLabel, String langCode, SharedPreferences prefs) {
-        // Beschriftung unterhalb der Flagge
 
         flagBtn.setOnClickListener(v -> {
-
             selectedLanguage = langCode;
-
             // Alle Markierungen zurücksetzen
             resetFlagLabels();
-
             // Diese Flagge hervorheben
             flagLabel.setTypeface(null, android.graphics.Typeface.BOLD);
-
             // Weiter-Button aktivieren
             findViewById(R.id.btnWeiter).setEnabled(true);
         });
     }
+
+
+
 
     /**
      * Setzt alle Sprachlabels (unterhalb der Flaggen) auf normale Schrift.
