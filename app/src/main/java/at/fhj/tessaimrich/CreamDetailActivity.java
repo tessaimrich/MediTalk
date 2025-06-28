@@ -36,18 +36,10 @@ public class CreamDetailActivity extends BaseMedicationDetailActivity {
     private AudioManager audioManager;
     private int originalVolume;
     private boolean isVolumeAdjusted = false;
-    /**
-     * Gibt das Layout dieser Detailansicht zurück.
-     * Wird von der Basisklasse beim Laden verwendet.
-     */
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_cream_detail;
     }
-    /**
-     * Gibt die ID des TextViews zurück, das den Medikamentennamen enthält.
-     * Wird in der Basisklasse zur Titelanzeige verwendet.
-     */
     @Override
     protected int getTitleViewId() {
         return R.id.tvCreamName;
@@ -65,7 +57,6 @@ public class CreamDetailActivity extends BaseMedicationDetailActivity {
      */
     @Override
     protected void onMedicationLoaded(Medication med) {
-        // TTS-Button
         btnAudio = findViewById(R.id.btnAudioCream);
         final boolean[] isSpeaking = {false};
         btnAudio.setOnClickListener(v -> {
@@ -74,12 +65,12 @@ public class CreamDetailActivity extends BaseMedicationDetailActivity {
                 return;
             }
             if (isSpeaking[0]) {
-                // stoppen
+
                 ttsService.stop();
                 isSpeaking[0] = false;
                 Toast.makeText(this, "Wiedergabe gestoppt", Toast.LENGTH_SHORT).show();
             } else {
-                // Text aus Assets laden und vorlesen
+
                 String rawKey = med.getTtsText();
                 String key = rawKey.toLowerCase(Locale.ROOT);
                 String lang = currentLang.toLowerCase(Locale.ROOT);
@@ -97,7 +88,7 @@ public class CreamDetailActivity extends BaseMedicationDetailActivity {
             }
         });
 
-        // PDF-Button
+
         btnPdf = findViewById(R.id.btnPdfCreamPdf);
         btnPdf.setOnClickListener(v -> {
             String asset = med.getPdfAsset();
@@ -108,7 +99,7 @@ public class CreamDetailActivity extends BaseMedicationDetailActivity {
             openPdf("pdfs/" + asset.trim());
         });
         setupAudioAndProximity();
-        // Home-Button: automatisch von BaseDrawerActivity
+
     }
 
 
@@ -125,7 +116,6 @@ public class CreamDetailActivity extends BaseMedicationDetailActivity {
      * </p>
      */
     private void setupAudioAndProximity() {
-        // AudioManager initialisieren & Basislautstärke merken
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         originalVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         int maxVol = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
