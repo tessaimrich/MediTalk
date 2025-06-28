@@ -40,23 +40,24 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
     // Öffnet/schließt den Drawer über das Hamburger-Menü in der Toolbar
     private ActionBarDrawerToggle toggle;
     public TTSService ttsService;
-
-
     /**
-     * Verbindung zum {@link TTSService}, um ihn zu starten,
+     * Attribut vom Typ ServiceConnection,
+     * das als anonymes Objekt deklariert und sofort initialisiert wird.
+     * Es ist eine Verbindung zum {@link TTSService}, um ihn zu starten,
      * ein Objekt vom Typ TTSService zu speichern und Sprache und Sprechgeschwindigkeit zu setzen.
      */
     private final ServiceConnection serviceConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
+            // Zugriff auf laufenden TTSService über seinen LocalBinder
             ttsService = ((TTSService.LocalBinder) binder).getService();
-            // aktuelle Sprache setzen
+            // // Sprache aus den App-Einstellungen holen
             SharedPreferences prefs = PreferenceManager
                     .getDefaultSharedPreferences(BaseDrawerActivity.this);
             String lang = prefs.getString("language", Locale.getDefault().getLanguage());
+            // Sprache und Sprechgeschwindigkeit im TTS-Service setzen
             ttsService.setLanguage(lang);
-            // Sprechgeschwindigkeit setzen
             float rate = getSharedPreferences("tts_prefs", MODE_PRIVATE)
                     .getFloat("speech_rate", 1.0f);
             ttsService.setSpeechRate(rate);
@@ -85,7 +86,7 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Drawer und Toggle initialisieren
+        // Drawer und Toggle (Hamburger-Menü) initialisieren
         drawer = findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(
                 this,
@@ -95,7 +96,7 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
                 R.string.navigation_drawer_close
         );
         drawer.addDrawerListener(toggle);
-        toggle.syncState();
+        toggle.syncState();             // Sync zwischen Drawer und Toolbar
 
         //NavigationItem‐Listener setzen
         NavigationView navView = findViewById(R.id.nav_view);
@@ -150,14 +151,15 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_language) {
-            showLanguageSelectionDialog();
+            showLanguageSelectionDialog();   // Sprache ändern
             return true;
 
         } else if (id == R.id.nav_display) {
-            startActivity(new Intent(this, SettingsActivity.class));
+            startActivity(new Intent(this, SettingsActivity.class));    // Anzeigeeinstellungen öffnen
 
         } else if (id == R.id.nav_info) {
-            new AlertDialog.Builder(this)
+            // App-Info anzeigen
+                new AlertDialog.Builder(this)
                     .setTitle("Info zur App")
                     .setMessage("MediTalk\nVersion: " + getString(R.string.app_version))
                     .setPositiveButton("OK", null)
@@ -235,5 +237,7 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
             unbindService(serviceConnection);
         }
     }
+
+
 
 }
