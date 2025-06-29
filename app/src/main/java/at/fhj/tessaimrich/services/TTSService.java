@@ -11,8 +11,20 @@ import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 import java.util.Locale;
 
-
+/**
+ * {@code TTSService} ist ein Android Service zur Verwaltung von Text-to-Speech (TTS).
+ * <p>
+ * Hauptfunktionen:
+ * <ul>
+ *   <li>Initialisierung und Konfiguration der TTS-Engine</li>
+ *   <li>Sprachausgabe von Texten in verschiedenen Sprachen</li>
+ *   <li>Überwachung des Fortschritts durch einen Listener</li>
+ *   <li>Verwendung eines Binders zur Interaktion mit Activities</li>
+ * </ul>
+ */
 public class TTSService extends Service {
+
+
     private TextToSpeech tts;
     private boolean ttsReady = false;
     private TTSListener listener;
@@ -20,33 +32,33 @@ public class TTSService extends Service {
 
 
 
+    /**
+     * Wird beim Start des Services aufgerufen. Initialisiert TTS und setzt Sprache.
+     */
     @Override
     public void onCreate() {
         super.onCreate();
 
         tts = new TextToSpeech(this, status -> {
             if (status == TextToSpeech.SUCCESS) {
-// Engine ist bereit
                 ttsReady = true;
                 tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
                     @Override
                     public void onStart(String utteranceId) {
                         if (listener != null) listener.onSpeakStart();
                     }
-
                     @Override
                     public void onDone(String utteranceId) {
                         if (listener != null) listener.onSpeakDone();
                     }
-
                     @Override
                     public void onError(String utteranceId) {
                         if (listener != null) listener.onSpeakError();
                     }
                 });
+
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
                 String languageCode = prefs.getString("language", "en");
-
                 setLanguage(languageCode);
 
                 Log.d("TTS", "Initialized and set language to " + languageCode);
@@ -59,16 +71,20 @@ public class TTSService extends Service {
         });
     }
 
+
+    /**
+     * Gibt den Binder zurück, damit andere Komponenten (z.B. Activities) mit dem Service kommunizieren können.
+     */
     @Override
     public IBinder onBind(Intent intent) {
         return binder;
     }
 
-    public void setTTSListener(TTSListener listener) {
-        this.listener = listener;
-    }
 
-
+    /**
+     * Spricht einen Text mit der aktuellen TTS-Konfiguration.
+     * @param text Der zu sprechende Text
+     */
     public void speak(String text) {
         if (!ttsReady || tts == null || text == null || text.isEmpty()) return;
 
@@ -81,30 +97,39 @@ public class TTSService extends Service {
     }
 
 
-
+    /**
+     * Stoppt die aktuelle Sprachausgabe.
+     */
     public void stop() {
         if (tts != null && tts.isSpeaking()) {
             tts.stop();
         }
     }
 
+    /**
+     * Setzt die Sprachgeschwindigkeit.
+     * @param rate Geschwindigkeit (1.0 = normal)
+     */
     public void setSpeechRate(float rate) {
         if (tts != null && ttsReady) {
             tts.setSpeechRate(rate);
         }
     }
 
+    /**
+     * Setzt die Sprache für TTS basierend auf dem Sprachcode.
+     * @param languageCode Sprachcode (z.B. "de" für Deutsch)
+     */
     public void setLanguage(String languageCode) {
         Locale locale;
         switch (languageCode) {
             case "en":
-                locale = Locale.US; // US-Englisch
+                locale = Locale.US;
                 break;
             case "de":
                 locale = Locale.GERMANY;
                 break;
             case "fr":
-                // try FR first, then generic
                 if (tts.setLanguage(Locale.FRANCE)
                         == TextToSpeech.LANG_MISSING_DATA
                         || tts.setLanguage(Locale.FRANCE)
@@ -128,7 +153,7 @@ public class TTSService extends Service {
                 locale = new Locale("sl", "SI");
                 break;
             default:
-                locale = Locale.getDefault();    // Fallback auf System-Locale
+                locale = Locale.getDefault();
         }
 
         int result = tts.setLanguage(locale);
@@ -140,14 +165,17 @@ public class TTSService extends Service {
         }
     }
 
+    /**
+     * Gibt zurück, ob TTS bereit zur Sprachausgabe ist.
+     */
     public boolean isTTSReady() {
         return ttsReady;
     }
 
-    public boolean isSpeaking() {
-        return tts != null && tts.isSpeaking();
-    }
 
+    /**
+     * Beendet den Service und gibt TTS-Ressourcen frei.
+     */
     @Override
     public void onDestroy() {
         if (tts != null) {
@@ -157,12 +185,18 @@ public class TTSService extends Service {
         super.onDestroy();
     }
 
+    /**
+     * Binder-Klasse für lokale Verbindung mit Clients.
+     */
     public class LocalBinder extends Binder {
         public TTSService getService() {
             return TTSService.this;
         }
     }
 
+    /**
+     * Schnittstelle für Rückmeldungen zu TTS-Ereignissen.
+     */
     public interface TTSListener {
         void onTTSInitialized(boolean isReady);
 
