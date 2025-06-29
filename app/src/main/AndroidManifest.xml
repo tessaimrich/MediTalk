@@ -29,7 +29,7 @@
         <activity
             android:name=".activities_core_function.SplashActivity"
             android:exported="true"
-            android:theme="@style/Theme.MediTalk.Splash">
+            android:theme="@style/Theme.MediTalk">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

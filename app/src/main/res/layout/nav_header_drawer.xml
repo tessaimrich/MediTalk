@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="160dp"
     android:padding="16dp"
+    android:background="@color/splash_background"
     android:gravity="bottom">
 
     <TextView
