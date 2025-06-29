@@ -24,13 +24,18 @@ import at.fhj.tessaimrich.data.Medication;
 
 
 /**
- * Detailansicht für ein Medikament der Kategorie „Cream“.
+ * Diese Activity zeigt die Detailinformationen zu einer Cream an.
  * <p>
- * Diese Klasse erweitert {@link BaseMedicationDetailActivity} und implementiert das Layout,
- * TTS-Funktionalität, PDF-Anzeige und die automatische Lautstärkeregelung
- * mithilfe des Näherungssensors für Cremes.
+ * Sie ermöglicht:
+ * <ul>
+ *   <li>Wiedergabe eines Textes via Text-to-Speech (TTS)</li>
+ *   <li>Anzeige einer PDF-Datei</li>
+ *   <li>Automatische Lautstärkeregelung bei Näherung</li>
+ * </ul>
+ * Die Activity basiert auf {@link BaseMedicationDetailActivity}, welche die gemeinsame Logik übernimmt.
  */
 public class CreamDetailActivity extends BaseMedicationDetailActivity {
+
     private ImageButton btnAudio, btnPdf;
     private SensorManager sensorManager;
     private Sensor proximitySensor;
@@ -38,6 +43,9 @@ public class CreamDetailActivity extends BaseMedicationDetailActivity {
     private AudioManager audioManager;
     private int originalVolume;
     private boolean isVolumeAdjusted = false;
+
+
+
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_cream_detail;
@@ -67,29 +75,27 @@ public class CreamDetailActivity extends BaseMedicationDetailActivity {
                 return;
             }
             if (isSpeaking[0]) {
-
-                ttsService.stop();
-                isSpeaking[0] = false;
-                Toast.makeText(this, "Wiedergabe gestoppt", Toast.LENGTH_SHORT).show();
-            } else {
-
-                String rawKey = med.getTtsText();
-                String key = rawKey.toLowerCase(Locale.ROOT);
-                String lang = currentLang.toLowerCase(Locale.ROOT);
-
-                String assetPath = "tts/pills/cream/"
-                        + key + "_" + lang + ".txt";
-                String text = loadAssetText(assetPath);
-                if (text != null && !text.isEmpty()) {
-                    ttsService.speak(text);
-                    isSpeaking[0] = true;
-                    Toast.makeText(this, "Wiedergabe gestartet", Toast.LENGTH_SHORT).show();
+                    ttsService.stop();
+                    isSpeaking[0] = false;
+                    Toast.makeText(this, "Wiedergabe gestoppt", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(this, "Text nicht gefunden", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+                    String rawKey = med.getTtsText();
 
+                    String key = rawKey.toLowerCase(Locale.ROOT);
+                    String lang = currentLang.toLowerCase(Locale.ROOT);
+
+                    String assetPath = "tts/pills/cream/"
+                            + key + "_" + lang + ".txt";
+                    String text = loadAssetText(assetPath);
+                    if (text != null && !text.isEmpty()) {
+                        ttsService.speak(text);
+                        isSpeaking[0] = true;
+                        Toast.makeText(this, "Wiedergabe gestartet", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "Text nicht gefunden", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        });
 
         btnPdf = findViewById(R.id.btnPdfCreamPdf);
         btnPdf.setOnClickListener(v -> {
@@ -125,6 +131,7 @@ public class CreamDetailActivity extends BaseMedicationDetailActivity {
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVol - 1, 0);
             Toast.makeText(this, "Basis-Lautstärke erhöht", Toast.LENGTH_SHORT).show();
         }
+
     sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
     proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         if (proximitySensor != null) {
@@ -159,7 +166,8 @@ public class CreamDetailActivity extends BaseMedicationDetailActivity {
 
 
     /**
-     * Lädt Textdateien aus dem Assets-Ordner, z.B. für TTS-Wiedergabe.
+     * Lädt eine Textdatei aus dem Assets-Ordner.
+     * Wird für TTS-Textverarbeitung verwendet.
      *
      * @param assetPath Pfad zur Datei im Assets-Ordner
      * @return Der geladene Text oder {@code null}, falls nicht gefunden
@@ -176,7 +184,8 @@ public class CreamDetailActivity extends BaseMedicationDetailActivity {
 
 
     /**
-     * Öffnet eine PDF-Datei aus dem Assets-Ordner über eine temporäre Datei im internen Speicher.
+     * Öffnet eine PDF-Datei aus dem Assets-Ordner.
+     * Die Datei wird in den internen Speicher kopiert und dann angezeigt.
      *
      * @param assetPath Pfad zur PDF-Datei im Assets-Verzeichnis
      */
@@ -196,6 +205,23 @@ public class CreamDetailActivity extends BaseMedicationDetailActivity {
                     .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
         } catch (IOException e) {
             Toast.makeText(this, "Fehler beim Öffnen der PDF", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+
+    /**
+     * Wird beim Beenden der Activity aufgerufen.
+     * Der SensorListener wird abgemeldet und die Lautstärke zurückgesetzt.
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (sensorManager != null && proximityListener != null) {
+            sensorManager.unregisterListener(proximityListener);
+        }
+        if (audioManager != null && isVolumeAdjusted) {
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, originalVolume, 0);
         }
     }
 }

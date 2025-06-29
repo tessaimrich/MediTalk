@@ -35,6 +35,7 @@ import at.fhj.tessaimrich.data.Medication;
  * Die Activity basiert auf {@link BaseMedicationDetailActivity}, welche die gemeinsame Logik übernimmt.
  */
 public class PillDetailActivity extends BaseMedicationDetailActivity {
+
     private ImageButton btnAudio, btnPdf;
     private SensorManager sensorManager;
     private Sensor proximitySensor;
@@ -42,6 +43,9 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
     private AudioManager audioManager;
     private int originalVolume;
     private boolean isVolumeAdjusted = false;
+
+
+
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_pill_detail;
@@ -71,29 +75,25 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
                         isSpeaking[0] = false;
                         Toast.makeText(this, "Wiedergabe gestoppt", Toast.LENGTH_SHORT).show();
                     } else {
+                        String rawKey = med.getTtsText();
+                        if (rawKey.equalsIgnoreCase("amlodipinevalsartanmylan")) {
+                            rawKey = "amlodipin";
+                        }
+                        String key = rawKey.toLowerCase(Locale.ROOT);
+                        String lang = currentLang.toLowerCase(Locale.ROOT);
 
 
-                String rawKey = med.getTtsText();
-                if (rawKey.equalsIgnoreCase("amlodipinevalsartanmylan")) {
-                    rawKey = "amlodipin";
-                }
-                String key = rawKey.toLowerCase(Locale.ROOT);
-                String lang = currentLang.toLowerCase(Locale.ROOT);
+                        String path = "tts/pills/" + key + "_" + lang + ".txt";
+                        String text = loadAssetText(path);
 
-
-                String path = "tts/pills/" + key + "_" + lang + ".txt";
-
-
-                String text = loadAssetText(path);
-
-                if (text != null && !text.isEmpty()) {
-                    ttsService.speak(text);
-                    isSpeaking[0] = true;
-                    Toast.makeText(this, "Wiedergabe gestartet", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this, "Text nicht gefunden", Toast.LENGTH_SHORT).show();
-                }
-            }
+                        if (text != null && !text.isEmpty()) {
+                            ttsService.speak(text);
+                            isSpeaking[0] = true;
+                            Toast.makeText(this, "Wiedergabe gestartet", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(this, "Text nicht gefunden", Toast.LENGTH_SHORT).show();
+                        }
+                    }
         });
 
 
@@ -104,8 +104,6 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
                 Toast.makeText(this, "Keine PDF verfügbar", Toast.LENGTH_SHORT).show();
                 return;
             }
-
-
             String pdfName = pdfAsset.trim().replaceAll("\\s+","");
             openPdf("pdfs/" + pdfName);
         });
@@ -115,8 +113,16 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
 
 
     /**
-     * Initialisiert AudioManager und Näherungssensor.
-     * Bei erkannter Nähe wird die Lautstärke reduziert.
+     * Initialisiert AudioManager und registiert einen Proximity-Sensor-Listener.
+     * <p>
+     * • Speichert die aktuelle Musiklautstärke und erhöht sie auf fast Maximum,
+     *   wenn sie unter der Hälfte liegt – damit z.B. Text‑to‑Speech gut hörbar ist.
+     * • Initialisiert den Näherungssensor (in cm). Erkennt Geräte-Nähe (z.B. <≃5cm),
+     *   indem gemessen wird, ob der Wert < proximitySensor.getMaximumRange() ist.
+     * • Bei Nähe: Lautstärke auf ⅓ Max setzen, bei Entfernung: auf Original‑Wert zurückholen.
+     * • Toast-Meldungen informieren den Nutzer über „Ohr erkannt – Lautstärke reduziert“
+     *   oder Rückkehr zu „Lautsprecher“-Modus.
+     * </p>
      */
     private void setupAudioAndSensor() {
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
@@ -164,7 +170,7 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
      * Wird für TTS-Textverarbeitung verwendet.
      *
      * @param path Pfad zur Datei
-     * @return Inhalt als String oder {@code null} bei Fehler
+     * @return Der geladene Text oder {@code null}, falls nicht gefunden
      */
     private String loadAssetText(String path) {
         try (InputStream in = getAssets().open(path)) {
@@ -182,7 +188,7 @@ public class PillDetailActivity extends BaseMedicationDetailActivity {
      * Öffnet eine PDF-Datei aus dem Assets-Ordner.
      * Die Datei wird in den internen Speicher kopiert und dann angezeigt.
      *
-     * @param assetPath Pfad zur PDF-Datei im Assets-Ordner
+     * @param assetPath Pfad zur PDF-Datei im Assets-Verzeichnis
      */
     private void openPdf(String assetPath) {
         try (InputStream in = getAssets().open(assetPath)) {
