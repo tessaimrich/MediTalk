@@ -38,9 +38,8 @@ import at.fhj.tessaimrich.services.TTSService;
 public abstract class BaseDrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    // Hauptcontainer für den Navigation Drawer
+
     protected DrawerLayout drawer;
-    // Öffnet/schließt den Drawer über das Hamburger-Menü in der Toolbar
     private ActionBarDrawerToggle toggle;
     public TTSService ttsService;
     /**
@@ -50,27 +49,23 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
      * ein Objekt vom Typ TTSService zu speichern und Sprache und Sprechgeschwindigkeit zu setzen.
      */
     private final ServiceConnection serviceConnection = new ServiceConnection() {
-
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
-            // Zugriff auf laufenden TTSService über seinen LocalBinder
             ttsService = ((TTSService.LocalBinder) binder).getService();
-            // // Sprache aus den App-Einstellungen holen
             SharedPreferences prefs = PreferenceManager
                     .getDefaultSharedPreferences(BaseDrawerActivity.this);
             String lang = prefs.getString("language", Locale.getDefault().getLanguage());
-            // Sprache und Sprechgeschwindigkeit im TTS-Service setzen
             ttsService.setLanguage(lang);
             float rate = getSharedPreferences("tts_prefs", MODE_PRIVATE)
                     .getFloat("speech_rate", 1.0f);
             ttsService.setSpeechRate(rate);
         }
-
         @Override
         public void onServiceDisconnected(ComponentName name) {
             ttsService = null;
         }
     };
+
 
 
 
@@ -85,11 +80,9 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawer);
 
-        //Toolbar als ActionBar setzen
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Drawer und Toggle (Hamburger-Menü) initialisieren
         drawer = findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(
                 this,
@@ -99,20 +92,15 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
                 R.string.navigation_drawer_close
         );
         drawer.addDrawerListener(toggle);
-        toggle.syncState();             // Sync zwischen Drawer und Toolbar
+        toggle.syncState();
 
-        //NavigationItem‐Listener setzen
         NavigationView navView = findViewById(R.id.nav_view);
         navView.setNavigationItemSelectedListener(this);
 
-        // TTS-Service starten und binden
         Intent ttsIntent = new Intent(this, TTSService.class);
         startService(ttsIntent);
         bindService(ttsIntent, serviceConnection, BIND_AUTO_CREATE);
-
     }
-
-
 
 
 
@@ -125,10 +113,7 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
 
         NavigationView navView = findViewById(R.id.nav_view);
         if (navView != null) {
-            // Zugriff auf das Header-Layout im Drawer
             android.view.View headerView = navView.getHeaderView(0);
-
-            // Zugriff auf das Sprach-TextView im Header
             TextView tvLanguage = headerView.findViewById(R.id.tvLanguage);
 
             if (tvLanguage != null) {
@@ -138,7 +123,6 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
             }
         }
     }
-
 
 
 
@@ -154,14 +138,13 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_language) {
-            showLanguageSelectionDialog();   // Sprache ändern
+            showLanguageSelectionDialog();
             return true;
 
         } else if (id == R.id.nav_display) {
-            startActivity(new Intent(this, SettingsActivity.class));    // Anzeigeeinstellungen öffnen
+            startActivity(new Intent(this, SettingsActivity.class));
 
         } else if (id == R.id.nav_info) {
-            // App-Info anzeigen
                 new AlertDialog.Builder(this)
                     .setTitle("Info zur App")
                     .setMessage("MediTalk\nVersion: " + getString(R.string.app_version))
@@ -169,8 +152,6 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
                     .show();
         }
         else if (id == R.id.nav_home) {
-            // Home: schließt diese Activity (SettingsActivity oder jede andere)
-            // und kehrt zur vorherigen (z.B. CategoryActivity) zurück
             finish();
         }
         return true;
@@ -192,8 +173,6 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
     }
 
 
-
-
     /**
      * Zeigt einen Dialog zur Sprachauswahl an.
      * Die neue Sprache wird gespeichert und auf den {@link TTSService} angewendet.
@@ -206,10 +185,8 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Sprache wählen")
                 .setItems(languages, (dialog, which) -> {
-                    String selectedCode  = codes[which];      // wird gespeichert
-                    //String selectedLabel = languages[which];  // nur zur Anzeige
+                    String selectedCode  = codes[which];
 
-                    // ISO-Sprachcode speichern
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
                     prefs.edit().putString("language", selectedCode).apply();
 
@@ -221,7 +198,7 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
                             "Sprache geändert: " + languages[which],
                             Toast.LENGTH_SHORT).show();
 
-                    recreate();     // UI neu laden
+                    recreate();
                 })
                 .show();
     }
@@ -240,7 +217,6 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
             unbindService(serviceConnection);
         }
     }
-
 
 
 }
