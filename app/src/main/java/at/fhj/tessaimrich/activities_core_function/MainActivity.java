@@ -25,9 +25,7 @@ import at.fhj.tessaimrich.R;
  */
 public class MainActivity extends AppCompatActivity {
 
-    /** Schlüssel zur Übergabe der Sprache an die nächste Activity */
     private static final String KEY_LANGUAGE = "language";
-    /** Vom Benutzer gewählte Sprache im ISO-639-1-Format (z.B. "en") */
     private String selectedLanguage = null;
 
 
@@ -47,17 +45,12 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        // Padding für SystemBars
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets sb = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(sb.left, sb.top, sb.right, sb.bottom);
             return insets;
         });
 
-    // Sprach-Buttons initialisieren
-        // verbindet das Bild, das Label, den Sprachcode und das Preferences-Objekt
-        // "en": Sprachcode aus ISO 639-1: internationale Norm für Namen von Sprachen
-        // prefs: SharedPreferences-Objekt, in das die Auswahl gespeichert werden soll
         setupFlag(findViewById(R.id.btnFlagEnglish),   findViewById(R.id.tvLangEnglish),   "en", prefs);
         setupFlag(findViewById(R.id.btnFlagSlovenian),    findViewById(R.id.tvLangSlovenian),    "sl", prefs);
         setupFlag(findViewById(R.id.btnFlagSpanish),    findViewById(R.id.tvLangSpanish),    "es", prefs);
@@ -65,8 +58,6 @@ public class MainActivity extends AppCompatActivity {
         setupFlag(findViewById(R.id.btnFlagItalian), findViewById(R.id.tvLangItalian), "it", prefs);
         setupFlag(findViewById(R.id.btnFlagFrench),  findViewById(R.id.tvLangFrench),  "fr", prefs);
 
-
-        // Weiter-Button vorbereiten
         ImageButton btnWeiter = findViewById(R.id.btnWeiter);
         btnWeiter.setEnabled(true);
         TextView tvWeiter = findViewById(R.id.tvWeiterLabel);
@@ -77,12 +68,9 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Keine Sprache gewählt. Bitte tippen Sie auf eine Flagge.", Toast.LENGTH_SHORT).show();
                 return;
             }
-
-            // Sprachname speichern
             prefs.edit()
                     .putString("language", selectedLanguage)
                     .apply();
-            // Zur CategoryActivity wechseln, Sprache mitgeben
             Intent intent = new Intent(MainActivity.this, CategoryActivity.class);
             intent.putExtra(KEY_LANGUAGE, selectedLanguage);
             startActivity(intent);
@@ -90,13 +78,12 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        // Logout-Button: schließt die App
         ImageButton btnLogout = findViewById(R.id.btnLogout);
         btnLogout.setOnClickListener(v -> {
-            finishAffinity();      // Alle Activities beenden → App geschlossen
+            finishAffinity();
         });
 
-    }  //Ende onCreate()
+    }
 
 
 
@@ -116,11 +103,8 @@ public class MainActivity extends AppCompatActivity {
 
         flagBtn.setOnClickListener(v -> {
             selectedLanguage = langCode;
-            // Alle Markierungen zurücksetzen
             resetFlagLabels();
-            // Diese Flagge hervorheben
             flagLabel.setTypeface(null, android.graphics.Typeface.BOLD);
-            // Weiter-Button aktivieren
             findViewById(R.id.btnWeiter).setEnabled(true);
         });
     }
