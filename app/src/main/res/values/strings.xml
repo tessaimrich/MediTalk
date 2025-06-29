@@ -64,4 +64,20 @@
 
     <!-- PillList-->
     <string name="tabletten">TABLETTEN</string>
+    <string name="tablettenname">TABLETTENNAME</string>
+    <string name="wie_nehme_ich_es_zu_mir_pill">Wie nehme ich es zu mir?</string>
+    <!-- InhalationList-->
+    <string name="inhalationen">INHALATIONEN</string>
+    <string name="inhalationenname">INHALATIONENNAME</string>
+    <string name="wie_nehme_ich_es_zu_mir_inhalation">Wie nehme ich es zu mir?</string>
+    <!-- DropList-->
+    <string name="tropfen">TROPFEN</string>
+    <string name="tropfenname">TROPFENNAME</string>
+    <string name="wie_nehme_ich_es_zu_mir_drop">Wie nehme ich es zu mir?</string>
+    <!-- CreamList-->
+    <string name="salben">SALBEN</string>
+    <string name="salbenname">SALBENNAME</string>
+
+
+
 </resources>
