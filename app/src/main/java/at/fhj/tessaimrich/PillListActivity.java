@@ -2,6 +2,7 @@ package at.fhj.tessaimrich;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -94,13 +95,17 @@ public class PillListActivity extends BaseDrawerActivity {
             public View getView(int position, View convertView, android.view.ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
                 TextView tv = view.findViewById(android.R.id.text1);
-                tv.setTextColor(ContextCompat.getColor(getContext(), R.color.med_text_darkgray));
+             if (tv != null) {
+                 tv.setTextColor(ContextCompat.getColor(getContext(), R.color.med_text_darkgray));
+                 if (position == selectedPos) {
+                     tv.setTypeface(null, Typeface.BOLD);
+                 } else {
+                     tv.setTypeface(null, Typeface.NORMAL);
+                 }
+             } else {
+                 Log.w("Adapter", "TextView nicht gefunden");
+             }
 
-                if (position == selectedPos) {
-                    tv.setTypeface(null, Typeface.BOLD);
-                } else {
-                    tv.setTypeface(null, Typeface.NORMAL);
-                }
                 return view;
             }
         };

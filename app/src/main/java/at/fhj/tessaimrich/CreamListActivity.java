@@ -2,6 +2,7 @@ package at.fhj.tessaimrich;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -92,10 +93,16 @@ public class CreamListActivity extends BaseDrawerActivity {
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
                 TextView tv = view.findViewById(android.R.id.text1);
-                tv.setTextColor(ContextCompat.getColor(getContext(), R.color.med_text_darkgray));
-                tv.setTypeface(null, position == selectedPos
-                        ? Typeface.BOLD
-                        : Typeface.NORMAL);
+                if (tv != null) {
+                    tv.setTextColor(ContextCompat.getColor(getContext(), R.color.med_text_darkgray));
+                    tv.setTypeface(null, position == selectedPos
+                            ? Typeface.BOLD
+                            : Typeface.NORMAL);
+                } else {
+                    Log.w("Adapter", "TextView nicht gefunden");
+                }
+
+
                 return view;
             }
         };
