@@ -21,13 +21,17 @@ import at.fhj.tessaimrich.data.Medication;
 /**
  * Die {@code DropDetailActivity} zeigt die Detailansicht eines Medikaments der Kategorie "Tropfen".
  * <p>
- * Diese Klasse bietet die Anzeige einer PDF-Datei in der gewünschten Sprache.
+ * Diese Klasse bietet die Anzeige einer PDF-Datei in der von den Nutzer:innen gewählten Sprache.
  * <p>
  * Die Klasse erbt von {@link BaseMedicationDetailActivity}, wodurch UI-Struktur, Sprachlogik
  * und Home-Button automatisch verfügbar sind.
  */
 public class DropDetailActivity extends BaseMedicationDetailActivity {
+
     private ImageButton btnPdf;
+
+
+
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_drop_detail;
@@ -39,8 +43,9 @@ public class DropDetailActivity extends BaseMedicationDetailActivity {
 
     /**
      * Wird automatisch aufgerufen, sobald die Medikamentendaten aus der Datenbank geladen wurden.
+     * Hier wird der PDF-Button mit Funktionalität versehen.
      *
-     * @param med Das geladene Medikamentenobjekt
+     * @param med Das aus der Datenbank geladene Medikamentenobjekt
      */
     @Override
     protected void onMedicationLoaded(Medication med) {

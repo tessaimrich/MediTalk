@@ -17,8 +17,22 @@ import at.fhj.tessaimrich.R;
 import at.fhj.tessaimrich.base.BaseMedicationDetailActivity;
 import at.fhj.tessaimrich.data.Medication;
 
+
+/**
+ * Die {@code InhalationDetailActivity} zeigt die Detailansicht eines Medikaments der Kategorie "Inhalationen".
+ * <p>
+ * Diese Klasse bietet die Anzeige einer PDF-Datei in der von den Nutzer:innen gewählten Sprache.
+ * <p>
+ * Sie erbt von {@link BaseMedicationDetailActivity}, wodurch UI-Struktur, Sprachlogik
+ * und der Home-Button automatisch verfügbar sind.
+ */
 public class InhalationDetailActivity extends BaseMedicationDetailActivity {
+
     private ImageButton btnPdf;
+
+
+
+
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_inhalation_detail;
@@ -29,6 +43,13 @@ public class InhalationDetailActivity extends BaseMedicationDetailActivity {
         return R.id.tvInhalationName;
     }
 
+
+    /**
+     * Wird automatisch aufgerufen, sobald die Medikamentendaten geladen wurden.
+     * Hier wird der PDF-Button mit Funktionalität versehen.
+     *
+     * @param med Das aus der Datenbank geladene Medikamentenobjekt
+     */
     @Override
     protected void onMedicationLoaded(Medication med) {
         btnPdf = findViewById(R.id.btnPdfinhalation);
@@ -38,21 +59,24 @@ public class InhalationDetailActivity extends BaseMedicationDetailActivity {
                 Toast.makeText(this, "Keine PDF verfügbar", Toast.LENGTH_SHORT).show();
                 return;
             }
-
-            // Basisschlüssel extrahieren (alles vor dem Unterstrich)
             int u = original.lastIndexOf('_');
             String base = (u > 0)
                     ? original.substring(0, u)
                     : original.replaceAll("\\.pdf$", "");
 
-            // PDF-Name mit aktueller Sprache zusammensetzen
             String pdfName = base + "_" + currentLang.toUpperCase(Locale.ROOT) + ".pdf";
             openPdfFromAssets("pdfs/" + pdfName);
         });
-        // Home-Button kommt automatisch aus BaseDrawerActivity
     }
 
-    /** Kopiert die PDF aus assets und öffnet sie */
+
+
+    /**
+     * Öffnet eine PDF-Datei aus dem Assets-Ordner.
+     * Dazu wird die Datei temporär in den internen Speicher kopiert und über einen PDF-Viewer geöffnet.
+     *
+     * @param assetPath Pfad zur PDF-Datei im assets-Verzeichnis
+     */
     private void openPdfFromAssets(String assetPath) {
         try (InputStream in = getAssets().open(assetPath)) {
             File outFile = new File(getFilesDir(), new File(assetPath).getName());
