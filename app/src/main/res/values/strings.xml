@@ -8,7 +8,12 @@
 
     <!-- MainActivity Titel -->
     <string name="main_title">MediTalk</string>
-
+    <!-- Category-->
+    <string name="medikamente_suchen">Medikamente suchen...</string>
+    <string name="inhalation_button">inhalation_button</string>
+    <string name="creams_oin_button">cream_button</string>
+    <string name="drops_button">drops_button</string>
+    <string name="pills_button">pills_button</string>
     <!-- Buttons unten / allgemein -->
     <string name="weiter">Weiter</string>
     <string name="Weiter">Weiter</string>
@@ -77,7 +82,7 @@
     <!-- CreamList-->
     <string name="salben">SALBEN</string>
     <string name="salbenname">SALBENNAME</string>
-
+    <string name="wie_nehme_ich_es_zu_mir_cream">Wie nehme ich es zu mir?</string>
 
 
 </resources>

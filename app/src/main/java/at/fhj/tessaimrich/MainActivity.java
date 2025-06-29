@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         ImageButton btnWeiter = findViewById(R.id.btnWeiter);
         btnWeiter.setEnabled(true);
         TextView tvWeiter = findViewById(R.id.tvWeiterLabel);
-        tvWeiter.setText("Weiter");
+        tvWeiter.setText(R.string.weiter);
 
         btnWeiter.setOnClickListener(v -> {
             if (selectedLanguage == null) {

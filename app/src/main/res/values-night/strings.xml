@@ -2,17 +2,8 @@
 
 <resources>
 
-    <string name="pills" />
-    <string name="creams_oin" />
-    <string name="drops" />
-    <string name="inhalation" />
-
-    <string name="menu" />
-
     <string name="navigation_drawer_open">Navigation öffnen</string>
     <string name="navigation_drawer_close">Navigation schließen</string>
     <string name="app_version">1.0</string>
-
-
 
 </resources>

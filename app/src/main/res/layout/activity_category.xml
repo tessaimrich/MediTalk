@@ -25,7 +25,8 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:paddingStart="50dp"
-            android:hint="Medikamente suchen..." />
+            android:paddingEnd="16dp"
+            android:hint="@string/medikamente_suchen" />
         
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -53,7 +54,7 @@
                 android:layout_height="80dp"
                 android:src="@drawable/pill_thin"
                 android:layout_marginTop="16dp"
-                android:contentDescription="@string/pills" />
+                android:contentDescription="@string/pills_button" />
 
             <!-- Tropfen -->
             <ImageView
@@ -62,7 +63,7 @@
                 android:layout_height="80dp"
                 android:src="@drawable/drops_"
                 android:layout_marginTop="16dp"
-                android:contentDescription="@string/drops" />
+                android:contentDescription="@string/drops_button" />
 
             <!-- Salben -->
             <ImageView
@@ -71,7 +72,7 @@
                 android:layout_height="80dp"
                 android:src="@drawable/cream_oinments"
                 android:layout_marginTop="16dp"
-                android:contentDescription="@string/creams_oin" />
+                android:contentDescription="@string/creams_oin_button" />
 
             <!-- Inhalationen -->
             <ImageView
@@ -80,7 +81,7 @@
                 android:layout_height="80dp"
                 android:src="@drawable/inhalator_"
                 android:layout_marginTop="16dp"
-                android:contentDescription="@string/inhalation" />
+                android:contentDescription="@string/inhalation_button" />
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

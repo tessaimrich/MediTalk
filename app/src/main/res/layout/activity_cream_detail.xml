@@ -21,7 +21,7 @@
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:src="@drawable/cream_oinments"
-            android:contentDescription="@string/creams_oin" />
+            android:contentDescription="@string/creams_oin_button" />
 
         <TextView
             android:id="@+id/tvCreamName"
@@ -54,7 +54,7 @@
                 android:id="@+id/tvQuestion1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Wie nehme ich es zu mir?"
+                android:text="@string/wie_nehme_ich_es_zu_mir_cream"
                 android:gravity="center"
                 android:textStyle="bold"
                 android:textSize="16sp"/>
