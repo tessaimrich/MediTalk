@@ -5,21 +5,28 @@ import android.os.Bundle;
 import android.os.Handler;
 
 import androidx.activity.ComponentActivity;
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
+/**
+ * SplashActivity ist die Startbildschirm-Activity der App.
+ * Sie zeigt beim Start für 2 Sekunden einen Splash Screen an
+ * und wechselt anschließend automatisch zur MainActivity.
+ * Außerdem wird der Nachtmodus dauerhaft aktiviert-Design Grund.
+ */
 public class SplashActivity extends ComponentActivity {
+    /**
+     * Wird aufgerufen, wenn die Activity erstellt wird.
+     * Setzt das Layout auf den Splash Screen, aktiviert den Nachtmodus
+     * und startet nach 2 Sekunden die MainActivity.
+     * @param savedInstanceState gespeicherter Zustand der Activity, falls vorhanden
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        // Splash 2 Sekunden anzeigen, dann weiterleiten
+
         new Handler().postDelayed(() -> {
             Intent intent = new Intent(SplashActivity.this, MainActivity.class);
             startActivity(intent);
