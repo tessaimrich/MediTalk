@@ -28,6 +28,21 @@ import at.fhj.tessaimrich.data.AppDatabase;
 import at.fhj.tessaimrich.data.Medication;
 
 
+/**
+ * Die CategoryActivity stellt die Hauptübersicht der Medikamentenkategorien dar
+ * und ermöglicht sowohl eine Navigation über Icons, als auch eine direkte
+ * Textsuche über ein AutoComplete-Eingabefeld.
+ * <p>
+ * Hauptfunktionen:
+ * <ul>
+ *   <li>Anzeigen von Medikamentenkategorien (z.B. Tabletten) als Icon</li>
+ *   <li>Suchfeld mit Autovervollständigung</li>
+ *   <li>Datenbankzugriff mit Sprachfilter</li>
+ *   <li>Automatisches Einfügen von Beispieldaten bei leerer Datenbank</li>
+ * </ul>
+ * Die Activity erbt von {@link BaseDrawerActivity} und zeigt dadurch automatisch
+ * das Navigationsmenü mit Home-Button und weiteren Einträgen.
+ */
 public class CategoryActivity extends BaseDrawerActivity {
 
     private MaterialAutoCompleteTextView searchInput;
@@ -48,14 +63,12 @@ public class CategoryActivity extends BaseDrawerActivity {
 
         db = AppDatabase.getInstance(getApplicationContext());
 
-        // Sprache ermitteln
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String lang = prefs
                 .getString("language", Locale.getDefault().getLanguage())
                 .split("-")[0]
                 .toLowerCase();
 
-        // Falls noch keine Einträge für diese Sprache existieren, Test-Daten einfügen
         List<Medication> pillsExist = db.medicationDao()
                 .findByCategoryAndLanguage("pills", lang);
             if (pillsExist.isEmpty()) {
@@ -75,16 +88,16 @@ public class CategoryActivity extends BaseDrawerActivity {
 
         AppDatabase.databaseWriteExecutor.execute(() -> {
 
-        List<Medication> dropsExist = db.medicationDao()
-                            .findByCategoryAndLanguage("drops", lang);
-            if (dropsExist.isEmpty()) {
-                db.medicationDao().insertAll(
-                        new Medication("Catiolanze", "drops", lang,
-                                "Catiolanze", "", "Catiolanze_" + lang.toUpperCase() + ".pdf"),
-                        new Medication("Simbrinza", "drops", lang,
-                                "Simbrinza", "", "Simbrinza_" + lang.toUpperCase() + ".pdf")
-                );
-            }
+            List<Medication> dropsExist = db.medicationDao()
+                                .findByCategoryAndLanguage("drops", lang);
+                if (dropsExist.isEmpty()) {
+                    db.medicationDao().insertAll(
+                            new Medication("Catiolanze", "drops", lang,
+                                    "Catiolanze", "", "Catiolanze_" + lang.toUpperCase() + ".pdf"),
+                            new Medication("Simbrinza", "drops", lang,
+                                    "Simbrinza", "", "Simbrinza_" + lang.toUpperCase() + ".pdf")
+                    );
+                }
 
             List<Medication> creamsExist = db.medicationDao()
                     .findByCategoryAndLanguage("cream", lang);
@@ -106,8 +119,6 @@ public class CategoryActivity extends BaseDrawerActivity {
                 );
             }
 
-
-            // nach Insert: Adapter updaten
             List<String> updated = db.medicationDao().getAllNames(lang);
             runOnUiThread(() -> {
                 adapter.clear();
@@ -115,10 +126,8 @@ public class CategoryActivity extends BaseDrawerActivity {
                 adapter.notifyDataSetChanged();
             });
 
-        });
+    });
 
-
-        // Adapter mit allen Namen dieser Sprache
         List<String> suggestions = db.medicationDao().getAllNames(lang);
         adapter = new ArrayAdapter<>(
                 this,
@@ -128,9 +137,6 @@ public class CategoryActivity extends BaseDrawerActivity {
 
         searchInput.setAdapter(adapter);
         searchInput.setThreshold(1);
-
-
-        // Enter/Search
         searchInput.setOnEditorActionListener((v, actionId, ev) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH
                     || actionId == EditorInfo.IME_ACTION_DONE) {
@@ -145,13 +151,11 @@ public class CategoryActivity extends BaseDrawerActivity {
             return false;
         });
 
-        // Klick auf Vorschlag
         searchInput.setOnItemClickListener((parent, view, pos, id) -> {
             String sel = adapter.getItem(pos);
             if (sel != null) performSearch(sel, lang);
         });
 
-        // Icons → ListActivities
         findViewById(R.id.ivPill).setOnClickListener(v ->
                 startActivity(new Intent(this, PillListActivity.class))
         );
@@ -171,7 +175,13 @@ public class CategoryActivity extends BaseDrawerActivity {
 
 
 
-    /** regex-basierte Suche über alle Medikamente der aktuellen Sprache */
+    /**
+     * Führt eine regex-basierte Suche über alle Medikamente der aktuellen Sprache durch.
+     * Wird ein Treffer gefunden, wird die passende DetailActivity für die Kategorie geöffnet.
+     *
+     * @param pattern Der Suchbegriff (Regex)
+     * @param lang    Die aktuell eingestellte Sprache
+     */
     private void performSearch(String pattern, String lang) {
         new Thread(() -> {
             try {
