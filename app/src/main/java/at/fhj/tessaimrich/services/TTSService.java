@@ -1,7 +1,6 @@
-package at.fhj.tessaimrich;
+package at.fhj.tessaimrich.services;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Binder;
@@ -11,8 +10,6 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 import java.util.Locale;
-import android.media.AudioManager;
-
 
 
 public class TTSService extends Service {
@@ -161,7 +158,7 @@ public class TTSService extends Service {
     }
 
     public class LocalBinder extends Binder {
-        TTSService getService() {
+        public TTSService getService() {
             return TTSService.this;
         }
     }

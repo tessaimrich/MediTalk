@@ -1,4 +1,4 @@
-package at.fhj.tessaimrich;
+package at.fhj.tessaimrich.activities_core_function;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,6 +6,8 @@ import android.os.Handler;
 
 import androidx.activity.ComponentActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+
+import at.fhj.tessaimrich.R;
 
 /**
  * SplashActivity ist die Startbildschirm-Activity der App.

@@ -1,4 +1,4 @@
-package at.fhj.tessaimrich;
+package at.fhj.tessaimrich.base;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -23,6 +23,9 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.util.Locale;
 
+import at.fhj.tessaimrich.R;
+import at.fhj.tessaimrich.activities_core_function.SettingsActivity;
+import at.fhj.tessaimrich.services.TTSService;
 
 
 /**

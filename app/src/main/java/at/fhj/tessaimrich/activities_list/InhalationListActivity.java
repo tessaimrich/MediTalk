@@ -1,8 +1,7 @@
-package at.fhj.tessaimrich;
+package at.fhj.tessaimrich.activities_list;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -19,32 +18,36 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import at.fhj.tessaimrich.activities_core_function.CategoryActivity;
+import at.fhj.tessaimrich.activities_detail.InhalationDetailActivity;
+import at.fhj.tessaimrich.R;
+import at.fhj.tessaimrich.base.BaseDrawerActivity;
 import at.fhj.tessaimrich.data.AppDatabase;
 import at.fhj.tessaimrich.data.Medication;
 
 /**
- * DropListActivity zeigt eine Liste von Medikamenten der Kategorie "drops" an.
- * Nutzer:innen können ein Medikament auswählen und zur Drop-Detailansicht wechseln.
- * Die Sprache wird über SharedPreferences bestimmt. Daten stammen aus Room-Datenbank.
+ * Diese Activity zeigt eine Liste aller Inhalationsmedikamente an,
+ * die in der Datenbank für die gewählte Sprache gespeichert sind.
+ * Die Nutzer:innen können ein Medikament auswählen und zur Detailansicht weitergehen.
+ * Es gibt außerdem einen Home-Button zurück zur Kategorieübersicht.
  */
+public class InhalationListActivity extends BaseDrawerActivity {
 
-public class DropListActivity extends BaseDrawerActivity {
-
-    private ListView lvDrops;
+    private ListView lvInhalations;
     private ImageButton btnHome, btnNext;
-    private List<String> drops;
+    private List<String> inhalations;
     private int selectedPos = -1;
 
     /**
-     * Initialisiert die Aktivität, lädt Medikamente aus der Datenbank
-     * und setzt Adapter, Click Listener sowie Spracheinstellungen.
-     * @param savedInstanceState gespeicherter Zustand der Aktivität
+     * Wird beim Starten der Activity aufgerufen.
+     * Initialisiert die Datenbank, lädt Medikamentendaten,
+     * bereitet die Ansicht vor und definiert das Verhalten der Buttons.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getLayoutInflater().inflate(
-                R.layout.activity_drop_list,
+                R.layout.activity_inhalation_list,
                 findViewById(R.id.content_frame),
                 true
         );
@@ -54,39 +57,41 @@ public class DropListActivity extends BaseDrawerActivity {
         AppDatabase db = AppDatabase.getInstance(getApplicationContext());
 
         List<Medication> existing = db.medicationDao()
-                .findByCategoryAndLanguage("drops", lang);
+                .findByCategoryAndLanguage("inhalation", lang);
         if (existing.isEmpty()) {
             db.medicationDao().insertAll(
                     new Medication(
-                            "Catiolanze",
-                            "drops",
+                            "Enerzair",
+                            "inhalation",
                             lang,
-                            "catiolanze",
+                            "enerzair",
                             "",
-                            "Catiolanze_" + lang.toUpperCase() + ".pdf"
+                            "Enerzair_" + lang.toUpperCase() + ".pdf"
                     ),
                     new Medication(
-                            "Simbrinza",
-                            "drops",
+                            "Ultibro",
+                            "inhalation",
                             lang,
-                            "simbrinza",
+                            "ultibro",
                             "",
-                            "Simbrinza_" + lang.toUpperCase() + ".pdf"
+                            "Ultibro_" + lang.toUpperCase() + ".pdf"
                     )
             );
-            Log.d("DB", "Drops für Sprache " + lang + " eingefügt");
+            Log.d("DB", "Inhalation-Testdaten für Sprache " + lang + " eingefügt");
         }
+
         List<Medication> meds = db.medicationDao()
-                .findByCategoryAndLanguage("drops", lang);
-        drops = new ArrayList<>();
+                .findByCategoryAndLanguage("inhalation", lang);
+
+        inhalations = new ArrayList<>();
         for (Medication m : meds) {
-            drops.add(m.getName());
+            inhalations.add(m.getName());
         }
-            lvDrops  = findViewById(R.id.lvDrops);
+        lvInhalations  = findViewById(R.id.lvInhalations);
         btnHome  = findViewById(R.id.btnHome);
         btnNext  = findViewById(R.id.btnNext);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, drops) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, inhalations) {
             /**
              * Liefert die Ansicht für jedes Listenelement.
              * Das aktuell ausgewählte Element wird fett dargestellt.
@@ -113,15 +118,15 @@ public class DropListActivity extends BaseDrawerActivity {
                 return view;
             }
         };
-        lvDrops.setAdapter(adapter);
+        lvInhalations.setAdapter(adapter);
 
-        lvDrops.setOnItemClickListener((parent, view, position, id) -> {
+        lvInhalations.setOnItemClickListener((parent, view, position, id) -> {
             selectedPos = position;
             adapter.notifyDataSetChanged();
         });
 
         btnHome.setOnClickListener(v -> {
-            Intent intent = new Intent(DropListActivity.this, CategoryActivity.class);
+            Intent intent = new Intent(InhalationListActivity.this, CategoryActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
             finish();
@@ -129,8 +134,8 @@ public class DropListActivity extends BaseDrawerActivity {
 
         btnNext.setOnClickListener(v -> {
             if (selectedPos >= 0) {
-                Intent intent = new Intent(DropListActivity.this, DropDetailActivity.class);
-                intent.putExtra("med_name", drops.get(selectedPos));
+                Intent intent = new Intent(InhalationListActivity.this, InhalationDetailActivity.class);
+                intent.putExtra("med_name", inhalations.get(selectedPos));
                 startActivity(intent);
             }
         });

@@ -1,4 +1,4 @@
-package at.fhj.tessaimrich;
+package at.fhj.tessaimrich.activities_core_function;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,6 +14,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
+import at.fhj.tessaimrich.activities_detail.CreamDetailActivity;
+import at.fhj.tessaimrich.activities_detail.DropDetailActivity;
+import at.fhj.tessaimrich.activities_detail.InhalationDetailActivity;
+import at.fhj.tessaimrich.activities_detail.PillDetailActivity;
+import at.fhj.tessaimrich.R;
+import at.fhj.tessaimrich.activities_list.CreamListActivity;
+import at.fhj.tessaimrich.activities_list.DropListActivity;
+import at.fhj.tessaimrich.activities_list.InhalationListActivity;
+import at.fhj.tessaimrich.activities_list.PillListActivity;
+import at.fhj.tessaimrich.base.BaseDrawerActivity;
 import at.fhj.tessaimrich.data.AppDatabase;
 import at.fhj.tessaimrich.data.Medication;
 

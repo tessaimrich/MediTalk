@@ -1,8 +1,7 @@
-package at.fhj.tessaimrich;
+package at.fhj.tessaimrich.activities_list;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -15,6 +14,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
+
+import at.fhj.tessaimrich.activities_core_function.CategoryActivity;
+import at.fhj.tessaimrich.activities_detail.CreamDetailActivity;
+import at.fhj.tessaimrich.R;
+import at.fhj.tessaimrich.base.BaseDrawerActivity;
 import at.fhj.tessaimrich.data.AppDatabase;
 import at.fhj.tessaimrich.data.Medication;
 import java.util.List;

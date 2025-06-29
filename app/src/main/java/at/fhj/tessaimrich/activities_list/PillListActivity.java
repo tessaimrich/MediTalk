@@ -1,8 +1,7 @@
-package at.fhj.tessaimrich;
+package at.fhj.tessaimrich.activities_list;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -19,6 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import at.fhj.tessaimrich.activities_core_function.CategoryActivity;
+import at.fhj.tessaimrich.activities_detail.PillDetailActivity;
+import at.fhj.tessaimrich.R;
+import at.fhj.tessaimrich.base.BaseDrawerActivity;
 import at.fhj.tessaimrich.data.AppDatabase;
 import at.fhj.tessaimrich.data.Medication;
 

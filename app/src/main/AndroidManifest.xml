@@ -16,18 +16,18 @@
         android:theme="@style/Theme.MediTalk"
         tools:targetApi="31">
         <service
-            android:name=".TTSService"
+            android:name=".services.TTSService"
             android:enabled="true"
             android:exported="false"/>
 
         <activity
-            android:name=".NavHeader"
+            android:name=".base.NavHeader"
             android:exported="false" />
         <activity
-            android:name=".BaseDrawerActivity"
+            android:name=".base.BaseDrawerActivity"
             android:exported="false" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".activities_core_function.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.MediTalk.Splash">
             <intent-filter>
@@ -37,37 +37,37 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name=".activities_core_function.SettingsActivity"
             android:exported="true" />
         <activity
-            android:name=".InhalationDetailActivity"
+            android:name=".activities_detail.InhalationDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".DropDetailActivity"
+            android:name=".activities_detail.DropDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".CreamDetailActivity"
+            android:name=".activities_detail.CreamDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".PillDetailActivity"
+            android:name=".activities_detail.PillDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".InhalationListActivity"
+            android:name=".activities_list.InhalationListActivity"
             android:exported="false" />
         <activity
-            android:name=".CreamListActivity"
+            android:name=".activities_list.CreamListActivity"
             android:exported="false" />
         <activity
-            android:name=".PillListActivity"
+            android:name=".activities_list.PillListActivity"
             android:exported="false" />
         <activity
-            android:name=".DropListActivity"
+            android:name=".activities_list.DropListActivity"
             android:exported="false" />
         <activity
-            android:name=".CategoryActivity"
+            android:name=".activities_core_function.CategoryActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".activities_core_function.MainActivity"
             android:exported="false" />
 
         <provider

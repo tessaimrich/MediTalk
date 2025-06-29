@@ -1,4 +1,4 @@
-package at.fhj.tessaimrich;
+package at.fhj.tessaimrich.activities_core_function;
 
 
 
@@ -14,6 +14,8 @@ import android.preference.PreferenceManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import at.fhj.tessaimrich.R;
 
 
 /**

@@ -1,4 +1,4 @@
-package at.fhj.tessaimrich;
+package at.fhj.tessaimrich.base;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import java.util.Locale;
 
+import at.fhj.tessaimrich.activities_core_function.CategoryActivity;
+import at.fhj.tessaimrich.R;
 import at.fhj.tessaimrich.data.AppDatabase;
 import at.fhj.tessaimrich.data.Medication;
 

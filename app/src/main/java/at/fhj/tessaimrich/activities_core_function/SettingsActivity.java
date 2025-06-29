@@ -1,4 +1,4 @@
-package at.fhj.tessaimrich;
+package at.fhj.tessaimrich.activities_core_function;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +10,6 @@ import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.speech.tts.TextToSpeech;
 import android.widget.ImageButton;
 import android.widget.RadioGroup;
 
@@ -18,6 +17,10 @@ import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.widget.Switch;
+
+import at.fhj.tessaimrich.R;
+import at.fhj.tessaimrich.services.TTSService;
+import at.fhj.tessaimrich.base.BaseDrawerActivity;
 
 /**
  * SettingsActivity verwaltet die Benutzereinstellungen für Sprachgeschwindigkeit

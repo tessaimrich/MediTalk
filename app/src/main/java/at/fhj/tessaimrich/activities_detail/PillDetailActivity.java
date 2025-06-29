@@ -1,4 +1,4 @@
-package at.fhj.tessaimrich;
+package at.fhj.tessaimrich.activities_detail;
 
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
 
+import at.fhj.tessaimrich.R;
+import at.fhj.tessaimrich.base.BaseMedicationDetailActivity;
 import at.fhj.tessaimrich.data.Medication;
 
 /**
